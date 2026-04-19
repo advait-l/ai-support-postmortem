@@ -12,6 +12,9 @@ import requests
 
 
 DEFAULT_ZEN_MODEL = "glm-5"
+MODEL_PRICING_PER_1K_TOKENS = {
+    "glm-5": {"input": 0.0005, "output": 0.0015},
+}
 TICKETS_PATH = "tickets.json"
 TRACES_PATH = "traces.jsonl"
 PIPELINE_OUTPUT_PATH = "pipeline_output.json"
@@ -193,6 +196,8 @@ def record_run_step(
     parent_step: str | None = None,
     latency_ms: float | None = None,
     prompt_tokens_estimate: int | None = None,
+    response_tokens_estimate: int | None = None,
+    estimated_cost_usd: float | None = None,
     system_prompt: str | None = None,
     user_prompt: str | None = None,
 ) -> None:
@@ -208,6 +213,8 @@ def record_run_step(
             "provider": provider,
             "model": model,
             "prompt_tokens_estimate": prompt_tokens_estimate,
+            "response_tokens_estimate": response_tokens_estimate,
+            "estimated_cost_usd": estimated_cost_usd,
             "system_prompt": system_prompt,
             "user_prompt": user_prompt,
             "response": response,
@@ -220,6 +227,46 @@ def record_run_step(
 
 def estimate_prompt_size(*parts: str) -> int:
     return sum(len(part.split()) for part in parts)
+
+
+def estimate_llm_cost(
+    model: str | None, prompt_tokens: int, response_tokens: int
+) -> float | None:
+    if model is None:
+        return None
+
+    pricing = MODEL_PRICING_PER_1K_TOKENS.get(model)
+    if pricing is None:
+        return None
+
+    prompt_cost = (prompt_tokens / 1000) * pricing["input"]
+    response_cost = (response_tokens / 1000) * pricing["output"]
+    return round(prompt_cost + response_cost, 6)
+
+
+def summarize_trace_entries(trace_entries: list[dict]) -> dict:
+    prompt_tokens_total = 0
+    response_tokens_total = 0
+    total_cost_usd = 0.0
+    cost_entry_count = 0
+
+    for entry in trace_entries:
+        prompt_tokens_total += int(entry.get("prompt_tokens_estimate") or 0)
+        response_tokens_total += int(entry.get("response_tokens_estimate") or 0)
+
+        estimated_cost = entry.get("estimated_cost_usd")
+        if estimated_cost is not None:
+            total_cost_usd += float(estimated_cost)
+            cost_entry_count += 1
+
+    return {
+        "trace_count": len(trace_entries),
+        "llm_prompt_tokens": prompt_tokens_total,
+        "llm_response_tokens": response_tokens_total,
+        "llm_total_tokens": prompt_tokens_total + response_tokens_total,
+        "estimated_cost_usd": round(total_cost_usd, 6),
+        "cost_entry_count": cost_entry_count,
+    }
 
 
 def load_local_env(path: str = ENV_PATH) -> None:
@@ -580,10 +627,12 @@ def traced_llm_call(
 
     while True:
         started_at = time.perf_counter()
+        prompt_tokens = estimate_prompt_size(system_prompt, user_prompt)
 
         try:
             output = call_zen(provider, system_prompt, user_prompt, current_model)
             latency_ms = round((time.perf_counter() - started_at) * 1000, 2)
+            response_tokens = estimate_prompt_size(output)
             record_run_step(
                 context,
                 step=step,
@@ -594,7 +643,11 @@ def traced_llm_call(
                 model=current_model,
                 provider=provider.get("type"),
                 latency_ms=latency_ms,
-                prompt_tokens_estimate=estimate_prompt_size(system_prompt, user_prompt),
+                prompt_tokens_estimate=prompt_tokens,
+                response_tokens_estimate=response_tokens,
+                estimated_cost_usd=estimate_llm_cost(
+                    current_model, prompt_tokens, response_tokens
+                ),
                 system_prompt=system_prompt,
                 user_prompt=user_prompt,
                 status="ok",
@@ -612,7 +665,9 @@ def traced_llm_call(
                 model=current_model,
                 provider=provider.get("type"),
                 latency_ms=latency_ms,
-                prompt_tokens_estimate=estimate_prompt_size(system_prompt, user_prompt),
+                prompt_tokens_estimate=prompt_tokens,
+                response_tokens_estimate=0,
+                estimated_cost_usd=estimate_llm_cost(current_model, prompt_tokens, 0),
                 system_prompt=system_prompt,
                 user_prompt=user_prompt,
                 status="error",
@@ -1329,6 +1384,7 @@ def render_run_detail_html(manifest: dict, trace_entries: list[dict]) -> str:
     run_kind = run_id.split("-", 1)[0]
     status_counts = Counter(entry.get("status", "unknown") for entry in trace_entries)
     agent_counts = Counter(entry.get("agent", "unknown") for entry in trace_entries)
+    trace_summary = summarize_trace_entries(trace_entries)
 
     def _status_color(s: str) -> str:
         colors = {"ok": "#34d399", "fallback": "#fbbf24", "error": "#f87171"}
@@ -1374,15 +1430,23 @@ def render_run_detail_html(manifest: dict, trace_entries: list[dict]) -> str:
         latency_str = f"{latency:.1f}ms" if latency is not None else "-"
         ticket_id = metadata.get("ticket_id")
         prompt_tokens = entry.get("prompt_tokens_estimate")
+        response_tokens = entry.get("response_tokens_estimate")
+        estimated_cost = entry.get("estimated_cost_usd")
 
         extras = []
         if ticket_id:
             extras.append(_mini_chip("Ticket", str(ticket_id)))
         if prompt_tokens is not None:
             extras.append(_mini_chip("Prompt tokens", str(prompt_tokens)))
+        if response_tokens is not None:
+            extras.append(_mini_chip("Response tokens", str(response_tokens)))
+        if estimated_cost is not None:
+            extras.append(_mini_chip("Est. cost", f"${float(estimated_cost):.4f}"))
 
-        agent_badge_html = _agent_badge(str(entry.get("agent", "unknown")))
-        status_badge_html = _status_badge(str(entry.get("status", "unknown")))
+        agent_name = str(entry.get("agent", "unknown"))
+        status_name = str(entry.get("status", "unknown"))
+        agent_badge_html = _agent_badge(agent_name)
+        status_badge_html = _status_badge(status_name)
         timestamp_html = escape(str(entry.get("timestamp", "unknown"))[:19])
         provider_html = escape(str(entry.get("provider") or "local"))
         model_html = escape(str(entry.get("model") or "-"))
@@ -1421,8 +1485,21 @@ def render_run_detail_html(manifest: dict, trace_entries: list[dict]) -> str:
                 f"</div>"
             )
 
+        search_blob = " ".join(
+            part
+            for part in [
+                step,
+                str(ticket_id or ""),
+                agent_name,
+                status_name,
+                str(metadata),
+                str(parent or ""),
+            ]
+            if part
+        ).lower()
+
         trace_rows.append(
-            f'<details class="trace-card">'
+            f'<details class="trace-card" data-agent="{escape(agent_name)}" data-status="{escape(status_name)}" data-search="{escape(search_blob)}">'
             f'<summary class="trace-summary">'
             f'<div class="trace-summary-main">'
             f"{agent_badge_html}"
@@ -1457,11 +1534,20 @@ def render_run_detail_html(manifest: dict, trace_entries: list[dict]) -> str:
         f'<div class="stat"><span class="stat-label">Tickets</span><span class="stat-value">{escape(str(manifest.get("ticket_count", "?")))}</span></div>',
         f'<div class="stat good"><span class="stat-label">Resolved</span><span class="stat-value">{escape(str(manifest.get("resolved", "?")))}</span></div>',
         f'<div class="stat bad"><span class="stat-label">Escalated</span><span class="stat-value">{escape(str(manifest.get("escalated", "?")))}</span></div>',
+        f'<div class="stat accent"><span class="stat-label">LLM Tokens</span><span class="stat-value">{trace_summary["llm_total_tokens"]}</span></div>',
+        f'<div class="stat accent"><span class="stat-label">Est. Cost</span><span class="stat-value">${trace_summary["estimated_cost_usd"]:.4f}</span></div>',
     ]
 
     trace_meta_chips = [
         _mini_chip("Trace events", str(len(trace_entries)), "accent"),
         _mini_chip("Errors", str(status_counts.get("error", 0)), "bad"),
+        _mini_chip("Prompt tokens", str(trace_summary["llm_prompt_tokens"]), "accent"),
+        _mini_chip(
+            "Response tokens", str(trace_summary["llm_response_tokens"]), "accent"
+        ),
+        _mini_chip(
+            "Est. cost", f"${trace_summary['estimated_cost_usd']:.4f}", "accent"
+        ),
     ]
     trace_meta_chips.extend(
         _mini_chip(agent, str(count)) for agent, count in sorted(agent_counts.items())
@@ -1488,6 +1574,17 @@ def render_run_detail_html(manifest: dict, trace_entries: list[dict]) -> str:
         artifact_links.append(
             f'<a href="{artifact_prefix}{escape(manifest_snapshot)}" class="artifact-link">&#128196; Manifest</a>'
         )
+
+    agent_options = ['<option value="all">All agents</option>']
+    agent_options.extend(
+        f'<option value="{escape(agent)}">{escape(agent.title())}</option>'
+        for agent in sorted(agent_counts)
+    )
+    status_options = ['<option value="all">All statuses</option>']
+    status_options.extend(
+        f'<option value="{escape(status)}">{escape(status.title())}</option>'
+        for status in sorted(status_counts)
+    )
 
     return f"""<!doctype html>
 <html lang="en">
@@ -1594,6 +1691,31 @@ def render_run_detail_html(manifest: dict, trace_entries: list[dict]) -> str:
       display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px;
       font-size: 0.85rem; color: var(--muted);
     }}
+    .filters {{
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;
+      margin-top: 16px;
+    }}
+    .filter-card {{
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+    }}
+    .filter-card label {{
+      display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em;
+      color: var(--muted); margin-bottom: 8px;
+    }}
+    .filter-card select,
+    .filter-card input {{
+      width: 100%;
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 10px 12px;
+      font-size: 0.88rem;
+    }}
+    .filter-card input::placeholder {{ color: var(--muted); }}
     .artifact-links {{
       display: flex; gap: 10px; flex-wrap: wrap;
     }}
@@ -1610,6 +1732,7 @@ def render_run_detail_html(manifest: dict, trace_entries: list[dict]) -> str:
     .trace-list {{
       display: flex; flex-direction: column; gap: 10px;
     }}
+    .trace-card.is-hidden {{ display: none; }}
     .trace-card {{
       background: var(--surface);
       border: 1px solid var(--border);
@@ -1752,13 +1875,69 @@ def render_run_detail_html(manifest: dict, trace_entries: list[dict]) -> str:
     <section class="section">
       <div class="section-header">Trace Overview</div>
       <div class="meta-row">{"".join(trace_meta_chips) or '<span class="muted">No trace events.</span>'}</div>
+      <div class="filters">
+        <div class="filter-card">
+          <label for="agent-filter">Agent</label>
+          <select id="agent-filter">{"".join(agent_options)}</select>
+        </div>
+        <div class="filter-card">
+          <label for="status-filter">Status</label>
+          <select id="status-filter">{"".join(status_options)}</select>
+        </div>
+        <div class="filter-card">
+          <label for="trace-search">Search</label>
+          <input id="trace-search" type="search" placeholder="ticket id, step, parent step">
+        </div>
+      </div>
     </section>
 
     <section class="section">
-      <div class="section-header">Trace Timeline ({len(trace_entries)} events, collapsed by default)</div>
+      <div class="section-header">Trace Timeline (<span id="trace-visible-count">{len(trace_entries)}</span> / {len(trace_entries)} events, collapsed by default)</div>
       <div class="trace-list">{"".join(trace_rows) or '<span class="muted">No trace events recorded for this run.</span>'}</div>
     </section>
   </main>
+  <script>
+    const agentFilter = document.getElementById('agent-filter');
+    const statusFilter = document.getElementById('status-filter');
+    const traceSearch = document.getElementById('trace-search');
+    const visibleCount = document.getElementById('trace-visible-count');
+    const traceCards = Array.from(document.querySelectorAll('.trace-card'));
+
+    function applyTraceFilters() {{
+      const agentValue = agentFilter ? agentFilter.value : 'all';
+      const statusValue = statusFilter ? statusFilter.value : 'all';
+      const searchValue = traceSearch ? traceSearch.value.trim().toLowerCase() : '';
+      let shown = 0;
+
+      traceCards.forEach((card) => {{
+        const matchesAgent = agentValue === 'all' || card.dataset.agent === agentValue;
+        const matchesStatus = statusValue === 'all' || card.dataset.status === statusValue;
+        const matchesSearch = !searchValue || (card.dataset.search || '').includes(searchValue);
+        const isVisible = matchesAgent && matchesStatus && matchesSearch;
+
+        card.classList.toggle('is-hidden', !isVisible);
+        if (isVisible) {{
+          shown += 1;
+        }}
+      }});
+
+      if (visibleCount) {{
+        visibleCount.textContent = String(shown);
+      }}
+    }}
+
+    if (agentFilter) {{
+      agentFilter.addEventListener('change', applyTraceFilters);
+    }}
+    if (statusFilter) {{
+      statusFilter.addEventListener('change', applyTraceFilters);
+    }}
+    if (traceSearch) {{
+      traceSearch.addEventListener('input', applyTraceFilters);
+    }}
+
+    applyTraceFilters();
+  </script>
 </body>
 </html>
 """
@@ -1773,6 +1952,39 @@ def render_runs_index_html(manifests: list[dict]) -> str:
         colors = {"pipeline": "#60a5fa", "eval": "#a78bfa", "render": "#34d399"}
         return colors.get(k, "#8896b3")
 
+    def _format_cost(value: object) -> str:
+        if value in (None, ""):
+            return "-"
+
+        try:
+            return f"${float(value):.4f}"
+        except (TypeError, ValueError):
+            return "-"
+
+    def _format_int(value: object) -> str:
+        if value in (None, ""):
+            return "-"
+
+        try:
+            return f"{int(value):,}"
+        except (TypeError, ValueError):
+            return "-"
+
+    total_runs = len(manifests)
+    total_traces = sum(int(manifest.get("trace_count") or 0) for manifest in manifests)
+    total_estimated_cost = sum(
+        float(manifest.get("estimated_cost_usd") or 0.0) for manifest in manifests
+    )
+    max_estimated_cost = max(
+        (float(manifest.get("estimated_cost_usd") or 0.0) for manifest in manifests),
+        default=0.0,
+    )
+    pipeline_runs = sum(
+        1
+        for manifest in manifests
+        if str(manifest.get("run_id", "")).startswith("pipeline-")
+    )
+
     cards = []
     for manifest in manifests:
         run_id = manifest["run_id"]
@@ -1781,6 +1993,9 @@ def render_runs_index_html(manifests: list[dict]) -> str:
         resolved = manifest.get("resolved", "?")
         escalated = manifest.get("escalated", "?")
         trace_count = manifest.get("trace_count", "?")
+        llm_total_tokens = manifest.get("llm_total_tokens")
+        estimated_cost_usd = manifest.get("estimated_cost_usd")
+        cost_entry_count = int(manifest.get("cost_entry_count") or 0)
         started_at = manifest.get("started_at", "unknown")
         finished_at = manifest.get("finished_at", "unknown")
         case_name = manifest.get("case")
@@ -1802,6 +2017,15 @@ def render_runs_index_html(manifests: list[dict]) -> str:
             except Exception:
                 pass
 
+        run_badges = [
+            f'<span class="run-badge"><span class="run-badge-label">LLM tokens</span><span class="run-badge-value">{_format_int(llm_total_tokens)}</span></span>',
+            f'<span class="run-badge"><span class="run-badge-label">Est. cost</span><span class="run-badge-value">{_format_cost(estimated_cost_usd)}</span></span>',
+        ]
+        if cost_entry_count == 0:
+            run_badges.append(
+                '<span class="run-badge muted"><span class="run-badge-label">Mode</span><span class="run-badge-value">Local fallback</span></span>'
+            )
+
         cards.append(
             f'<article class="run-card" style="--kind-color:{color}">'
             f'<div class="run-header">'
@@ -1820,6 +2044,7 @@ def render_runs_index_html(manifests: list[dict]) -> str:
             f"<span>Started: {escape(str(started_at)[:19])}</span>"
             f"<span>{duration}</span>"
             f"</div>"
+            + f'<div class="run-badges">{"".join(run_badges)}</div>'
             + (
                 f'<div class="run-case">Case: {escape(case_name)}</div>'
                 if case_name
@@ -1897,6 +2122,26 @@ def render_runs_index_html(manifests: list[dict]) -> str:
     .hero .subtitle {{
       color: var(--muted); font-size: 0.95rem;
     }}
+    .hero-stats {{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-top: 24px;
+      margin-bottom: 28px;
+    }}
+    .hero-stat {{
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+    }}
+    .hero-stat-label {{
+      display: block; font-size: 0.72rem; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }}
+    .hero-stat-value {{
+      display: block; font-size: 1.35rem; font-weight: 800; margin-top: 4px;
+    }}
     .back-link {{
       color: var(--accent); text-decoration: none; font-size: 0.9rem;
       display: flex; align-items: center; gap: 6px;
@@ -1962,6 +2207,25 @@ def render_runs_index_html(manifests: list[dict]) -> str:
       font-size: 0.78rem; color: var(--muted);
       margin-bottom: 10px;
     }}
+    .run-badges {{
+      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;
+    }}
+    .run-badge {{
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 9px; border-radius: 999px;
+      background: var(--surface-raised); border: 1px solid var(--border);
+      font-size: 0.72rem;
+    }}
+    .run-badge.muted {{
+      color: var(--muted);
+    }}
+    .run-badge-label {{
+      color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em;
+      font-size: 0.64rem;
+    }}
+    .run-badge-value {{
+      font-weight: 700;
+    }}
     .run-case {{
       font-size: 0.82rem; color: var(--accent);
       padding: 6px 10px; background: var(--accent);
@@ -1999,6 +2263,13 @@ def render_runs_index_html(manifests: list[dict]) -> str:
       </div>
       <a href="../index.html" class="back-link">&#8592; Back to Report</a>
     </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="hero-stat-label">Recent Runs</span><span class="hero-stat-value">{total_runs}</span></div>
+      <div class="hero-stat"><span class="hero-stat-label">Pipeline Runs</span><span class="hero-stat-value">{pipeline_runs}</span></div>
+      <div class="hero-stat"><span class="hero-stat-label">Trace Events</span><span class="hero-stat-value">{total_traces}</span></div>
+      <div class="hero-stat"><span class="hero-stat-label">Total Est. Cost</span><span class="hero-stat-value">{_format_cost(total_estimated_cost)}</span></div>
+      <div class="hero-stat"><span class="hero-stat-label">Max Run Cost</span><span class="hero-stat-value">{_format_cost(max_estimated_cost)}</span></div>
+    </div>
     <div class="grid">{"".join(cards) if cards else '<div class="empty">No run snapshots available yet.</div>'}</div>
   </main>
 </body>
@@ -2023,9 +2294,11 @@ def publish_run_snapshot(context: dict, manifest: dict) -> None:
     if os.path.exists(context["trace_path"]):
         trace_entries = load_jsonl_file(context["trace_path"])
 
+    trace_summary = summarize_trace_entries(trace_entries)
+
     manifest = {
         **manifest,
-        "trace_count": len(trace_entries),
+        **trace_summary,
         "artifacts": {
             **(manifest.get("artifacts") or {}),
             "report_snapshot": f"{run_id}-report.html",

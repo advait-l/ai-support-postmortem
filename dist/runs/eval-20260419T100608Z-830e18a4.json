@@ -1,0 +1,21 @@
+{
+  "run_id": "eval-20260419T100608Z-830e18a4",
+  "started_at": "2026-04-19T10:06:08.578517+00:00",
+  "finished_at": "2026-04-19T10:06:08.581946+00:00",
+  "ticket_count": 6,
+  "resolved": 6,
+  "escalated": 0,
+  "top_issues": [
+    "Password reset",
+    "Slow dashboard",
+    "Feature requests"
+  ],
+  "ok": true,
+  "case": "frontline_resolvable.json",
+  "trace_count": 19,
+  "artifacts": {
+    "report_snapshot": "eval-20260419T100608Z-830e18a4-report.html",
+    "manifest_snapshot": "eval-20260419T100608Z-830e18a4.json",
+    "traces_snapshot": "eval-20260419T100608Z-830e18a4.traces.json"
+  }
+}

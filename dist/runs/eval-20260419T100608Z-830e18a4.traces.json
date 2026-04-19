@@ -1,0 +1,390 @@
+{
+  "run_id": "eval-20260419T100608Z-830e18a4",
+  "traces": [
+    {
+      "timestamp": "2026-04-19T10:06:08.578539+00:00",
+      "trace_id": "e2a43ecf-a6d2-4c09-ac4c-8153f81c5a6b",
+      "step": "ticket:EVAL-2101",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "EVAL-2101",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "eval-20260419T100608Z-830e18a4"
+    },
+    {
+      "timestamp": "2026-04-19T10:06:08.578730+00:00",
+      "trace_id": "568e3e75-476c-4b03-99ce-752e8c580590",
+      "step": "ticket:EVAL-2101:route",
+      "agent": "manager",
+      "parent_step": "ticket:EVAL-2101",
+      "metadata": {
+        "ticket_id": "EVAL-2101",
+        "category": "password_reset",
+        "resolvable": true
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "eval-20260419T100608Z-830e18a4"
+    },
+    {
+      "timestamp": "2026-04-19T10:06:08.578819+00:00",
+      "trace_id": "c5469484-6b8f-4f74-91bb-22b9777574a7",
+      "step": "ticket:EVAL-2101:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:EVAL-2101",
+      "metadata": {
+        "ticket_id": "EVAL-2101",
+        "result": "resolved"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "eval-20260419T100608Z-830e18a4"
+    },
+    {
+      "timestamp": "2026-04-19T10:06:08.578889+00:00",
+      "trace_id": "0421a58b-8fdc-4f7e-9607-075dd19e8360",
+      "step": "ticket:EVAL-2102",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "EVAL-2102",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "eval-20260419T100608Z-830e18a4"
+    },
+    {
+      "timestamp": "2026-04-19T10:06:08.578966+00:00",
+      "trace_id": "d40054fb-2de5-4e65-9f41-561cd2004c0e",
+      "step": "ticket:EVAL-2102:route",
+      "agent": "manager",
+      "parent_step": "ticket:EVAL-2102",
+      "metadata": {
+        "ticket_id": "EVAL-2102",
+        "category": "slow_dashboard",
+        "resolvable": true
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "eval-20260419T100608Z-830e18a4"
+    },
+    {
+      "timestamp": "2026-04-19T10:06:08.579037+00:00",
+      "trace_id": "3dee0895-4a79-4a76-9251-e1e702aa9640",
+      "step": "ticket:EVAL-2102:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:EVAL-2102",
+      "metadata": {
+        "ticket_id": "EVAL-2102",
+        "result": "resolved"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "eval-20260419T100608Z-830e18a4"
+    },
+    {
+      "timestamp": "2026-04-19T10:06:08.579115+00:00",
+      "trace_id": "08d0e486-f44b-4f32-bc3f-0dec39a9883c",
+      "step": "ticket:EVAL-2103",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "EVAL-2103",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "eval-20260419T100608Z-830e18a4"
+    },
+    {
+      "timestamp": "2026-04-19T10:06:08.579159+00:00",
+      "trace_id": "6540e8d8-5cb4-4c71-bcbf-e5a968f24053",
+      "step": "ticket:EVAL-2103:route",
+      "agent": "manager",
+      "parent_step": "ticket:EVAL-2103",
+      "metadata": {
+        "ticket_id": "EVAL-2103",
+        "category": "feature_request",
+        "resolvable": true
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "eval-20260419T100608Z-830e18a4"
+    },
+    {
+      "timestamp": "2026-04-19T10:06:08.579210+00:00",
+      "trace_id": "c4500c48-fe11-4094-b076-35a3581f8671",
+      "step": "ticket:EVAL-2103:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:EVAL-2103",
+      "metadata": {
+        "ticket_id": "EVAL-2103",
+        "result": "resolved"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "eval-20260419T100608Z-830e18a4"
+    },
+    {
+      "timestamp": "2026-04-19T10:06:08.579263+00:00",
+      "trace_id": "2d7021c8-170f-4d7a-b324-59b5cc738c1d",
+      "step": "ticket:EVAL-2104",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "EVAL-2104",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "eval-20260419T100608Z-830e18a4"
+    },
+    {
+      "timestamp": "2026-04-19T10:06:08.579339+00:00",
+      "trace_id": "ebea8145-6a1d-4ab8-99ae-5ec232add354",
+      "step": "ticket:EVAL-2104:route",
+      "agent": "manager",
+      "parent_step": "ticket:EVAL-2104",
+      "metadata": {
+        "ticket_id": "EVAL-2104",
+        "category": "invoice_copy",
+        "resolvable": true
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "eval-20260419T100608Z-830e18a4"
+    },
+    {
+      "timestamp": "2026-04-19T10:06:08.579388+00:00",
+      "trace_id": "b514d162-5694-46aa-b2ce-f1c8eebf5d03",
+      "step": "ticket:EVAL-2104:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:EVAL-2104",
+      "metadata": {
+        "ticket_id": "EVAL-2104",
+        "result": "resolved"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "eval-20260419T100608Z-830e18a4"
+    },
+    {
+      "timestamp": "2026-04-19T10:06:08.579455+00:00",
+      "trace_id": "35ec193a-e1ce-4729-a7ea-dfed0cc747cc",
+      "step": "ticket:EVAL-2105",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "EVAL-2105",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "eval-20260419T100608Z-830e18a4"
+    },
+    {
+      "timestamp": "2026-04-19T10:06:08.579525+00:00",
+      "trace_id": "a2fd08cf-1cb9-410e-882f-a9fb1c5412fc",
+      "step": "ticket:EVAL-2105:route",
+      "agent": "manager",
+      "parent_step": "ticket:EVAL-2105",
+      "metadata": {
+        "ticket_id": "EVAL-2105",
+        "category": "team_invites",
+        "resolvable": true
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "eval-20260419T100608Z-830e18a4"
+    },
+    {
+      "timestamp": "2026-04-19T10:06:08.579592+00:00",
+      "trace_id": "014dc865-2762-4ad6-ae32-6a688bf63367",
+      "step": "ticket:EVAL-2105:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:EVAL-2105",
+      "metadata": {
+        "ticket_id": "EVAL-2105",
+        "result": "resolved"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "eval-20260419T100608Z-830e18a4"
+    },
+    {
+      "timestamp": "2026-04-19T10:06:08.579655+00:00",
+      "trace_id": "05724e03-ff47-48f6-945c-a0f0ac59567b",
+      "step": "ticket:EVAL-2106",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "EVAL-2106",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "eval-20260419T100608Z-830e18a4"
+    },
+    {
+      "timestamp": "2026-04-19T10:06:08.579725+00:00",
+      "trace_id": "4950b99d-3296-41aa-974a-3990e88ffe36",
+      "step": "ticket:EVAL-2106:route",
+      "agent": "manager",
+      "parent_step": "ticket:EVAL-2106",
+      "metadata": {
+        "ticket_id": "EVAL-2106",
+        "category": "search_accuracy",
+        "resolvable": true
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "eval-20260419T100608Z-830e18a4"
+    },
+    {
+      "timestamp": "2026-04-19T10:06:08.579794+00:00",
+      "trace_id": "0017a384-d073-4d0a-80a2-825de44bfc52",
+      "step": "ticket:EVAL-2106:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:EVAL-2106",
+      "metadata": {
+        "ticket_id": "EVAL-2106",
+        "result": "resolved"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "eval-20260419T100608Z-830e18a4"
+    },
+    {
+      "timestamp": "2026-04-19T10:06:08.580294+00:00",
+      "trace_id": "18aa9b13-d900-4307-9441-5749cc8f87be",
+      "step": "recommendations:local",
+      "agent": "analyst",
+      "parent_step": null,
+      "metadata": {
+        "mode": "local"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "eval-20260419T100608Z-830e18a4"
+    }
+  ]
+}

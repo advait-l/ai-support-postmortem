@@ -134,9 +134,9 @@
     },
     "result": {
       "status": "resolved",
-      "customer_response": "Hi James,\n\nI'm sorry to hear that your dashboard and reports are experiencing significant slowness and timeouts this afternoon. To help us investigate this issue, could you please try accessing the pages again during a lower-traffic period? Additionally, could you narrow down the specific report or page names where you are seeing the timeouts and provide the exact timestamps of when these delays occur? This information will be crucial for our team to pinpoint the cause.\n\nThank you,\nSupport Team",
+      "customer_response": "Hi james.parker@example.com,\n\nThanks for reaching out. Ask the customer to retry during a lower-traffic period, narrow to the specific report or page, and capture the timestamp for investigation.\n\nPlease let us know if that does not resolve the issue.",
       "kb_article": "Performance troubleshooting",
-      "resolution_summary": "Requested the customer to retry during a lower-traffic period and provide specific report names and timestamps for investigation."
+      "resolution_summary": "Ask the customer to retry during a lower-traffic period, narrow to the specific report or page, and capture the timestamp for investigation."
     }
   },
   {
@@ -276,9 +276,9 @@
     },
     "result": {
       "status": "resolved",
-      "customer_response": "Hi Alexander,\n\nI'm sorry to hear the invite modal is stuck spinning when you try to add your new reps. Let's try a few troubleshooting steps to get this resolved.\n\nFirst, please try sending the invite again using the desktop Chrome browser. Also, double-check that the teammate's email address isn't already in a pending invite state. If the spinner still persists after these steps, please reply with the exact timestamp of when you attempted the invite so we can investigate further.\n\nBest,\nSupport Team",
+      "customer_response": "Hi alexander.brooks@example.com,\n\nThanks for reaching out. Advise the customer to retry from desktop Chrome, verify the teammate email is not already pending, and capture the invite timestamp if the spinner persists.\n\nPlease let us know if that does not resolve the issue.",
       "kb_article": "Invite flow troubleshooting",
-      "resolution_summary": "Provided troubleshooting steps for the stuck invite modal, including retrying on desktop Chrome, checking for pending invites, and requesting a timestamp if the issue persists."
+      "resolution_summary": "Advise the customer to retry from desktop Chrome, verify the teammate email is not already pending, and capture the invite timestamp if the spinner persists."
     }
   },
   {
@@ -312,9 +312,9 @@
     },
     "result": {
       "status": "resolved",
-      "customer_response": "Hi Daniel,\n\nThank you for reaching out about the search accuracy issue. We are aware that searching by exact account name can sometimes return unrelated records first. As a temporary workaround, we recommend searching for accounts using the account ID or email address instead, which should provide the correct results.\n\nWe have flagged this issue internally for relevance tuning to improve the search functionality. Please let us know if you need any further assistance.\n\nBest regards,\nSupport Team",
+      "customer_response": "Hi daniel.patterson@example.com,\n\nThanks for reaching out. Recommend searching with the account ID or email as a temporary workaround and note that relevance tuning has been flagged internally.\n\nPlease let us know if that does not resolve the issue.",
       "kb_article": "Search mismatch workaround",
-      "resolution_summary": "Provided a temporary workaround to search by account ID or email and noted that relevance tuning has been flagged internally."
+      "resolution_summary": "Recommend searching with the account ID or email as a temporary workaround and note that relevance tuning has been flagged internally."
     }
   },
   {
