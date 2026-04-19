@@ -1,0 +1,36 @@
+[
+  {
+    "id": "TCK-1001",
+    "created_at": "2026-04-12T09:14:00Z",
+    "customer_email": "ava.wilson@example.com",
+    "subject": "App keeps bouncing me back to login on iPhone",
+    "body": "On my iPhone in Safari I sign in, finish 2FA, and then land back on the login screen again. I tried three times and can't stay logged in long enough to check orders.",
+    "triage": {
+      "category": "mobile_login_loop",
+      "priority": "high",
+      "resolvable": false,
+      "reason": "Frontline support can provide troubleshooting steps such as clearing Safari cache/cookies or trying an incognito window, and offer a workaround like using a desktop browser."
+    },
+    "result": {
+      "status": "escalated",
+      "reason": "Frontline support can provide troubleshooting steps such as clearing Safari cache/cookies or trying an incognito window, and offer a workaround like using a desktop browser."
+    }
+  },
+  {
+    "id": "TCK-1002",
+    "created_at": "2026-04-12T13:42:00Z",
+    "customer_email": "liam.turner@example.com",
+    "subject": "CSV export downloads blank file",
+    "body": "Export to CSV completes but the downloaded file only has headers and no rows. This started today and blocks my finance handoff.",
+    "triage": {
+      "category": "csv_export",
+      "priority": "high",
+      "resolvable": false,
+      "reason": "Requires engineering investigation to fix the export bug; frontline cannot restore missing data or alter the export logic."
+    },
+    "result": {
+      "status": "escalated",
+      "reason": "Requires engineering investigation to fix the export bug; frontline cannot restore missing data or alter the export logic."
+    }
+  }
+]

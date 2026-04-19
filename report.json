@@ -1,0 +1,165 @@
+{
+  "generated_at": "2026-04-19T07:25:56.136635+00:00",
+  "summary": {
+    "total_tickets": 17,
+    "resolved_count": 5,
+    "escalated_count": 12,
+    "resolution_rate": 29.4,
+    "escalation_rate": 70.6,
+    "category_breakdown": [
+      {
+        "category": "mobile_login_loop",
+        "label": "Mobile login loop",
+        "count": 5
+      },
+      {
+        "category": "csv_export",
+        "label": "CSV export failures",
+        "count": 4
+      },
+      {
+        "category": "duplicate_billing",
+        "label": "Duplicate billing",
+        "count": 3
+      },
+      {
+        "category": "password_reset",
+        "label": "Password reset",
+        "count": 1
+      },
+      {
+        "category": "slow_dashboard",
+        "label": "Slow dashboard",
+        "count": 1
+      },
+      {
+        "category": "feature_request",
+        "label": "Feature requests",
+        "count": 1
+      },
+      {
+        "category": "invoice_copy",
+        "label": "Invoice copy issues",
+        "count": 1
+      },
+      {
+        "category": "team_invites",
+        "label": "Team invite failures",
+        "count": 1
+      }
+    ],
+    "top_recurring_issues": [
+      {
+        "category": "mobile_login_loop",
+        "label": "Mobile login loop",
+        "count": 5,
+        "resolved": 0,
+        "escalated": 5,
+        "example_quotes": [
+          "On my iPhone in Safari I sign in, finish 2FA, and then land back on the login screen again. I tried three times and c...",
+          "After I enter the texted verification code on mobile Safari, the page flashes and sends me back to sign in. Desktop C..."
+        ]
+      },
+      {
+        "category": "csv_export",
+        "label": "CSV export failures",
+        "count": 4,
+        "resolved": 0,
+        "escalated": 4,
+        "example_quotes": [
+          "Export to CSV completes but the downloaded file only has headers and no rows. This started today and blocks my financ...",
+          "The CSV file downloads, but several columns including customer name are empty even though they appear in the web table."
+        ]
+      },
+      {
+        "category": "duplicate_billing",
+        "label": "Duplicate billing",
+        "count": 3,
+        "resolved": 0,
+        "escalated": 3,
+        "example_quotes": [
+          "I upgraded once this morning but my card statement shows two charges from your company. Please confirm whether one wi...",
+          "Our admin only clicked upgrade once, but we have two invoice emails and two identical card charges. Please fix this b..."
+        ]
+      }
+    ],
+    "escalation_groups": [
+      {
+        "category": "mobile_login_loop",
+        "label": "Mobile login loop",
+        "count": 5,
+        "reasons": [
+          "Frontline can provide troubleshooting steps such as clearing Safari cache/cookies or trying a different browser, and offer a workaround like using the native app or desktop site.",
+          "Frontline can provide a workaround (using desktop Chrome) and troubleshooting steps (clearing Safari cache/cookies) while acknowledging the bug.",
+          "Frontline can provide troubleshooting steps such as clearing the Safari cache/cookies, offer a workaround by using the laptop, and acknowledge the issue for engineering escalation if it is a known bug."
+        ],
+        "example_quotes": [
+          "On my iPhone in Safari I sign in, finish 2FA, and then land back on the login screen again. I tried three times and c...",
+          "After I enter the texted verification code on mobile Safari, the page flashes and sends me back to sign in. Desktop C..."
+        ]
+      },
+      {
+        "category": "csv_export",
+        "label": "CSV export failures",
+        "count": 4,
+        "reasons": [
+          "Issue is likely a system bug requiring engineering changes to fix; frontline cannot provide a workaround to restore data export functionality.",
+          "Fixing missing data in the CSV export requires an engineering change to the export logic.",
+          "Frontline can provide a workaround by instructing the user to import the CSV with UTF-8 encoding in Excel."
+        ],
+        "example_quotes": [
+          "Export to CSV completes but the downloaded file only has headers and no rows. This started today and blocks my financ...",
+          "The CSV file downloads, but several columns including customer name are empty even though they appear in the web table."
+        ]
+      },
+      {
+        "category": "duplicate_billing",
+        "label": "Duplicate billing",
+        "count": 3,
+        "reasons": [
+          "Resolving a duplicate charge requires a billing system change to issue a refund or reversal.",
+          "Resolving duplicate charges requires billing system changes to issue a refund or credit, which frontline support cannot perform.",
+          "Resolving the duplicate charge requires issuing a refund, which is a billing system change that frontline support cannot perform."
+        ],
+        "example_quotes": [
+          "I upgraded once this morning but my card statement shows two charges from your company. Please confirm whether one wi...",
+          "Our admin only clicked upgrade once, but we have two invoice emails and two identical card charges. Please fix this b..."
+        ]
+      }
+    ],
+    "sparkline": {
+      "days": [
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17"
+      ],
+      "counts": [
+        3,
+        3,
+        3,
+        3,
+        3,
+        2
+      ],
+      "line": "@@@@@*"
+    }
+  },
+  "recommendations": [
+    {
+      "title": "Prioritize mobile session stability",
+      "reason": "Mobile login-loop issues remain the highest recurring engineering-facing failure and block core usage."
+    },
+    {
+      "title": "Repair CSV export reliability",
+      "reason": "Blank files, missing columns, encoding bugs, and truncation make exports untrustworthy for finance workflows."
+    },
+    {
+      "title": "Reduce avoidable support load with frontline-safe fixes",
+      "reason": "Feature requests, search issues, and invite problems now have workable responses and should stay out of engineering queues when possible."
+    }
+  ],
+  "report_markdown": "# Weekly Support Post-Mortem\n\n## This Week at a Glance\n- **Total Ticket Volume:** 17\n- **Resolution Rate:** 29.4% (5 resolved, 12 escalated)\n- **Escalation Rate:** 70.6%\n- **Volume by Day:**\n  `@@@@@*`\n  Days: 12 13 14 15 16 17\n  Counts: 3 3 3 3 3 2\n\n## Top 3 Recurring Issues\n1. **Mobile login loop** (5 tickets; 0 resolved, 5 escalated)\n   - \"On my iPhone in Safari I sign in, finish 2FA, and then land back on the login screen again. I tried three times and c...\"\n   - \"After I enter the texted verification code on mobile Safari, the page flashes and sends me back to sign in. Desktop C...\"\n2. **CSV export failures** (4 tickets; 0 resolved, 4 escalated)\n   - \"Export to CSV completes but the downloaded file only has headers and no rows. This started today and blocks my financ...\"\n   - \"The CSV file downloads, but several columns including customer name are empty even though they appear in the web table.\"\n3. **Duplicate billing** (3 tickets; 0 resolved, 3 escalated)\n   - \"I upgraded once this morning but my card statement shows two charges from your company. Please confirm whether one wi...\"\n   - \"Our admin only clicked upgrade once, but we have two invoice emails and two identical card charges. Please fix this b...\"\n\n## What's Getting Escalated and Why\n- **Mobile login loop** (5 escalations)\n  Reason: Frontline can provide troubleshooting steps such as clearing Safari cache/cookies or trying a different browser, and offer a workaround like using the native app or desktop site.\n  Example: \"On my iPhone in Safari I sign in, finish 2FA, and then land back on the login screen again. I tried three times and c...\"\n- **CSV export failures** (4 escalations)\n  Reason: Issue is likely a system bug requiring engineering changes to fix; frontline cannot provide a workaround to restore data export functionality.\n  Example: \"Export to CSV completes but the downloaded file only has headers and no rows. This started today and blocks my financ...\"\n- **Duplicate billing** (3 escalations)\n  Reason: Resolving a duplicate charge requires a billing system change to issue a refund or reversal.\n  Example: \"I upgraded once this morning but my card statement shows two charges from your company. Please confirm whether one wi...\"\n\n## Recommendations for Product Team\n1. **Prioritize mobile session stability**: Mobile login-loop issues remain the highest recurring engineering-facing failure and block core usage.\n2. **Repair CSV export reliability**: Blank files, missing columns, encoding bugs, and truncation make exports untrustworthy for finance workflows.\n3. **Reduce avoidable support load with frontline-safe fixes**: Feature requests, search issues, and invite problems now have workable responses and should stay out of engineering queues when possible."
+}

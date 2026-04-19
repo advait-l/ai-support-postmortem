@@ -1,0 +1,142 @@
+[
+  {
+    "id": "TCK-1001",
+    "created_at": "2026-04-12T09:14:00Z",
+    "customer_email": "ava.wilson@example.com",
+    "subject": "App keeps bouncing me back to login on iPhone",
+    "body": "On my iPhone in Safari I sign in, finish 2FA, and then land back on the login screen again. I tried three times and can't stay logged in long enough to check orders."
+  },
+  {
+    "id": "TCK-1002",
+    "created_at": "2026-04-12T13:42:00Z",
+    "customer_email": "liam.turner@example.com",
+    "subject": "CSV export downloads blank file",
+    "body": "Export to CSV completes but the downloaded file only has headers and no rows. This started today and blocks my finance handoff."
+  },
+  {
+    "id": "TCK-1003",
+    "created_at": "2026-04-12T16:05:00Z",
+    "customer_email": "mia.bennett@example.com",
+    "subject": "Looks like I was billed twice",
+    "body": "I upgraded once this morning but my card statement shows two charges from your company. Please confirm whether one will be reversed automatically."
+  },
+  {
+    "id": "TCK-1004",
+    "created_at": "2026-04-13T08:27:00Z",
+    "customer_email": "noah.foster@example.com",
+    "subject": "Mobile login loops after verification code",
+    "body": "After I enter the texted verification code on mobile Safari, the page flashes and sends me back to sign in. Desktop Chrome works."
+  },
+  {
+    "id": "TCK-1005",
+    "created_at": "2026-04-13T11:11:00Z",
+    "customer_email": "emma.ross@example.com",
+    "subject": "Password reset email never arrived",
+    "body": "I requested a password reset twice and nothing has hit my inbox or spam folder. Can you trigger it manually?"
+  },
+  {
+    "id": "TCK-1006",
+    "created_at": "2026-04-13T15:54:00Z",
+    "customer_email": "ethan.reed@example.com",
+    "subject": "CSV export is missing customer names",
+    "body": "The CSV file downloads, but several columns including customer name are empty even though they appear in the web table."
+  },
+  {
+    "id": "TCK-1007",
+    "created_at": "2026-04-14T09:03:00Z",
+    "customer_email": "olivia.cooper@example.com",
+    "subject": "Charged twice for monthly plan",
+    "body": "Our admin only clicked upgrade once, but we have two invoice emails and two identical card charges. Please fix this before accounting closes books."
+  },
+  {
+    "id": "TCK-1008",
+    "created_at": "2026-04-14T12:36:00Z",
+    "customer_email": "james.parker@example.com",
+    "subject": "Dashboard very slow this afternoon",
+    "body": "Pages that normally load in a second are taking 15 to 20 seconds. Reports are especially slow and time out sometimes."
+  },
+  {
+    "id": "TCK-1009",
+    "created_at": "2026-04-14T17:22:00Z",
+    "customer_email": "sophia.mitchell@example.com",
+    "subject": "iOS login keeps kicking me out",
+    "body": "I can log in from my laptop, but on iOS Safari I get kicked out immediately after the home page appears. It feels like the session never sticks."
+  },
+  {
+    "id": "TCK-1010",
+    "created_at": "2026-04-15T07:48:00Z",
+    "customer_email": "benjamin.ward@example.com",
+    "subject": "Request for dark mode",
+    "body": "Our support team works nights and would really appreciate a dark mode. The white background is rough in low light."
+  },
+  {
+    "id": "TCK-1011",
+    "created_at": "2026-04-15T10:19:00Z",
+    "customer_email": "isabella.cox@example.com",
+    "subject": "Exported CSV contains garbled characters",
+    "body": "Names with accents are coming through as broken characters in the CSV export. Excel opens it, but the encoding looks wrong."
+  },
+  {
+    "id": "TCK-1012",
+    "created_at": "2026-04-15T14:08:00Z",
+    "customer_email": "lucas.bailey@example.com",
+    "subject": "Duplicate charge and no refund confirmation",
+    "body": "I already emailed earlier this week. We were charged twice on the Pro annual plan and still have not received any refund timeline."
+  },
+  {
+    "id": "TCK-1013",
+    "created_at": "2026-04-16T09:51:00Z",
+    "customer_email": "amelia.rivera@example.com",
+    "subject": "Login loop only on mobile browser",
+    "body": "This only happens on my phone browser. I sign in, see the dashboard for a split second, then the app returns to the login page again."
+  },
+  {
+    "id": "TCK-1014",
+    "created_at": "2026-04-16T12:25:00Z",
+    "customer_email": "henry.morris@example.com",
+    "subject": "Typo in invoice email",
+    "body": "Your invoice email says 'reciept' instead of 'receipt'. Not urgent, but it looks sloppy when forwarded to finance."
+  },
+  {
+    "id": "TCK-1015",
+    "created_at": "2026-04-16T18:02:00Z",
+    "customer_email": "charlotte.price@example.com",
+    "subject": "CSV export cuts off after 200 rows",
+    "body": "Our report should have around 800 rows, but the downloaded CSV stops at 200 every time. The in-app table still shows all rows."
+  },
+  {
+    "id": "TCK-1016",
+    "created_at": "2026-04-17T08:40:00Z",
+    "customer_email": "alexander.brooks@example.com",
+    "subject": "Can't invite teammate",
+    "body": "The invite modal spins forever after I enter my teammate's email address. We are blocked from onboarding two new reps."
+  },
+  {
+    "id": "TCK-1017",
+    "created_at": "2026-04-17T11:33:00Z",
+    "customer_email": "harper.long@example.com",
+    "subject": "Stuck in mobile login loop again",
+    "body": "This started after your last update. On mobile Safari the app keeps asking me to log in repeatedly and never holds the session cookie."
+  },
+  {
+    "id": "TCK-1018",
+    "created_at": "2026-04-17T16:47:00Z",
+    "customer_email": "daniel.patterson@example.com",
+    "subject": "Search results not matching exact account name",
+    "body": "Searching the exact customer account name returns unrelated records first, so reps are opening the wrong accounts."
+  },
+  {
+    "id": "TCK-1019",
+    "created_at": "2026-04-18T09:07:00Z",
+    "customer_email": "evelyn.hughes@example.com",
+    "subject": "Mobile sign-in redirects in circles",
+    "body": "When I try signing in on my iPad, the app redirects between two pages and never lands me in the product. Desktop is fine."
+  },
+  {
+    "id": "TCK-1020",
+    "created_at": "2026-04-18T14:29:00Z",
+    "customer_email": "michael.flores@example.com",
+    "subject": "Feature request: schedule exports",
+    "body": "It would help a lot if CSV exports could be scheduled weekly instead of run manually every Friday."
+  }
+]
