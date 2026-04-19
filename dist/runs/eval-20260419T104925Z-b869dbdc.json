@@ -1,0 +1,26 @@
+{
+  "run_id": "eval-20260419T104925Z-b869dbdc",
+  "started_at": "2026-04-19T10:49:25.543365+00:00",
+  "finished_at": "2026-04-19T10:49:25.547149+00:00",
+  "ticket_count": 6,
+  "resolved": 6,
+  "escalated": 0,
+  "top_issues": [
+    "Password reset",
+    "Slow dashboard",
+    "Feature requests"
+  ],
+  "ok": true,
+  "case": "frontline_resolvable.json",
+  "trace_count": 19,
+  "llm_prompt_tokens": 0,
+  "llm_response_tokens": 0,
+  "llm_total_tokens": 0,
+  "estimated_cost_usd": 0.0,
+  "cost_entry_count": 0,
+  "artifacts": {
+    "report_snapshot": "eval-20260419T104925Z-b869dbdc-report.html",
+    "manifest_snapshot": "eval-20260419T104925Z-b869dbdc.json",
+    "traces_snapshot": "eval-20260419T104925Z-b869dbdc.traces.json"
+  }
+}

@@ -73,7 +73,7 @@ The pipeline completes end-to-end even without a working LLM provider. Determini
 - The Zen API rate-limits aggressively. A full 20-ticket run with LLM can take 1-10 minutes depending on backoff. Use `python3 -m py_compile` for fast syntax checks and provider-free runs for functional checks.
 - `write_report_artifacts` writes to both the run directory and a target output directory. Passing `out_dir=None` skips the output directory write — only the run-scoped copy is created.
 - `build_report_with_context` returns a tuple `(summary, recommendations, report)`, not just the report string.
-- The default model is `glm-5`, not `qwen3.6-plus` (changed since earlier iterations).
+- The default model is `glm-5`.
 
 ## Missing Infrastructure
 - No test suite, linter config, formatter config, CI workflow, or task runner. Use the direct commands above.

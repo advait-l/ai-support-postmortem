@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>eval-20260419T105100Z-ca274972 Observability</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0a0e1a;
+      --surface: #111827;
+      --surface-raised: #1a2238;
+      --muted: #8896b3;
+      --text: #e8ecf4;
+      --accent: #60a5fa;
+      --border: #1e2d4a;
+      --good: #34d399;
+      --bad: #f87171;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+    nav {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(10, 14, 26, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+    }
+    nav .nav-inner {
+      max-width: 1120px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 56px;
+    }
+    nav .logo {
+      font-weight: 700; font-size: 1.05rem; color: var(--text);
+      display: flex; align-items: center; gap: 10px;
+    }
+    nav .logo .logo-dot {
+      width: 9px; height: 9px; border-radius: 50%;
+      background: var(--accent); display: inline-block;
+    }
+    nav a {
+      color: var(--muted); text-decoration: none; font-size: 0.9rem;
+      transition: color 0.15s;
+    }
+    nav a:hover { color: var(--accent); }
+    nav .nav-links { display: flex; gap: 24px; }
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+    .back-nav {
+      display: flex; gap: 16px; margin-bottom: 24px;
+    }
+    .back-nav a {
+      color: var(--muted); font-size: 0.9rem;
+    }
+    .back-nav a:hover { color: var(--accent); }
+    .hero h1 {
+      font-size: 1.5rem; font-weight: 700;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      margin-bottom: 8px;
+    }
+    .hero .subtitle {
+      color: var(--muted); font-size: 0.95rem;
+    }
+    .section {
+      margin-top: 36px;
+    }
+    .section-header {
+      font-size: 1rem; font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+    }
+    .stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    .stat.good .stat-value { color: var(--good); }
+    .stat.bad .stat-value { color: var(--bad); }
+    .stat-label {
+      display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em;
+      color: var(--muted); margin-bottom: 4px;
+    }
+    .stat-value {
+      display: block; font-size: 1.5rem; font-weight: 800;
+    }
+    .meta-row {
+      display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px;
+      font-size: 0.85rem; color: var(--muted);
+    }
+    .filters {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;
+      margin-top: 16px;
+    }
+    .filter-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+    }
+    .filter-card label {
+      display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em;
+      color: var(--muted); margin-bottom: 8px;
+    }
+    .filter-card select,
+    .filter-card input {
+      width: 100%;
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 10px 12px;
+      font-size: 0.88rem;
+    }
+    .filter-card input::placeholder { color: var(--muted); }
+    .artifact-links {
+      display: flex; gap: 10px; flex-wrap: wrap;
+    }
+    .artifact-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text); text-decoration: none; font-size: 0.85rem;
+      transition: border-color 0.15s;
+    }
+    .artifact-link:hover { border-color: var(--accent); }
+    .trace-list {
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .trace-card.is-hidden { display: none; }
+    .trace-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      transition: border-color 0.15s;
+      overflow: hidden;
+    }
+    .trace-card:hover { border-color: var(--accent); }
+    .trace-card[open] {
+      border-color: rgba(96, 165, 250, 0.45);
+    }
+    .trace-card > summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 16px;
+    }
+    .trace-card > summary::-webkit-details-marker { display: none; }
+    .trace-summary-main {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+      min-width: 0;
+    }
+    .trace-summary-meta {
+      display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px;
+      color: var(--muted); font-size: 0.78rem;
+      text-align: right;
+    }
+    .trace-summary-meta span {
+      font-family: ui-monospace, SFMono-Regular, monospace;
+    }
+    .trace-body {
+      border-top: 1px solid var(--border);
+      padding: 14px 16px 16px;
+      display: grid;
+      gap: 12px;
+    }
+    .trace-body-row {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px;
+    }
+    .mini-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 8px; border-radius: 999px; border: 1px solid var(--border);
+      background: var(--surface-raised);
+      color: var(--text); font-size: 0.72rem;
+    }
+    .mini-chip.accent { border-color: var(--accent)44; background: var(--accent)18; }
+    .mini-chip.bad { border-color: var(--bad)44; background: var(--bad)18; }
+    .mini-chip-label {
+      color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em;
+      font-size: 0.65rem;
+    }
+    .mini-chip-value { font-weight: 700; }
+    .badge {
+      display: inline-block; font-size: 0.7rem; font-weight: 600;
+      padding: 3px 8px; border-radius: 6px; border: 1px solid;
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge.agent {
+      background: var(--accent)22; color: var(--accent); border-color: var(--accent)44;
+    }
+    .step {
+      font-size: 0.85rem; font-weight: 600;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+    }
+    .detail {
+      font-size: 0.8rem; display: flex; align-items: center; gap: 8px;
+    }
+    .detail .label {
+      color: var(--muted); font-weight: 600; min-width: 64px;
+    }
+    .detail code {
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-size: 0.75rem; background: var(--surface-raised);
+      padding: 2px 6px; border-radius: 4px;
+      word-break: break-all;
+    }
+    .raw-block {
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+    }
+    .raw-block.error {
+      border-color: var(--bad)44;
+    }
+    .raw-label {
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--muted); font-weight: 700; margin-bottom: 8px;
+    }
+    .raw-block pre {
+      white-space: pre-wrap; word-break: break-word;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-size: 0.75rem; line-height: 1.5; color: var(--text);
+    }
+    .raw-block.error pre {
+      color: var(--bad);
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-inner">
+      <div class="logo"><span class="logo-dot"></span>Post-Mortem</div>
+      <div class="nav-links">
+        <a href="./index.html">Run History</a>
+        <a href="../index.html">Latest Report</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <div class="back-nav">
+      <a href="./index.html">&#8592; Runs</a>
+      <a href="../index.html">&#8592; Report</a>
+    </div>
+
+    <div class="hero">
+      <h1>eval-20260419T105100Z-ca274972</h1>
+      <p class="subtitle">Observability trace details for this pipeline run.</p>
+    </div>
+
+    <section class="section">
+      <div class="section-header">Summary</div>
+      <div class="stats"><div class="stat"><span class="stat-label">Run Type</span><span class="stat-value">eval</span></div><div class="stat"><span class="stat-label">Tickets</span><span class="stat-value">6</span></div><div class="stat good"><span class="stat-label">Resolved</span><span class="stat-value">6</span></div><div class="stat bad"><span class="stat-label">Escalated</span><span class="stat-value">0</span></div><div class="stat accent"><span class="stat-label">LLM Tokens</span><span class="stat-value">0</span></div><div class="stat accent"><span class="stat-label">Est. Cost</span><span class="stat-value">$0.0000</span></div></div>
+      <div class="meta-row">
+        <span>Started: 2026-04-19T10:51:00</span>
+        <span>Finished: 2026-04-19T10:51:00</span>
+        <span>Case: frontline_resolvable.json</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">Artifacts</div>
+      <div class="artifact-links"><a href="../eval-20260419T105100Z-ca274972-report.html" class="artifact-link">&#128196; Report</a><a href="../eval-20260419T105100Z-ca274972.traces.json" class="artifact-link">&#128196; Traces</a><a href="../eval-20260419T105100Z-ca274972.json" class="artifact-link">&#128196; Manifest</a></div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">Trace Overview</div>
+      <div class="meta-row"><span class="mini-chip accent"><span class="mini-chip-label">Trace events</span><span class="mini-chip-value">19</span></span><span class="mini-chip bad"><span class="mini-chip-label">Errors</span><span class="mini-chip-value">0</span></span><span class="mini-chip accent"><span class="mini-chip-label">Prompt tokens</span><span class="mini-chip-value">0</span></span><span class="mini-chip accent"><span class="mini-chip-label">Response tokens</span><span class="mini-chip-value">0</span></span><span class="mini-chip accent"><span class="mini-chip-label">Est. cost</span><span class="mini-chip-value">$0.0000</span></span><span class="mini-chip"><span class="mini-chip-label">analyst</span><span class="mini-chip-value">1</span></span><span class="mini-chip"><span class="mini-chip-label">manager</span><span class="mini-chip-value">18</span></span><span class="mini-chip"><span class="mini-chip-label">ok</span><span class="mini-chip-value">19</span></span></div>
+      <div class="filters">
+        <div class="filter-card">
+          <label for="agent-filter">Agent</label>
+          <select id="agent-filter"><option value="all">All agents</option><option value="analyst">Analyst</option><option value="manager">Manager</option></select>
+        </div>
+        <div class="filter-card">
+          <label for="status-filter">Status</label>
+          <select id="status-filter"><option value="all">All statuses</option><option value="ok">Ok</option></select>
+        </div>
+        <div class="filter-card">
+          <label for="trace-search">Search</label>
+          <input id="trace-search" type="search" placeholder="ticket id, step, parent step">
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">Trace Timeline (<span id="trace-visible-count">19</span> / 19 events, collapsed by default)</div>
+      <div class="trace-list"><details class="trace-card" data-agent="manager" data-status="ok" data-search="ticket:eval-2101 eval-2101 manager ok {&#x27;ticket_id&#x27;: &#x27;eval-2101&#x27;, &#x27;action&#x27;: &#x27;plan&#x27;}"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">EVAL-2101</span></div><div class="trace-summary-meta"><span>2026-04-19T10:51:00</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">EVAL-2101</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>-</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;action&quot;: &quot;plan&quot;,
+  &quot;ticket_id&quot;: &quot;EVAL-2101&quot;
+}</pre></div></div></details><details class="trace-card" data-agent="manager" data-status="ok" data-search="ticket:eval-2101:route eval-2101 manager ok {&#x27;ticket_id&#x27;: &#x27;eval-2101&#x27;, &#x27;category&#x27;: &#x27;password_reset&#x27;, &#x27;resolvable&#x27;: true} ticket:eval-2101"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">route</span></div><div class="trace-summary-meta"><span>2026-04-19T10:51:00</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">EVAL-2101</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:EVAL-2101</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;category&quot;: &quot;password_reset&quot;,
+  &quot;resolvable&quot;: true,
+  &quot;ticket_id&quot;: &quot;EVAL-2101&quot;
+}</pre></div></div></details><details class="trace-card" data-agent="manager" data-status="ok" data-search="ticket:eval-2101:finalize eval-2101 manager ok {&#x27;ticket_id&#x27;: &#x27;eval-2101&#x27;, &#x27;result&#x27;: &#x27;resolved&#x27;} ticket:eval-2101"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">finalize...</span></div><div class="trace-summary-meta"><span>2026-04-19T10:51:00</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">EVAL-2101</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:EVAL-2101</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;result&quot;: &quot;resolved&quot;,
+  &quot;ticket_id&quot;: &quot;EVAL-2101&quot;
+}</pre></div></div></details><details class="trace-card" data-agent="manager" data-status="ok" data-search="ticket:eval-2102 eval-2102 manager ok {&#x27;ticket_id&#x27;: &#x27;eval-2102&#x27;, &#x27;action&#x27;: &#x27;plan&#x27;}"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">EVAL-2102</span></div><div class="trace-summary-meta"><span>2026-04-19T10:51:00</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">EVAL-2102</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>-</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;action&quot;: &quot;plan&quot;,
+  &quot;ticket_id&quot;: &quot;EVAL-2102&quot;
+}</pre></div></div></details><details class="trace-card" data-agent="manager" data-status="ok" data-search="ticket:eval-2102:route eval-2102 manager ok {&#x27;ticket_id&#x27;: &#x27;eval-2102&#x27;, &#x27;category&#x27;: &#x27;slow_dashboard&#x27;, &#x27;resolvable&#x27;: true} ticket:eval-2102"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">route</span></div><div class="trace-summary-meta"><span>2026-04-19T10:51:00</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">EVAL-2102</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:EVAL-2102</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;category&quot;: &quot;slow_dashboard&quot;,
+  &quot;resolvable&quot;: true,
+  &quot;ticket_id&quot;: &quot;EVAL-2102&quot;
+}</pre></div></div></details><details class="trace-card" data-agent="manager" data-status="ok" data-search="ticket:eval-2102:finalize eval-2102 manager ok {&#x27;ticket_id&#x27;: &#x27;eval-2102&#x27;, &#x27;result&#x27;: &#x27;resolved&#x27;} ticket:eval-2102"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">finalize...</span></div><div class="trace-summary-meta"><span>2026-04-19T10:51:00</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">EVAL-2102</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:EVAL-2102</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;result&quot;: &quot;resolved&quot;,
+  &quot;ticket_id&quot;: &quot;EVAL-2102&quot;
+}</pre></div></div></details><details class="trace-card" data-agent="manager" data-status="ok" data-search="ticket:eval-2103 eval-2103 manager ok {&#x27;ticket_id&#x27;: &#x27;eval-2103&#x27;, &#x27;action&#x27;: &#x27;plan&#x27;}"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">EVAL-2103</span></div><div class="trace-summary-meta"><span>2026-04-19T10:51:00</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">EVAL-2103</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>-</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;action&quot;: &quot;plan&quot;,
+  &quot;ticket_id&quot;: &quot;EVAL-2103&quot;
+}</pre></div></div></details><details class="trace-card" data-agent="manager" data-status="ok" data-search="ticket:eval-2103:route eval-2103 manager ok {&#x27;ticket_id&#x27;: &#x27;eval-2103&#x27;, &#x27;category&#x27;: &#x27;feature_request&#x27;, &#x27;resolvable&#x27;: true} ticket:eval-2103"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">route</span></div><div class="trace-summary-meta"><span>2026-04-19T10:51:00</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">EVAL-2103</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:EVAL-2103</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;category&quot;: &quot;feature_request&quot;,
+  &quot;resolvable&quot;: true,
+  &quot;ticket_id&quot;: &quot;EVAL-2103&quot;
+}</pre></div></div></details><details class="trace-card" data-agent="manager" data-status="ok" data-search="ticket:eval-2103:finalize eval-2103 manager ok {&#x27;ticket_id&#x27;: &#x27;eval-2103&#x27;, &#x27;result&#x27;: &#x27;resolved&#x27;} ticket:eval-2103"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">finalize...</span></div><div class="trace-summary-meta"><span>2026-04-19T10:51:00</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">EVAL-2103</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:EVAL-2103</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;result&quot;: &quot;resolved&quot;,
+  &quot;ticket_id&quot;: &quot;EVAL-2103&quot;
+}</pre></div></div></details><details class="trace-card" data-agent="manager" data-status="ok" data-search="ticket:eval-2104 eval-2104 manager ok {&#x27;ticket_id&#x27;: &#x27;eval-2104&#x27;, &#x27;action&#x27;: &#x27;plan&#x27;}"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">EVAL-2104</span></div><div class="trace-summary-meta"><span>2026-04-19T10:51:00</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">EVAL-2104</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>-</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;action&quot;: &quot;plan&quot;,
+  &quot;ticket_id&quot;: &quot;EVAL-2104&quot;
+}</pre></div></div></details><details class="trace-card" data-agent="manager" data-status="ok" data-search="ticket:eval-2104:route eval-2104 manager ok {&#x27;ticket_id&#x27;: &#x27;eval-2104&#x27;, &#x27;category&#x27;: &#x27;invoice_copy&#x27;, &#x27;resolvable&#x27;: true} ticket:eval-2104"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">route</span></div><div class="trace-summary-meta"><span>2026-04-19T10:51:00</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">EVAL-2104</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:EVAL-2104</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;category&quot;: &quot;invoice_copy&quot;,
+  &quot;resolvable&quot;: true,
+  &quot;ticket_id&quot;: &quot;EVAL-2104&quot;
+}</pre></div></div></details><details class="trace-card" data-agent="manager" data-status="ok" data-search="ticket:eval-2104:finalize eval-2104 manager ok {&#x27;ticket_id&#x27;: &#x27;eval-2104&#x27;, &#x27;result&#x27;: &#x27;resolved&#x27;} ticket:eval-2104"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">finalize...</span></div><div class="trace-summary-meta"><span>2026-04-19T10:51:00</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">EVAL-2104</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:EVAL-2104</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;result&quot;: &quot;resolved&quot;,
+  &quot;ticket_id&quot;: &quot;EVAL-2104&quot;
+}</pre></div></div></details><details class="trace-card" data-agent="manager" data-status="ok" data-search="ticket:eval-2105 eval-2105 manager ok {&#x27;ticket_id&#x27;: &#x27;eval-2105&#x27;, &#x27;action&#x27;: &#x27;plan&#x27;}"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">EVAL-2105</span></div><div class="trace-summary-meta"><span>2026-04-19T10:51:00</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">EVAL-2105</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>-</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;action&quot;: &quot;plan&quot;,
+  &quot;ticket_id&quot;: &quot;EVAL-2105&quot;
+}</pre></div></div></details><details class="trace-card" data-agent="manager" data-status="ok" data-search="ticket:eval-2105:route eval-2105 manager ok {&#x27;ticket_id&#x27;: &#x27;eval-2105&#x27;, &#x27;category&#x27;: &#x27;team_invites&#x27;, &#x27;resolvable&#x27;: true} ticket:eval-2105"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">route</span></div><div class="trace-summary-meta"><span>2026-04-19T10:51:00</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">EVAL-2105</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:EVAL-2105</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;category&quot;: &quot;team_invites&quot;,
+  &quot;resolvable&quot;: true,
+  &quot;ticket_id&quot;: &quot;EVAL-2105&quot;
+}</pre></div></div></details><details class="trace-card" data-agent="manager" data-status="ok" data-search="ticket:eval-2105:finalize eval-2105 manager ok {&#x27;ticket_id&#x27;: &#x27;eval-2105&#x27;, &#x27;result&#x27;: &#x27;resolved&#x27;} ticket:eval-2105"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">finalize...</span></div><div class="trace-summary-meta"><span>2026-04-19T10:51:00</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">EVAL-2105</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:EVAL-2105</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;result&quot;: &quot;resolved&quot;,
+  &quot;ticket_id&quot;: &quot;EVAL-2105&quot;
+}</pre></div></div></details><details class="trace-card" data-agent="manager" data-status="ok" data-search="ticket:eval-2106 eval-2106 manager ok {&#x27;ticket_id&#x27;: &#x27;eval-2106&#x27;, &#x27;action&#x27;: &#x27;plan&#x27;}"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">EVAL-2106</span></div><div class="trace-summary-meta"><span>2026-04-19T10:51:00</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">EVAL-2106</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>-</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;action&quot;: &quot;plan&quot;,
+  &quot;ticket_id&quot;: &quot;EVAL-2106&quot;
+}</pre></div></div></details><details class="trace-card" data-agent="manager" data-status="ok" data-search="ticket:eval-2106:route eval-2106 manager ok {&#x27;ticket_id&#x27;: &#x27;eval-2106&#x27;, &#x27;category&#x27;: &#x27;search_accuracy&#x27;, &#x27;resolvable&#x27;: true} ticket:eval-2106"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">route</span></div><div class="trace-summary-meta"><span>2026-04-19T10:51:00</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">EVAL-2106</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:EVAL-2106</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;category&quot;: &quot;search_accuracy&quot;,
+  &quot;resolvable&quot;: true,
+  &quot;ticket_id&quot;: &quot;EVAL-2106&quot;
+}</pre></div></div></details><details class="trace-card" data-agent="manager" data-status="ok" data-search="ticket:eval-2106:finalize eval-2106 manager ok {&#x27;ticket_id&#x27;: &#x27;eval-2106&#x27;, &#x27;result&#x27;: &#x27;resolved&#x27;} ticket:eval-2106"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">finalize...</span></div><div class="trace-summary-meta"><span>2026-04-19T10:51:00</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">EVAL-2106</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:EVAL-2106</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;result&quot;: &quot;resolved&quot;,
+  &quot;ticket_id&quot;: &quot;EVAL-2106&quot;
+}</pre></div></div></details><details class="trace-card" data-agent="analyst" data-status="ok" data-search="recommendations:local analyst ok {&#x27;mode&#x27;: &#x27;local&#x27;}"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">analyst</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">local</span></div><div class="trace-summary-meta"><span>2026-04-19T10:51:00</span><span>-</span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>-</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;mode&quot;: &quot;local&quot;
+}</pre></div></div></details></div>
+    </section>
+  </main>
+  <script>
+    const agentFilter = document.getElementById('agent-filter');
+    const statusFilter = document.getElementById('status-filter');
+    const traceSearch = document.getElementById('trace-search');
+    const visibleCount = document.getElementById('trace-visible-count');
+    const traceCards = Array.from(document.querySelectorAll('.trace-card'));
+
+    function applyTraceFilters() {
+      const agentValue = agentFilter ? agentFilter.value : 'all';
+      const statusValue = statusFilter ? statusFilter.value : 'all';
+      const searchValue = traceSearch ? traceSearch.value.trim().toLowerCase() : '';
+      let shown = 0;
+
+      traceCards.forEach((card) => {
+        const matchesAgent = agentValue === 'all' || card.dataset.agent === agentValue;
+        const matchesStatus = statusValue === 'all' || card.dataset.status === statusValue;
+        const matchesSearch = !searchValue || (card.dataset.search || '').includes(searchValue);
+        const isVisible = matchesAgent && matchesStatus && matchesSearch;
+
+        card.classList.toggle('is-hidden', !isVisible);
+        if (isVisible) {
+          shown += 1;
+        }
+      });
+
+      if (visibleCount) {
+        visibleCount.textContent = String(shown);
+      }
+    }
+
+    if (agentFilter) {
+      agentFilter.addEventListener('change', applyTraceFilters);
+    }
+    if (statusFilter) {
+      statusFilter.addEventListener('change', applyTraceFilters);
+    }
+    if (traceSearch) {
+      traceSearch.addEventListener('input', applyTraceFilters);
+    }
+
+    applyTraceFilters();
+  </script>
+</body>
+</html>

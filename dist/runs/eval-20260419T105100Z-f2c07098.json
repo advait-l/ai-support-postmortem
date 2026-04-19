@@ -1,0 +1,26 @@
+{
+  "run_id": "eval-20260419T105100Z-f2c07098",
+  "started_at": "2026-04-19T10:51:00.202701+00:00",
+  "finished_at": "2026-04-19T10:51:00.209239+00:00",
+  "ticket_count": 6,
+  "resolved": 0,
+  "escalated": 6,
+  "top_issues": [
+    "CSV export failures",
+    "Mobile login loop",
+    "Other"
+  ],
+  "ok": true,
+  "case": "core_recurring.json",
+  "trace_count": 20,
+  "llm_prompt_tokens": 0,
+  "llm_response_tokens": 0,
+  "llm_total_tokens": 0,
+  "estimated_cost_usd": 0.0,
+  "cost_entry_count": 0,
+  "artifacts": {
+    "report_snapshot": "eval-20260419T105100Z-f2c07098-report.html",
+    "manifest_snapshot": "eval-20260419T105100Z-f2c07098.json",
+    "traces_snapshot": "eval-20260419T105100Z-f2c07098.traces.json"
+  }
+}

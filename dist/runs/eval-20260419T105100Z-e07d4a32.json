@@ -1,0 +1,26 @@
+{
+  "run_id": "eval-20260419T105100Z-e07d4a32",
+  "started_at": "2026-04-19T10:51:00.215436+00:00",
+  "finished_at": "2026-04-19T10:51:00.219586+00:00",
+  "ticket_count": 6,
+  "resolved": 0,
+  "escalated": 6,
+  "top_issues": [
+    "Duplicate billing",
+    "Mobile login loop",
+    "CSV export failures"
+  ],
+  "ok": true,
+  "case": "escalation_heavy.json",
+  "trace_count": 19,
+  "llm_prompt_tokens": 0,
+  "llm_response_tokens": 0,
+  "llm_total_tokens": 0,
+  "estimated_cost_usd": 0.0,
+  "cost_entry_count": 0,
+  "artifacts": {
+    "report_snapshot": "eval-20260419T105100Z-e07d4a32-report.html",
+    "manifest_snapshot": "eval-20260419T105100Z-e07d4a32.json",
+    "traces_snapshot": "eval-20260419T105100Z-e07d4a32.traces.json"
+  }
+}
