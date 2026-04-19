@@ -1,0 +1,15 @@
+{
+  "run_id": "eval-20260419T083040Z-21726a84",
+  "started_at": "2026-04-19T08:30:40.341660+00:00",
+  "finished_at": "2026-04-19T08:31:33.101715+00:00",
+  "ticket_count": 6,
+  "resolved": 6,
+  "escalated": 0,
+  "top_issues": [
+    "Password reset",
+    "Slow dashboard",
+    "Feature requests"
+  ],
+  "ok": true,
+  "case": "frontline_resolvable.json"
+}

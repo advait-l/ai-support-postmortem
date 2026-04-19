@@ -1,0 +1,15 @@
+{
+  "run_id": "eval-20260419T083033Z-d08d7972",
+  "started_at": "2026-04-19T08:30:33.698591+00:00",
+  "finished_at": "2026-04-19T08:30:40.340058+00:00",
+  "ticket_count": 6,
+  "resolved": 0,
+  "escalated": 6,
+  "top_issues": [
+    "Duplicate billing",
+    "Mobile login loop",
+    "CSV export failures"
+  ],
+  "ok": true,
+  "case": "escalation_heavy.json"
+}

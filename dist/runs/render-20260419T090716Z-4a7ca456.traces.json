@@ -1,0 +1,24 @@
+{
+  "run_id": "render-20260419T090716Z-4a7ca456",
+  "traces": [
+    {
+      "timestamp": "2026-04-19T09:07:16.397557+00:00",
+      "trace_id": "0b968708-d27e-4cd9-b984-59a7f4366af0",
+      "step": "recommendations:local",
+      "agent": "analyst",
+      "parent_step": null,
+      "metadata": {
+        "mode": "local"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "render-20260419T090716Z-4a7ca456"
+    }
+  ]
+}

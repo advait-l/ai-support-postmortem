@@ -1,0 +1,15 @@
+{
+  "run_id": "render-20260419T090716Z-4a7ca456",
+  "started_at": "2026-04-19T09:07:16.396619+00:00",
+  "finished_at": "2026-04-19T09:07:16.400743+00:00",
+  "ticket_count": 20,
+  "artifacts": {
+    "report_md": "runs/render-20260419T090716Z-4a7ca456/report.md",
+    "report_json": "runs/render-20260419T090716Z-4a7ca456/report.json",
+    "viewer": "runs/render-20260419T090716Z-4a7ca456/latest-run.html",
+    "report_snapshot": "render-20260419T090716Z-4a7ca456-report.html",
+    "manifest_snapshot": "render-20260419T090716Z-4a7ca456.json",
+    "traces_snapshot": "render-20260419T090716Z-4a7ca456.traces.json"
+  },
+  "trace_count": 1
+}

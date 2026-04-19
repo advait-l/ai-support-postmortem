@@ -1,0 +1,21 @@
+{
+  "run_id": "eval-20260419T090712Z-c70c4429",
+  "started_at": "2026-04-19T09:07:12.536525+00:00",
+  "finished_at": "2026-04-19T09:07:12.539907+00:00",
+  "ticket_count": 6,
+  "resolved": 0,
+  "escalated": 6,
+  "top_issues": [
+    "CSV export failures",
+    "Mobile login loop",
+    "Other"
+  ],
+  "ok": true,
+  "case": "core_recurring.json",
+  "trace_count": 20,
+  "artifacts": {
+    "report_snapshot": "eval-20260419T090712Z-c70c4429-report.html",
+    "manifest_snapshot": "eval-20260419T090712Z-c70c4429.json",
+    "traces_snapshot": "eval-20260419T090712Z-c70c4429.traces.json"
+  }
+}

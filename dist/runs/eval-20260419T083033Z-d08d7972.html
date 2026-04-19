@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Weekly Support Post-Mortem</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b1020;
+      --panel: #131a2e;
+      --muted: #8d99b8;
+      --text: #edf2ff;
+      --accent: #7cc7ff;
+      --border: #283252;
+      --good: #7fe3b0;
+      --warn: #ffd37a;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, sans-serif; background: linear-gradient(180deg, #0b1020 0%, #11172a 100%); color: var(--text); }
+    main { max-width: 980px; margin: 0 auto; padding: 40px 20px 64px; }
+    h1 { font-size: 2.4rem; margin: 0 0 8px; }
+    h2 { font-size: 1.4rem; margin: 36px 0 16px; }
+    h3 { margin: 0 0 8px; font-size: 1.05rem; }
+    p, li, blockquote { line-height: 1.55; }
+    .lede { color: var(--muted); max-width: 720px; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 20px; }
+    .stat, .card { background: rgba(19, 26, 46, 0.88); border: 1px solid var(--border); border-radius: 16px; padding: 16px; backdrop-filter: blur(6px); }
+    .stat strong { display: block; font-size: 1.6rem; margin-top: 8px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+    .meta { color: var(--muted); font-size: 0.95rem; }
+    .sparkline { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; background: #0e1428; border: 1px solid var(--border); border-radius: 16px; padding: 16px; color: var(--accent); overflow-x: auto; }
+    blockquote { margin: 12px 0 0; padding-left: 12px; border-left: 3px solid var(--accent); color: #d7def7; }
+    .recommendation h3 { color: var(--warn); }
+    footer { margin-top: 40px; color: var(--muted); font-size: 0.92rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Weekly Support Post-Mortem</h1>
+      <p class="lede">A week of support tickets went through triage, resolve/escalate, and analysis. This static report is the deployed demo artifact.</p>
+    </header>
+
+    <section>
+      <h2>This Week at a Glance</h2>
+      <div class="stats">
+        <div class="stat"><span>Total Ticket Volume</span><strong>6</strong></div>
+        <div class="stat"><span>Resolution Rate</span><strong>0.0%</strong></div>
+        <div class="stat"><span>Escalation Rate</span><strong>100.0%</strong></div>
+      </div>
+      <div class="sparkline">
+        <div>Volume by day: ++@++</div>
+        <div>Days:          12 14 15 17 18</div>
+        <div>Counts:        1 1 2 1 1</div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Top 3 Recurring Issues</h2>
+      <div class="grid"><article class="card"><h3>Duplicate billing</h3><p class="meta">3 tickets, 0 resolved, 3 escalated</p><ul><li>I upgraded once this morning but my card statement shows two charges from your company.</li><li>We have two invoice emails and two identical card charges.</li></ul></article><article class="card"><h3>Mobile login loop</h3><p class="meta">2 tickets, 0 resolved, 2 escalated</p><ul><li>On mobile Safari the app keeps asking me to log in repeatedly and never holds the session cookie.</li><li>When I try signing in on my iPad, the app redirects between two pages and never lands me in the product.</li></ul></article><article class="card"><h3>CSV export failures</h3><p class="meta">1 tickets, 0 resolved, 1 escalated</p><ul><li>Names with accents are coming through as broken characters in the CSV export.</li></ul></article></div>
+    </section>
+
+    <section>
+      <h2>What's Getting Escalated and Why</h2>
+      <div class="grid"><article class="card"><h3>Duplicate billing</h3><p class="meta">3 escalations</p><p>Duplicate billing needs billing-system investigation and refund handling.</p><blockquote>I upgraded once this morning but my card statement shows two charges from your company.</blockquote></article><article class="card"><h3>Mobile login loop</h3><p class="meta">2 escalations</p><p>Persistent login loops on mobile Safari usually need engineering investigation.</p><blockquote>On mobile Safari the app keeps asking me to log in repeatedly and never holds the session cookie.</blockquote></article><article class="card"><h3>CSV export failures</h3><p class="meta">1 escalations</p><p>CSV export issues are typically product bugs that frontline support cannot patch.</p><blockquote>Names with accents are coming through as broken characters in the CSV export.</blockquote></article></div>
+    </section>
+
+    <section>
+      <h2>Recommendations for Product Team</h2>
+      <div class="grid"><article class="card recommendation"><h3>Implement idempotency keys in the billing and upgrade flow</h3><p>Duplicate billing represents 50% of this week&#x27;s tickets and all required manual escalation for refunds. Adding idempotency controls to the payment processing logic will prevent the race condition causing double-charges and drastically reduce both customer frustration and billing escalations.</p></article><article class="card recommendation"><h3>Fix session cookie persistence for mobile Safari and WebKit</h3><p>Two separate users on mobile Safari and iPad are completely blocked from the product due to session cookies failing to hold, causing infinite login redirect loops. Correcting the SameSite attributes or cookie handling for WebKit browsers will unblock mobile access and eliminate these 100% escalated engineering tickets.</p></article><article class="card recommendation"><h3>Enforce UTF-8 encoding with BOM in CSV export generation</h3><p>Accented characters are currently garbled in CSV exports, indicating a missing or incorrect character encoding declaration. Explicitly encoding CSV outputs as UTF-8 with a Byte Order Mark (BOM) will ensure international characters render correctly in spreadsheet applications like Excel.</p></article></div>
+    </section>
+
+    <footer>Generated from local pipeline output and rendered as a static site for deployment.</footer>
+  </main>
+</body>
+</html>

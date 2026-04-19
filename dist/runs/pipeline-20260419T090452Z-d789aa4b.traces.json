@@ -1,0 +1,1244 @@
+{
+  "run_id": "pipeline-20260419T090452Z-d789aa4b",
+  "traces": [
+    {
+      "timestamp": "2026-04-19T09:04:52.424634+00:00",
+      "trace_id": "2f1f2559-8b54-416d-a748-95c028107de2",
+      "step": "ticket:TCK-1001",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1001",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.424959+00:00",
+      "trace_id": "ce6a8f51-37b6-4658-9ee6-ee835b9e969e",
+      "step": "ticket:TCK-1001:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1001",
+      "metadata": {
+        "ticket_id": "TCK-1001",
+        "category": "mobile_login_loop",
+        "resolvable": false
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.425096+00:00",
+      "trace_id": "ef2d0c16-b7d3-4a95-8f98-c2f3d8963e16",
+      "step": "ticket:TCK-1001:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1001",
+      "metadata": {
+        "ticket_id": "TCK-1001",
+        "result": "escalated"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.425168+00:00",
+      "trace_id": "25cbc938-3bf5-4313-a9ec-696e1644f5fb",
+      "step": "ticket:TCK-1002",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1002",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.425242+00:00",
+      "trace_id": "7cbd72ec-2162-49fd-82e8-d68df80b4890",
+      "step": "ticket:TCK-1002:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1002",
+      "metadata": {
+        "ticket_id": "TCK-1002",
+        "category": "csv_export",
+        "resolvable": false
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.425329+00:00",
+      "trace_id": "4d179f17-823f-4ec2-8653-03aa8b7bf218",
+      "step": "ticket:TCK-1002:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1002",
+      "metadata": {
+        "ticket_id": "TCK-1002",
+        "result": "escalated"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.425424+00:00",
+      "trace_id": "6706c112-9986-4021-a6b4-f602c237fae1",
+      "step": "ticket:TCK-1003",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1003",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.425497+00:00",
+      "trace_id": "7dd83c00-ccdd-4169-bfec-9fc71823911d",
+      "step": "ticket:TCK-1003:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1003",
+      "metadata": {
+        "ticket_id": "TCK-1003",
+        "category": "duplicate_billing",
+        "resolvable": false
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.425565+00:00",
+      "trace_id": "eb0f0bf4-c399-4e8d-aa59-8d1e06fceb8b",
+      "step": "ticket:TCK-1003:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1003",
+      "metadata": {
+        "ticket_id": "TCK-1003",
+        "result": "escalated"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.425633+00:00",
+      "trace_id": "73a4844e-97db-4fd9-9e19-a3ce623a8bd6",
+      "step": "ticket:TCK-1004",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1004",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.425698+00:00",
+      "trace_id": "ec1bf6cb-1363-4594-8b7a-86ca8e95d55c",
+      "step": "ticket:TCK-1004:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1004",
+      "metadata": {
+        "ticket_id": "TCK-1004",
+        "category": "mobile_login_loop",
+        "resolvable": false
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.425767+00:00",
+      "trace_id": "95897472-34cf-4cd3-9220-500ac7c338a3",
+      "step": "ticket:TCK-1004:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1004",
+      "metadata": {
+        "ticket_id": "TCK-1004",
+        "result": "escalated"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.425831+00:00",
+      "trace_id": "d190dc47-af1c-43dd-859d-22651d4f0950",
+      "step": "ticket:TCK-1005",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1005",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.425878+00:00",
+      "trace_id": "cf9c0030-61d2-4738-a31d-f7aef8137875",
+      "step": "ticket:TCK-1005:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1005",
+      "metadata": {
+        "ticket_id": "TCK-1005",
+        "category": "password_reset",
+        "resolvable": true
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.425942+00:00",
+      "trace_id": "9beca65c-f69b-4000-949d-1bcea52865c6",
+      "step": "ticket:TCK-1005:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1005",
+      "metadata": {
+        "ticket_id": "TCK-1005",
+        "result": "resolved"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.426034+00:00",
+      "trace_id": "0805ca49-f667-4e5b-a4a6-ed50ee124163",
+      "step": "ticket:TCK-1006",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1006",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.426127+00:00",
+      "trace_id": "50e9afff-57a6-4c82-94bf-35a6a76c397f",
+      "step": "ticket:TCK-1006:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1006",
+      "metadata": {
+        "ticket_id": "TCK-1006",
+        "category": "csv_export",
+        "resolvable": false
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.426218+00:00",
+      "trace_id": "933ced8c-2b83-4dfa-a656-df9ef9a4ab80",
+      "step": "ticket:TCK-1006:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1006",
+      "metadata": {
+        "ticket_id": "TCK-1006",
+        "result": "escalated"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.426305+00:00",
+      "trace_id": "e3c41f1e-a549-4f9a-b97c-2020739765f3",
+      "step": "ticket:TCK-1007",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1007",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.426399+00:00",
+      "trace_id": "8c466114-926f-4110-b0c2-dcbb4d59ca18",
+      "step": "ticket:TCK-1007:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1007",
+      "metadata": {
+        "ticket_id": "TCK-1007",
+        "category": "duplicate_billing",
+        "resolvable": false
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.426489+00:00",
+      "trace_id": "4b898b06-6902-4dfe-9c8e-de3d353de74d",
+      "step": "ticket:TCK-1007:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1007",
+      "metadata": {
+        "ticket_id": "TCK-1007",
+        "result": "escalated"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.426592+00:00",
+      "trace_id": "2798691d-4dd9-47c4-8686-b9a5a8bb382a",
+      "step": "ticket:TCK-1008",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1008",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.426688+00:00",
+      "trace_id": "87e1c790-bc76-4933-b198-feac6e1ec88d",
+      "step": "ticket:TCK-1008:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1008",
+      "metadata": {
+        "ticket_id": "TCK-1008",
+        "category": "slow_dashboard",
+        "resolvable": true
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.426784+00:00",
+      "trace_id": "7d16e074-a6ac-41e9-b956-82aa69ca99f2",
+      "step": "ticket:TCK-1008:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1008",
+      "metadata": {
+        "ticket_id": "TCK-1008",
+        "result": "resolved"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.426874+00:00",
+      "trace_id": "39354801-2d7c-455b-9f8d-b43318fa9ad4",
+      "step": "ticket:TCK-1009",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1009",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.426961+00:00",
+      "trace_id": "c4f00be3-d13d-4dd2-9c34-44dcbc877ff2",
+      "step": "ticket:TCK-1009:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1009",
+      "metadata": {
+        "ticket_id": "TCK-1009",
+        "category": "mobile_login_loop",
+        "resolvable": false
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.427047+00:00",
+      "trace_id": "1eee6c99-d262-465c-8127-4e834ca4be83",
+      "step": "ticket:TCK-1009:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1009",
+      "metadata": {
+        "ticket_id": "TCK-1009",
+        "result": "escalated"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.427144+00:00",
+      "trace_id": "6df2321b-374f-46d9-ac90-5620fb174115",
+      "step": "ticket:TCK-1010",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1010",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.427235+00:00",
+      "trace_id": "a313b7d8-76b7-4c9e-90a9-982639852283",
+      "step": "ticket:TCK-1010:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1010",
+      "metadata": {
+        "ticket_id": "TCK-1010",
+        "category": "feature_request",
+        "resolvable": true
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.427342+00:00",
+      "trace_id": "c3b1f0f4-e235-405a-974d-bc0234472a36",
+      "step": "ticket:TCK-1010:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1010",
+      "metadata": {
+        "ticket_id": "TCK-1010",
+        "result": "resolved"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.427424+00:00",
+      "trace_id": "e9f2df18-5d60-45fa-8b7b-f425d42a1596",
+      "step": "ticket:TCK-1011",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1011",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.427514+00:00",
+      "trace_id": "8f570c06-f72f-4502-b94b-f845c7fbf151",
+      "step": "ticket:TCK-1011:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1011",
+      "metadata": {
+        "ticket_id": "TCK-1011",
+        "category": "csv_export",
+        "resolvable": false
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.427606+00:00",
+      "trace_id": "233d2c64-60d2-46bd-b87a-07e9be80fd77",
+      "step": "ticket:TCK-1011:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1011",
+      "metadata": {
+        "ticket_id": "TCK-1011",
+        "result": "escalated"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.427690+00:00",
+      "trace_id": "efd08690-ea1d-4d97-bc6e-6d34e32ff398",
+      "step": "ticket:TCK-1012",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1012",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.427783+00:00",
+      "trace_id": "f314c192-99e9-4fd5-a917-a6f5ba8f233e",
+      "step": "ticket:TCK-1012:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1012",
+      "metadata": {
+        "ticket_id": "TCK-1012",
+        "category": "duplicate_billing",
+        "resolvable": false
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.427870+00:00",
+      "trace_id": "d2696163-63f7-4400-b69e-5f33d922b35a",
+      "step": "ticket:TCK-1012:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1012",
+      "metadata": {
+        "ticket_id": "TCK-1012",
+        "result": "escalated"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.427958+00:00",
+      "trace_id": "c3d17a8d-057f-47cd-8342-a49086118840",
+      "step": "ticket:TCK-1013",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1013",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.428050+00:00",
+      "trace_id": "81202edb-097e-4d38-9aa5-e2a5f9a1bcbf",
+      "step": "ticket:TCK-1013:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1013",
+      "metadata": {
+        "ticket_id": "TCK-1013",
+        "category": "mobile_login_loop",
+        "resolvable": false
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.428137+00:00",
+      "trace_id": "06964327-2f07-4dd5-b3a9-47f62681e5b5",
+      "step": "ticket:TCK-1013:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1013",
+      "metadata": {
+        "ticket_id": "TCK-1013",
+        "result": "escalated"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.428223+00:00",
+      "trace_id": "8f138448-f70d-4db2-bd23-2d71edf0ba31",
+      "step": "ticket:TCK-1014",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1014",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.428319+00:00",
+      "trace_id": "d8dbcf2f-81f6-4e0d-b57f-4c0d9a26f959",
+      "step": "ticket:TCK-1014:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1014",
+      "metadata": {
+        "ticket_id": "TCK-1014",
+        "category": "invoice_copy",
+        "resolvable": true
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.428423+00:00",
+      "trace_id": "4214c847-4521-4897-bb46-24a9b835a9df",
+      "step": "ticket:TCK-1014:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1014",
+      "metadata": {
+        "ticket_id": "TCK-1014",
+        "result": "resolved"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.428524+00:00",
+      "trace_id": "9d73a089-0864-4ba1-bb51-f7393bede33d",
+      "step": "ticket:TCK-1015",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1015",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.428618+00:00",
+      "trace_id": "7439df19-4f31-4f96-9f9c-40477eb3861a",
+      "step": "ticket:TCK-1015:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1015",
+      "metadata": {
+        "ticket_id": "TCK-1015",
+        "category": "csv_export",
+        "resolvable": false
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.429675+00:00",
+      "trace_id": "fdefd63f-93a1-4734-97b1-f7d4b2a9b566",
+      "step": "ticket:TCK-1015:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1015",
+      "metadata": {
+        "ticket_id": "TCK-1015",
+        "result": "escalated"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.430012+00:00",
+      "trace_id": "e41366a4-97ca-4454-a32d-21f280b344b6",
+      "step": "ticket:TCK-1016",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1016",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.430147+00:00",
+      "trace_id": "3990943c-df0c-4510-a8c1-063173070ba5",
+      "step": "ticket:TCK-1016:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1016",
+      "metadata": {
+        "ticket_id": "TCK-1016",
+        "category": "team_invites",
+        "resolvable": true
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.430228+00:00",
+      "trace_id": "fbf885f7-5f49-4af9-b6ea-594083676eea",
+      "step": "ticket:TCK-1016:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1016",
+      "metadata": {
+        "ticket_id": "TCK-1016",
+        "result": "resolved"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.430301+00:00",
+      "trace_id": "03134683-3fb5-4f3f-81dc-29ff7d972573",
+      "step": "ticket:TCK-1017",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1017",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.430368+00:00",
+      "trace_id": "506f7f14-754c-4227-9695-f622199dab26",
+      "step": "ticket:TCK-1017:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1017",
+      "metadata": {
+        "ticket_id": "TCK-1017",
+        "category": "mobile_login_loop",
+        "resolvable": false
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.430439+00:00",
+      "trace_id": "79116453-ed00-4e5c-aec5-97fc21028104",
+      "step": "ticket:TCK-1017:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1017",
+      "metadata": {
+        "ticket_id": "TCK-1017",
+        "result": "escalated"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.430502+00:00",
+      "trace_id": "d363e844-f13c-48b7-8b4f-df45714f85a9",
+      "step": "ticket:TCK-1018",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1018",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.430575+00:00",
+      "trace_id": "c6280e7b-616d-4b5f-b57e-87ed5f93e020",
+      "step": "ticket:TCK-1018:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1018",
+      "metadata": {
+        "ticket_id": "TCK-1018",
+        "category": "search_accuracy",
+        "resolvable": true
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.430647+00:00",
+      "trace_id": "7fe5dcd5-90f3-4efb-b9bb-e1ed2cda2349",
+      "step": "ticket:TCK-1018:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1018",
+      "metadata": {
+        "ticket_id": "TCK-1018",
+        "result": "resolved"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.430712+00:00",
+      "trace_id": "f1da6fd7-db59-4fb0-989a-e90a726dd59d",
+      "step": "ticket:TCK-1019",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1019",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.430781+00:00",
+      "trace_id": "2f9cd01b-46e8-49e5-8e50-3d8751a9cfff",
+      "step": "ticket:TCK-1019:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1019",
+      "metadata": {
+        "ticket_id": "TCK-1019",
+        "category": "mobile_login_loop",
+        "resolvable": false
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.430849+00:00",
+      "trace_id": "9445b5ee-740c-491d-b283-0099f0b4327d",
+      "step": "ticket:TCK-1019:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1019",
+      "metadata": {
+        "ticket_id": "TCK-1019",
+        "result": "escalated"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.430912+00:00",
+      "trace_id": "ba42ddec-00a4-46ee-9498-2219c5c21f49",
+      "step": "ticket:TCK-1020",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1020",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.430981+00:00",
+      "trace_id": "e09f3c41-5d4c-4fb9-b472-ff70d90342ad",
+      "step": "ticket:TCK-1020:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1020",
+      "metadata": {
+        "ticket_id": "TCK-1020",
+        "category": "feature_request",
+        "resolvable": true
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.431052+00:00",
+      "trace_id": "bf0e3d53-1e2e-4f41-a56a-4339290286d4",
+      "step": "ticket:TCK-1020:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1020",
+      "metadata": {
+        "ticket_id": "TCK-1020",
+        "result": "resolved"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    },
+    {
+      "timestamp": "2026-04-19T09:04:52.432906+00:00",
+      "trace_id": "bc90f719-7c6c-4fe1-9b05-02d3be8727f3",
+      "step": "recommendations:local",
+      "agent": "analyst",
+      "parent_step": null,
+      "metadata": {
+        "mode": "local"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T090452Z-d789aa4b"
+    }
+  ]
+}

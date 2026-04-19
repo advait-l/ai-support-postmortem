@@ -1,0 +1,14 @@
+{
+  "run_id": "eval-20260419T082653Z-9c62762c",
+  "started_at": "2026-04-19T08:26:53.802694+00:00",
+  "finished_at": "2026-04-19T08:30:33.662768+00:00",
+  "ticket_count": 6,
+  "resolved": 0,
+  "escalated": 6,
+  "top_issues": [
+    "Mobile login loop",
+    "CSV export failures"
+  ],
+  "ok": true,
+  "case": "core_recurring.json"
+}

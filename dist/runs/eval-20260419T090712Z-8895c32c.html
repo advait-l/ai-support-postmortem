@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>eval-20260419T090712Z-8895c32c Observability</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b1020;
+      --panel: #131a2e;
+      --panel-2: #0e1428;
+      --muted: #8d99b8;
+      --text: #edf2ff;
+      --border: #283252;
+      --accent: #7cc7ff;
+      --good: #7fe3b0;
+      --warn: #ffd37a;
+      --bad: #ff8d8d;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, sans-serif; background: linear-gradient(180deg, #0b1020 0%, #11172a 100%); color: var(--text); }
+    main { max-width: 1100px; margin: 0 auto; padding: 40px 20px 64px; }
+    h1 { margin: 0 0 10px; font-size: 2.1rem; }
+    h2 { margin: 34px 0 14px; font-size: 1.25rem; }
+    p { line-height: 1.55; }
+    a { color: var(--accent); text-decoration: none; }
+    .lede, .meta { color: var(--muted); }
+    .stats, .agents, .links { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+    .stat, .agent-card, .trace-card, .link-card { background: rgba(19, 26, 46, 0.88); border: 1px solid var(--border); border-radius: 16px; padding: 16px; }
+    .stat strong, .agent-card strong { display: block; font-size: 1.45rem; margin-top: 8px; }
+    .trace-list { display: grid; gap: 12px; }
+    .trace-card { background: var(--panel-2); }
+    .trace-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+    .trace-meta { display: flex; flex-wrap: wrap; gap: 12px; color: var(--muted); font-size: 0.92rem; margin-bottom: 10px; }
+    .pill { border-radius: 999px; padding: 4px 10px; font-size: 0.8rem; border: 1px solid var(--border); }
+    .pill.agent { color: var(--accent); }
+    .pill.status.ok { color: var(--good); border-color: rgba(127, 227, 176, 0.35); }
+    .pill.status.error { color: var(--bad); border-color: rgba(255, 141, 141, 0.35); }
+    .pill.status.fallback { color: var(--warn); border-color: rgba(255, 211, 122, 0.35); }
+    .step { font-weight: 600; }
+    .trace-line { margin: 8px 0 0; word-break: break-word; }
+    .trace-line.error { color: var(--bad); }
+  </style>
+</head>
+<body>
+  <main>
+    <p><a href="./index.html">Back to runs</a> | <a href="../index.html">Latest report</a></p>
+    <h1>eval-20260419T090712Z-8895c32c</h1>
+    <p class="lede">Static observability view for one pipeline run, including the recorded step timeline that was written during processing.</p>
+
+    <section>
+      <div class="stats"><div class="stat"><span>Run Type</span><strong>eval</strong></div><div class="stat"><span>Tickets</span><strong>6</strong></div><div class="stat"><span>Resolved</span><strong>0</strong></div><div class="stat"><span>Escalated</span><strong>6</strong></div><div class="stat"><span>Trace Events</span><strong>19</strong></div><div class="stat"><span>Errors</span><strong>0</strong></div></div>
+      <p class="meta">Started: 2026-04-19T09:07:12.542329+00:00 | Finished: 2026-04-19T09:07:12.546647+00:00</p>
+      <p class="meta">Case: escalation_heavy.json</p>
+    </section>
+
+    <section>
+      <h2>Artifacts</h2>
+      <div class="links"><div class="link-card"><a href="./eval-20260419T090712Z-8895c32c-report.html">Open report snapshot</a></div><div class="link-card"><a href="./eval-20260419T090712Z-8895c32c.traces.json">Open traces JSON</a></div><div class="link-card"><a href="./eval-20260419T090712Z-8895c32c.json">Open run manifest</a></div></div>
+    </section>
+
+    <section>
+      <h2>Events By Agent</h2>
+      <div class="agents"><div class="agent-card"><span>analyst</span><strong>1</strong></div><div class="agent-card"><span>manager</span><strong>18</strong></div></div>
+    </section>
+
+    <section>
+      <h2>Trace Timeline</h2>
+      <div class="trace-list"><article class="trace-card"><div class="trace-head"><span class="pill agent">manager</span><span class="pill status ok">ok</span><span class="step">ticket:EVAL-2201</span></div><div class="trace-meta"><span>2026-04-19T09:07:12.542343+00:00</span><span>- ms</span><span>local</span><span>-</span></div><p class="trace-line"><strong>Parent:</strong> -</p><p class="trace-line"><strong>Metadata:</strong> {&quot;action&quot;: &quot;plan&quot;, &quot;ticket_id&quot;: &quot;EVAL-2201&quot;}</p></article><article class="trace-card"><div class="trace-head"><span class="pill agent">manager</span><span class="pill status ok">ok</span><span class="step">ticket:EVAL-2201:route</span></div><div class="trace-meta"><span>2026-04-19T09:07:12.542515+00:00</span><span>- ms</span><span>local</span><span>-</span></div><p class="trace-line"><strong>Parent:</strong> ticket:EVAL-2201</p><p class="trace-line"><strong>Metadata:</strong> {&quot;category&quot;: &quot;duplicate_billing&quot;, &quot;resolvable&quot;: false, &quot;ticket_id&quot;: &quot;EVAL-2201&quot;}</p></article><article class="trace-card"><div class="trace-head"><span class="pill agent">manager</span><span class="pill status ok">ok</span><span class="step">ticket:EVAL-2201:finalize</span></div><div class="trace-meta"><span>2026-04-19T09:07:12.542593+00:00</span><span>- ms</span><span>local</span><span>-</span></div><p class="trace-line"><strong>Parent:</strong> ticket:EVAL-2201</p><p class="trace-line"><strong>Metadata:</strong> {&quot;result&quot;: &quot;escalated&quot;, &quot;ticket_id&quot;: &quot;EVAL-2201&quot;}</p></article><article class="trace-card"><div class="trace-head"><span class="pill agent">manager</span><span class="pill status ok">ok</span><span class="step">ticket:EVAL-2202</span></div><div class="trace-meta"><span>2026-04-19T09:07:12.542659+00:00</span><span>- ms</span><span>local</span><span>-</span></div><p class="trace-line"><strong>Parent:</strong> -</p><p class="trace-line"><strong>Metadata:</strong> {&quot;action&quot;: &quot;plan&quot;, &quot;ticket_id&quot;: &quot;EVAL-2202&quot;}</p></article><article class="trace-card"><div class="trace-head"><span class="pill agent">manager</span><span class="pill status ok">ok</span><span class="step">ticket:EVAL-2202:route</span></div><div class="trace-meta"><span>2026-04-19T09:07:12.542726+00:00</span><span>- ms</span><span>local</span><span>-</span></div><p class="trace-line"><strong>Parent:</strong> ticket:EVAL-2202</p><p class="trace-line"><strong>Metadata:</strong> {&quot;category&quot;: &quot;duplicate_billing&quot;, &quot;resolvable&quot;: false, &quot;ticket_id&quot;: &quot;EVAL-2202&quot;}</p></article><article class="trace-card"><div class="trace-head"><span class="pill agent">manager</span><span class="pill status ok">ok</span><span class="step">ticket:EVAL-2202:finalize</span></div><div class="trace-meta"><span>2026-04-19T09:07:12.542798+00:00</span><span>- ms</span><span>local</span><span>-</span></div><p class="trace-line"><strong>Parent:</strong> ticket:EVAL-2202</p><p class="trace-line"><strong>Metadata:</strong> {&quot;result&quot;: &quot;escalated&quot;, &quot;ticket_id&quot;: &quot;EVAL-2202&quot;}</p></article><article class="trace-card"><div class="trace-head"><span class="pill agent">manager</span><span class="pill status ok">ok</span><span class="step">ticket:EVAL-2203</span></div><div class="trace-meta"><span>2026-04-19T09:07:12.542862+00:00</span><span>- ms</span><span>local</span><span>-</span></div><p class="trace-line"><strong>Parent:</strong> -</p><p class="trace-line"><strong>Metadata:</strong> {&quot;action&quot;: &quot;plan&quot;, &quot;ticket_id&quot;: &quot;EVAL-2203&quot;}</p></article><article class="trace-card"><div class="trace-head"><span class="pill agent">manager</span><span class="pill status ok">ok</span><span class="step">ticket:EVAL-2203:route</span></div><div class="trace-meta"><span>2026-04-19T09:07:12.542931+00:00</span><span>- ms</span><span>local</span><span>-</span></div><p class="trace-line"><strong>Parent:</strong> ticket:EVAL-2203</p><p class="trace-line"><strong>Metadata:</strong> {&quot;category&quot;: &quot;csv_export&quot;, &quot;resolvable&quot;: false, &quot;ticket_id&quot;: &quot;EVAL-2203&quot;}</p></article><article class="trace-card"><div class="trace-head"><span class="pill agent">manager</span><span class="pill status ok">ok</span><span class="step">ticket:EVAL-2203:finalize</span></div><div class="trace-meta"><span>2026-04-19T09:07:12.542996+00:00</span><span>- ms</span><span>local</span><span>-</span></div><p class="trace-line"><strong>Parent:</strong> ticket:EVAL-2203</p><p class="trace-line"><strong>Metadata:</strong> {&quot;result&quot;: &quot;escalated&quot;, &quot;ticket_id&quot;: &quot;EVAL-2203&quot;}</p></article><article class="trace-card"><div class="trace-head"><span class="pill agent">manager</span><span class="pill status ok">ok</span><span class="step">ticket:EVAL-2204</span></div><div class="trace-meta"><span>2026-04-19T09:07:12.543062+00:00</span><span>- ms</span><span>local</span><span>-</span></div><p class="trace-line"><strong>Parent:</strong> -</p><p class="trace-line"><strong>Metadata:</strong> {&quot;action&quot;: &quot;plan&quot;, &quot;ticket_id&quot;: &quot;EVAL-2204&quot;}</p></article><article class="trace-card"><div class="trace-head"><span class="pill agent">manager</span><span class="pill status ok">ok</span><span class="step">ticket:EVAL-2204:route</span></div><div class="trace-meta"><span>2026-04-19T09:07:12.543142+00:00</span><span>- ms</span><span>local</span><span>-</span></div><p class="trace-line"><strong>Parent:</strong> ticket:EVAL-2204</p><p class="trace-line"><strong>Metadata:</strong> {&quot;category&quot;: &quot;duplicate_billing&quot;, &quot;resolvable&quot;: false, &quot;ticket_id&quot;: &quot;EVAL-2204&quot;}</p></article><article class="trace-card"><div class="trace-head"><span class="pill agent">manager</span><span class="pill status ok">ok</span><span class="step">ticket:EVAL-2204:finalize</span></div><div class="trace-meta"><span>2026-04-19T09:07:12.543209+00:00</span><span>- ms</span><span>local</span><span>-</span></div><p class="trace-line"><strong>Parent:</strong> ticket:EVAL-2204</p><p class="trace-line"><strong>Metadata:</strong> {&quot;result&quot;: &quot;escalated&quot;, &quot;ticket_id&quot;: &quot;EVAL-2204&quot;}</p></article><article class="trace-card"><div class="trace-head"><span class="pill agent">manager</span><span class="pill status ok">ok</span><span class="step">ticket:EVAL-2205</span></div><div class="trace-meta"><span>2026-04-19T09:07:12.543272+00:00</span><span>- ms</span><span>local</span><span>-</span></div><p class="trace-line"><strong>Parent:</strong> -</p><p class="trace-line"><strong>Metadata:</strong> {&quot;action&quot;: &quot;plan&quot;, &quot;ticket_id&quot;: &quot;EVAL-2205&quot;}</p></article><article class="trace-card"><div class="trace-head"><span class="pill agent">manager</span><span class="pill status ok">ok</span><span class="step">ticket:EVAL-2205:route</span></div><div class="trace-meta"><span>2026-04-19T09:07:12.543341+00:00</span><span>- ms</span><span>local</span><span>-</span></div><p class="trace-line"><strong>Parent:</strong> ticket:EVAL-2205</p><p class="trace-line"><strong>Metadata:</strong> {&quot;category&quot;: &quot;mobile_login_loop&quot;, &quot;resolvable&quot;: false, &quot;ticket_id&quot;: &quot;EVAL-2205&quot;}</p></article><article class="trace-card"><div class="trace-head"><span class="pill agent">manager</span><span class="pill status ok">ok</span><span class="step">ticket:EVAL-2205:finalize</span></div><div class="trace-meta"><span>2026-04-19T09:07:12.543406+00:00</span><span>- ms</span><span>local</span><span>-</span></div><p class="trace-line"><strong>Parent:</strong> ticket:EVAL-2205</p><p class="trace-line"><strong>Metadata:</strong> {&quot;result&quot;: &quot;escalated&quot;, &quot;ticket_id&quot;: &quot;EVAL-2205&quot;}</p></article><article class="trace-card"><div class="trace-head"><span class="pill agent">manager</span><span class="pill status ok">ok</span><span class="step">ticket:EVAL-2206</span></div><div class="trace-meta"><span>2026-04-19T09:07:12.543470+00:00</span><span>- ms</span><span>local</span><span>-</span></div><p class="trace-line"><strong>Parent:</strong> -</p><p class="trace-line"><strong>Metadata:</strong> {&quot;action&quot;: &quot;plan&quot;, &quot;ticket_id&quot;: &quot;EVAL-2206&quot;}</p></article><article class="trace-card"><div class="trace-head"><span class="pill agent">manager</span><span class="pill status ok">ok</span><span class="step">ticket:EVAL-2206:route</span></div><div class="trace-meta"><span>2026-04-19T09:07:12.543537+00:00</span><span>- ms</span><span>local</span><span>-</span></div><p class="trace-line"><strong>Parent:</strong> ticket:EVAL-2206</p><p class="trace-line"><strong>Metadata:</strong> {&quot;category&quot;: &quot;mobile_login_loop&quot;, &quot;resolvable&quot;: false, &quot;ticket_id&quot;: &quot;EVAL-2206&quot;}</p></article><article class="trace-card"><div class="trace-head"><span class="pill agent">manager</span><span class="pill status ok">ok</span><span class="step">ticket:EVAL-2206:finalize</span></div><div class="trace-meta"><span>2026-04-19T09:07:12.543601+00:00</span><span>- ms</span><span>local</span><span>-</span></div><p class="trace-line"><strong>Parent:</strong> ticket:EVAL-2206</p><p class="trace-line"><strong>Metadata:</strong> {&quot;result&quot;: &quot;escalated&quot;, &quot;ticket_id&quot;: &quot;EVAL-2206&quot;}</p></article><article class="trace-card"><div class="trace-head"><span class="pill agent">analyst</span><span class="pill status ok">ok</span><span class="step">recommendations:local</span></div><div class="trace-meta"><span>2026-04-19T09:07:12.544042+00:00</span><span>- ms</span><span>local</span><span>-</span></div><p class="trace-line"><strong>Parent:</strong> -</p><p class="trace-line"><strong>Metadata:</strong> {&quot;mode&quot;: &quot;local&quot;}</p></article></div>
+    </section>
+  </main>
+</body>
+</html>

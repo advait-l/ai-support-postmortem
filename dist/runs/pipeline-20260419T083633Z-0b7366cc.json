@@ -1,0 +1,14 @@
+{
+  "run_id": "pipeline-20260419T083633Z-0b7366cc",
+  "started_at": "2026-04-19T08:36:33.309523+00:00",
+  "finished_at": "2026-04-19T08:36:33.323673+00:00",
+  "ticket_count": 20,
+  "resolved": 7,
+  "escalated": 13,
+  "artifacts": {
+    "pipeline_output": "runs/pipeline-20260419T083633Z-0b7366cc/pipeline_output.json",
+    "report_md": "runs/pipeline-20260419T083633Z-0b7366cc/report.md",
+    "report_json": "runs/pipeline-20260419T083633Z-0b7366cc/report.json",
+    "viewer": "runs/pipeline-20260419T083633Z-0b7366cc/latest-run.html"
+  }
+}
