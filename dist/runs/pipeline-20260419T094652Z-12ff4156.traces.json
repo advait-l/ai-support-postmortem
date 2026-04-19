@@ -1,0 +1,1308 @@
+{
+  "run_id": "pipeline-20260419T094652Z-12ff4156",
+  "traces": [
+    {
+      "timestamp": "2026-04-19T09:46:52.965166+00:00",
+      "trace_id": "19287c32-2342-40a1-be1e-0f09dc76da3a",
+      "step": "ticket:TCK-1001",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1001",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:46:52.965736+00:00",
+      "trace_id": "29a8be06-8df3-4060-bed1-a82fb1ad0c73",
+      "step": "ticket:TCK-1001:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1001",
+      "metadata": {
+        "ticket_id": "TCK-1001",
+        "category": "mobile_login_loop",
+        "resolvable": false
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:46:52.965902+00:00",
+      "trace_id": "0abdc6db-0412-48ba-8784-d37779241f28",
+      "step": "ticket:TCK-1001:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1001",
+      "metadata": {
+        "ticket_id": "TCK-1001",
+        "result": "escalated"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:46:52.966026+00:00",
+      "trace_id": "18f1edac-b078-426f-9bb8-18fc03769bb5",
+      "step": "ticket:TCK-1002",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1002",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:46:52.966142+00:00",
+      "trace_id": "c6bf3593-0953-4440-8195-a7747671abfb",
+      "step": "ticket:TCK-1002:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1002",
+      "metadata": {
+        "ticket_id": "TCK-1002",
+        "category": "csv_export",
+        "resolvable": false
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:46:52.966257+00:00",
+      "trace_id": "f9ded173-f4dc-48e6-a20c-e2ef0d14fdcd",
+      "step": "ticket:TCK-1002:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1002",
+      "metadata": {
+        "ticket_id": "TCK-1002",
+        "result": "escalated"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:46:52.966350+00:00",
+      "trace_id": "a3ff1100-63f6-46ce-83ca-cef3ae1a2cb6",
+      "step": "ticket:TCK-1003",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1003",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:46:52.966460+00:00",
+      "trace_id": "1f798240-7e7e-4a5e-94a5-f494b0cf3fc3",
+      "step": "ticket:TCK-1003:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1003",
+      "metadata": {
+        "ticket_id": "TCK-1003",
+        "category": "duplicate_billing",
+        "resolvable": false
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:46:52.966578+00:00",
+      "trace_id": "28234eae-57a3-4012-b438-9ca2c3cf571a",
+      "step": "ticket:TCK-1003:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1003",
+      "metadata": {
+        "ticket_id": "TCK-1003",
+        "result": "escalated"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:46:52.966667+00:00",
+      "trace_id": "cbf0917e-70bc-4fb3-9cc8-2dbf3d1e9a6f",
+      "step": "ticket:TCK-1004",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1004",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:46:52.966760+00:00",
+      "trace_id": "67e00c6a-fbce-43e0-a48a-83fc949e5e1c",
+      "step": "ticket:TCK-1004:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1004",
+      "metadata": {
+        "ticket_id": "TCK-1004",
+        "category": "mobile_login_loop",
+        "resolvable": false
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:46:52.966864+00:00",
+      "trace_id": "b1193bb3-c29b-444c-8297-1898e6ab3c78",
+      "step": "ticket:TCK-1004:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1004",
+      "metadata": {
+        "ticket_id": "TCK-1004",
+        "result": "escalated"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:46:52.966978+00:00",
+      "trace_id": "93b16252-8fa0-4df1-b3aa-44864c392121",
+      "step": "ticket:TCK-1005",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1005",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:46:52.967100+00:00",
+      "trace_id": "b72a4c24-08ca-4756-9841-4a44546d9c3e",
+      "step": "ticket:TCK-1005:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1005",
+      "metadata": {
+        "ticket_id": "TCK-1005",
+        "category": "password_reset",
+        "resolvable": true
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:46:52.967234+00:00",
+      "trace_id": "9addc51a-54ab-4cfb-8a39-a72cdf5244f3",
+      "step": "ticket:TCK-1005:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1005",
+      "metadata": {
+        "ticket_id": "TCK-1005",
+        "result": "resolved"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:46:52.967334+00:00",
+      "trace_id": "821fb9cc-a2ba-42fa-9fa0-e963748fab20",
+      "step": "ticket:TCK-1006",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1006",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:46:52.967421+00:00",
+      "trace_id": "8bbfea23-04e2-431c-b57f-9f4bde906ab6",
+      "step": "ticket:TCK-1006:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1006",
+      "metadata": {
+        "ticket_id": "TCK-1006",
+        "category": "csv_export",
+        "resolvable": false
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:46:52.967535+00:00",
+      "trace_id": "8489a0d0-d25e-4c73-b12b-08fcc33279db",
+      "step": "ticket:TCK-1006:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1006",
+      "metadata": {
+        "ticket_id": "TCK-1006",
+        "result": "escalated"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:46:52.967738+00:00",
+      "trace_id": "69b7c4c9-31e5-443b-b58d-203b6cee7f56",
+      "step": "ticket:TCK-1007",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1007",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:46:52.967876+00:00",
+      "trace_id": "1d3026d6-e552-411c-b221-0ee0806407c7",
+      "step": "ticket:TCK-1007:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1007",
+      "metadata": {
+        "ticket_id": "TCK-1007",
+        "category": "duplicate_billing",
+        "resolvable": false
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:46:52.968007+00:00",
+      "trace_id": "8e8211c5-14bf-4317-a882-214e745979cd",
+      "step": "ticket:TCK-1007:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1007",
+      "metadata": {
+        "ticket_id": "TCK-1007",
+        "result": "escalated"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:46:52.968088+00:00",
+      "trace_id": "582facfd-1a6e-4989-9e32-f0f224687209",
+      "step": "ticket:TCK-1008",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1008",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:46:52.968196+00:00",
+      "trace_id": "398fbc51-93e2-43fe-9326-e1cd69332d98",
+      "step": "ticket:TCK-1008:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1008",
+      "metadata": {
+        "ticket_id": "TCK-1008",
+        "category": "slow_dashboard",
+        "resolvable": true
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:08.417925+00:00",
+      "trace_id": "d2fb33bc-cfff-4625-82f5-8171781b8866",
+      "step": "ticket:TCK-1008:resolve",
+      "agent": "resolver",
+      "parent_step": "ticket:TCK-1008",
+      "metadata": {
+        "ticket_id": "TCK-1008",
+        "category": "slow_dashboard",
+        "attempt": 1
+      },
+      "provider": "zen",
+      "model": "glm-5",
+      "prompt_tokens_estimate": 149,
+      "system_prompt": "You are a frontline support agent drafting a customer response. Use the supplied knowledge base only. Return JSON only and do not use markdown fences.",
+      "user_prompt": "Draft a support response for this ticket.\n\nReturn JSON with exactly these keys:\ncustomer_response: a concise email-style reply\nkb_article: the knowledge base title you used\nresolution_summary: one sentence summarizing the action taken\n\nKnowledge Base Entry:\nTitle: Performance troubleshooting\nSummary: Ask the customer to retry during a lower-traffic period, narrow to the specific report or page, and capture the timestamp for investigation.\nWhen to use: Use for slow pages, report timeouts, or intermittent latency.\n\nTicket ID: TCK-1008\nCustomer: james.parker@example.com\nSubject: Dashboard very slow this afternoon\nBody: Pages that normally load in a second are taking 15 to 20 seconds. Reports are especially slow and time out sometimes.\n\nTriage category: slow_dashboard\nPriority: high\nResolution reason: Frontline support can collect timing details and offer safe troubleshooting steps.",
+      "response": "{\n  \"customer_response\": \"Hi James,\\n\\nI'm sorry to hear you're experiencing slowness and timeouts with your dashboard and reports this afternoon. To help us investigate this, could you please try accessing the dashboard during a lower-traffic period to see if the performance improves? Additionally, if you can narrow down the specific report or page that is timing out and provide the exact timestamp of when the slowness occurs, it will greatly help our team look into the root cause.\\n\\nThank you,\\nSupport Team\",\n  \"kb_article\": \"Performance troubleshooting\",\n  \"resolution_summary\": \"Requested the customer to test during lower-traffic periods, identify the specific slow reports or pages, and provide timestamps for further investigation.\"\n}",
+      "latency_ms": 15449.54,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:08.418628+00:00",
+      "trace_id": "3fe5196b-787f-4d9b-a68a-4343f7129681",
+      "step": "ticket:TCK-1008:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1008",
+      "metadata": {
+        "ticket_id": "TCK-1008",
+        "result": "resolved"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:08.418816+00:00",
+      "trace_id": "0d1cc1c3-4ad7-4c54-a708-7adc0726d903",
+      "step": "ticket:TCK-1009",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1009",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:08.419174+00:00",
+      "trace_id": "6eb9209a-bba7-438b-be8a-d98f6c29dc9c",
+      "step": "ticket:TCK-1009:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1009",
+      "metadata": {
+        "ticket_id": "TCK-1009",
+        "category": "mobile_login_loop",
+        "resolvable": false
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:08.419590+00:00",
+      "trace_id": "64e87b3e-86e3-405e-a3e8-fc08efd25969",
+      "step": "ticket:TCK-1009:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1009",
+      "metadata": {
+        "ticket_id": "TCK-1009",
+        "result": "escalated"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:08.419873+00:00",
+      "trace_id": "9a425d9d-2664-4022-a9da-188d200e7351",
+      "step": "ticket:TCK-1010",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1010",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:08.420236+00:00",
+      "trace_id": "41e8a6ec-8a3d-4b88-8114-73385bd0d4e8",
+      "step": "ticket:TCK-1010:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1010",
+      "metadata": {
+        "ticket_id": "TCK-1010",
+        "category": "feature_request",
+        "resolvable": true
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:08.420658+00:00",
+      "trace_id": "b75c2276-67c1-4911-a3f4-0470d3769981",
+      "step": "ticket:TCK-1010:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1010",
+      "metadata": {
+        "ticket_id": "TCK-1010",
+        "result": "resolved"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:08.421132+00:00",
+      "trace_id": "832ea8ec-95ee-48cf-af42-29c794ea7dd1",
+      "step": "ticket:TCK-1011",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1011",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:08.421539+00:00",
+      "trace_id": "1d7aa1c4-2b0a-42cc-891f-2315465bb36c",
+      "step": "ticket:TCK-1011:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1011",
+      "metadata": {
+        "ticket_id": "TCK-1011",
+        "category": "csv_export",
+        "resolvable": false
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:08.421931+00:00",
+      "trace_id": "1604c0f4-f301-4343-9256-dfea45225664",
+      "step": "ticket:TCK-1011:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1011",
+      "metadata": {
+        "ticket_id": "TCK-1011",
+        "result": "escalated"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:08.422200+00:00",
+      "trace_id": "68a068e1-9d02-49e4-a3b5-2f6183676a9c",
+      "step": "ticket:TCK-1012",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1012",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:08.422503+00:00",
+      "trace_id": "4a71a4d8-7fc2-4330-ab29-937bc1b9261e",
+      "step": "ticket:TCK-1012:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1012",
+      "metadata": {
+        "ticket_id": "TCK-1012",
+        "category": "duplicate_billing",
+        "resolvable": false
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:08.422732+00:00",
+      "trace_id": "e0e2cb12-2bb7-4741-94a7-fe4caef6cd96",
+      "step": "ticket:TCK-1012:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1012",
+      "metadata": {
+        "ticket_id": "TCK-1012",
+        "result": "escalated"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:08.422924+00:00",
+      "trace_id": "d74c49e6-b4c9-4b43-9b2e-8c266f3db37e",
+      "step": "ticket:TCK-1013",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1013",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:08.423347+00:00",
+      "trace_id": "5520fd10-d8ca-45aa-a3a5-dc4e79af20f4",
+      "step": "ticket:TCK-1013:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1013",
+      "metadata": {
+        "ticket_id": "TCK-1013",
+        "category": "mobile_login_loop",
+        "resolvable": false
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:08.423674+00:00",
+      "trace_id": "12a82908-d286-4bbe-b9e6-95505590fa42",
+      "step": "ticket:TCK-1013:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1013",
+      "metadata": {
+        "ticket_id": "TCK-1013",
+        "result": "escalated"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:08.423940+00:00",
+      "trace_id": "50b5e5e2-e10d-4240-98ef-e94d8a40c3f2",
+      "step": "ticket:TCK-1014",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1014",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:08.424155+00:00",
+      "trace_id": "aa82b26c-7c30-4bfc-89ae-577a050ca33e",
+      "step": "ticket:TCK-1014:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1014",
+      "metadata": {
+        "ticket_id": "TCK-1014",
+        "category": "invoice_copy",
+        "resolvable": true
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:08.424416+00:00",
+      "trace_id": "87fdebaa-901a-477f-bf08-fb54558ec8a8",
+      "step": "ticket:TCK-1014:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1014",
+      "metadata": {
+        "ticket_id": "TCK-1014",
+        "result": "resolved"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:08.424636+00:00",
+      "trace_id": "986c62dd-3d44-49e7-9070-3de39bc37c10",
+      "step": "ticket:TCK-1015",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1015",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:08.424922+00:00",
+      "trace_id": "184c94d1-a889-47f9-af2e-0202173d9758",
+      "step": "ticket:TCK-1015:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1015",
+      "metadata": {
+        "ticket_id": "TCK-1015",
+        "category": "csv_export",
+        "resolvable": false
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:08.425404+00:00",
+      "trace_id": "1763a9db-e409-4237-a04b-01aeed7d9340",
+      "step": "ticket:TCK-1015:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1015",
+      "metadata": {
+        "ticket_id": "TCK-1015",
+        "result": "escalated"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:08.425635+00:00",
+      "trace_id": "8becb2b5-7f24-4c1d-8493-6d20fae917f7",
+      "step": "ticket:TCK-1016",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1016",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:08.426473+00:00",
+      "trace_id": "3893a761-37ec-4639-86e1-0e4089edbf1a",
+      "step": "ticket:TCK-1016:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1016",
+      "metadata": {
+        "ticket_id": "TCK-1016",
+        "category": "team_invites",
+        "resolvable": true
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:22.512310+00:00",
+      "trace_id": "f61e070c-7364-47f7-8aff-776912f07d2c",
+      "step": "ticket:TCK-1016:resolve",
+      "agent": "resolver",
+      "parent_step": "ticket:TCK-1016",
+      "metadata": {
+        "ticket_id": "TCK-1016",
+        "category": "team_invites",
+        "attempt": 1
+      },
+      "provider": "zen",
+      "model": "glm-5",
+      "prompt_tokens_estimate": 148,
+      "system_prompt": "You are a frontline support agent drafting a customer response. Use the supplied knowledge base only. Return JSON only and do not use markdown fences.",
+      "user_prompt": "Draft a support response for this ticket.\n\nReturn JSON with exactly these keys:\ncustomer_response: a concise email-style reply\nkb_article: the knowledge base title you used\nresolution_summary: one sentence summarizing the action taken\n\nKnowledge Base Entry:\nTitle: Invite flow troubleshooting\nSummary: Advise the customer to retry from desktop Chrome, verify the teammate email is not already pending, and capture the invite timestamp if the spinner persists.\nWhen to use: Use for teammate invite failures or stuck invite modals.\n\nTicket ID: TCK-1016\nCustomer: alexander.brooks@example.com\nSubject: Can't invite teammate\nBody: The invite modal spins forever after I enter my teammate's email address. We are blocked from onboarding two new reps.\n\nTriage category: team_invites\nPriority: medium\nResolution reason: Frontline support can provide invite troubleshooting and retry guidance.",
+      "response": "{\n  \"customer_response\": \"Hi Alexander,\\n\\nI'm sorry you're experiencing issues inviting your new reps. Please try retrying the invite from a desktop Chrome browser and verify that the teammate's email is not already in a pending state. If the spinner persists, please capture the invite timestamp and let us know so we can investigate further.\\n\\nBest,\\nSupport\",\n  \"kb_article\": \"Invite flow troubleshooting\",\n  \"resolution_summary\": \"Advised the customer to retry the invite on desktop Chrome, check for pending emails, and provide the invite timestamp if the spinner persists.\"\n}",
+      "latency_ms": 14085.25,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:22.513443+00:00",
+      "trace_id": "dde93518-170b-4ef3-9f48-c10a75334159",
+      "step": "ticket:TCK-1016:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1016",
+      "metadata": {
+        "ticket_id": "TCK-1016",
+        "result": "resolved"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:22.513511+00:00",
+      "trace_id": "0412d26f-f869-4608-9c02-162461c53425",
+      "step": "ticket:TCK-1017",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1017",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:22.513871+00:00",
+      "trace_id": "a80c1dbc-59d7-4acf-8820-33312e38bf29",
+      "step": "ticket:TCK-1017:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1017",
+      "metadata": {
+        "ticket_id": "TCK-1017",
+        "category": "mobile_login_loop",
+        "resolvable": false
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:22.513997+00:00",
+      "trace_id": "41e9a37a-00e5-40ad-93b9-76b556c79099",
+      "step": "ticket:TCK-1017:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1017",
+      "metadata": {
+        "ticket_id": "TCK-1017",
+        "result": "escalated"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:22.514083+00:00",
+      "trace_id": "bedb833d-b2ae-4246-be99-8a86b2055ad3",
+      "step": "ticket:TCK-1018",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1018",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:22.514190+00:00",
+      "trace_id": "c6e5a1f4-e5b7-43b6-8316-a35acf044364",
+      "step": "ticket:TCK-1018:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1018",
+      "metadata": {
+        "ticket_id": "TCK-1018",
+        "category": "search_accuracy",
+        "resolvable": true
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:34.488046+00:00",
+      "trace_id": "560e9e07-7ca2-45a7-97b1-385bc752c9c9",
+      "step": "ticket:TCK-1018:resolve",
+      "agent": "resolver",
+      "parent_step": "ticket:TCK-1018",
+      "metadata": {
+        "ticket_id": "TCK-1018",
+        "category": "search_accuracy",
+        "attempt": 1
+      },
+      "provider": "zen",
+      "model": "glm-5",
+      "prompt_tokens_estimate": 151,
+      "system_prompt": "You are a frontline support agent drafting a customer response. Use the supplied knowledge base only. Return JSON only and do not use markdown fences.",
+      "user_prompt": "Draft a support response for this ticket.\n\nReturn JSON with exactly these keys:\ncustomer_response: a concise email-style reply\nkb_article: the knowledge base title you used\nresolution_summary: one sentence summarizing the action taken\n\nKnowledge Base Entry:\nTitle: Search mismatch workaround\nSummary: Recommend searching with the account ID or email as a temporary workaround and note that relevance tuning has been flagged internally.\nWhen to use: Use when exact-name search results are poor but the account still exists.\n\nTicket ID: TCK-1018\nCustomer: daniel.patterson@example.com\nSubject: Search results not matching exact account name\nBody: Searching the exact customer account name returns unrelated records first, so reps are opening the wrong accounts.\n\nTriage category: search_accuracy\nPriority: medium\nResolution reason: Frontline support can provide a temporary search workaround while relevance is reviewed.",
+      "response": "{\n  \"customer_response\": \"Hi Daniel,\\n\\nThank you for reaching out about the search results not matching the exact account name. As a temporary workaround, we recommend searching for accounts using the account ID or email address instead of the customer name. This should help ensure your reps are opening the correct accounts right away. Please note that we have flagged this issue internally for relevance tuning to improve search accuracy in the future.\\n\\nLet us know if you need any further assistance.\\n\\nBest regards,\\nSupport Team\",\n  \"kb_article\": \"Search mismatch workaround\",\n  \"resolution_summary\": \"Provided a temporary workaround to search by account ID or email and informed the customer that relevance tuning has been flagged internally.\"\n}",
+      "latency_ms": 11973.64,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:34.488694+00:00",
+      "trace_id": "3f0e98f2-7063-49b2-945e-20af389ec508",
+      "step": "ticket:TCK-1018:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1018",
+      "metadata": {
+        "ticket_id": "TCK-1018",
+        "result": "resolved"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:34.489133+00:00",
+      "trace_id": "e74bbbbf-33ad-41c3-9cf9-ed3ae0ef572a",
+      "step": "ticket:TCK-1019",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1019",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:34.489545+00:00",
+      "trace_id": "a0adce5c-b1ef-4caf-8e9e-28f6cfa9c733",
+      "step": "ticket:TCK-1019:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1019",
+      "metadata": {
+        "ticket_id": "TCK-1019",
+        "category": "mobile_login_loop",
+        "resolvable": false
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:34.489915+00:00",
+      "trace_id": "31d74432-7314-4e44-b7cc-0319f7c6f893",
+      "step": "ticket:TCK-1019:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1019",
+      "metadata": {
+        "ticket_id": "TCK-1019",
+        "result": "escalated"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:34.490313+00:00",
+      "trace_id": "07b2a390-55ba-4a22-826d-c4cb1fc15d1d",
+      "step": "ticket:TCK-1020",
+      "agent": "manager",
+      "parent_step": null,
+      "metadata": {
+        "ticket_id": "TCK-1020",
+        "action": "plan"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:34.490688+00:00",
+      "trace_id": "fe0362cd-9755-4f73-bba8-859dea258069",
+      "step": "ticket:TCK-1020:route",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1020",
+      "metadata": {
+        "ticket_id": "TCK-1020",
+        "category": "feature_request",
+        "resolvable": true
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:47:34.491071+00:00",
+      "trace_id": "147873d9-a191-4048-aea2-6e57dd2f7d38",
+      "step": "ticket:TCK-1020:finalize",
+      "agent": "manager",
+      "parent_step": "ticket:TCK-1020",
+      "metadata": {
+        "ticket_id": "TCK-1020",
+        "result": "resolved"
+      },
+      "provider": null,
+      "model": null,
+      "prompt_tokens_estimate": null,
+      "system_prompt": null,
+      "user_prompt": null,
+      "response": null,
+      "latency_ms": null,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    },
+    {
+      "timestamp": "2026-04-19T09:48:04.673813+00:00",
+      "trace_id": "07397d01-fa3f-4dae-9730-6c3e99e86c09",
+      "step": "recommendations",
+      "agent": "analyst",
+      "parent_step": null,
+      "metadata": {
+        "ticket_count": 20,
+        "attempt": 1
+      },
+      "provider": "zen",
+      "model": "glm-5",
+      "prompt_tokens_estimate": 2598,
+      "system_prompt": "You are a senior support analyst writing product recommendations from support data. Return JSON only with a `recommendations` array of exactly 3 items. Each item must contain `title` and `reason`.",
+      "user_prompt": "Use this weekly support summary and ticket output to produce exactly 3 concrete product recommendations.\nFocus on the highest-leverage fixes, not generic process advice.\n\nWeekly Summary:\n{\n  \"total_tickets\": 20,\n  \"resolved_count\": 7,\n  \"escalated_count\": 13,\n  \"resolution_rate\": 35.0,\n  \"escalation_rate\": 65.0,\n  \"category_breakdown\": [\n    {\n      \"category\": \"mobile_login_loop\",\n      \"label\": \"Mobile login loop\",\n      \"count\": 6\n    },\n    {\n      \"category\": \"csv_export\",\n      \"label\": \"CSV export failures\",\n      \"count\": 4\n    },\n    {\n      \"category\": \"duplicate_billing\",\n      \"label\": \"Duplicate billing\",\n      \"count\": 3\n    },\n    {\n      \"category\": \"feature_request\",\n      \"label\": \"Feature requests\",\n      \"count\": 2\n    },\n    {\n      \"category\": \"password_reset\",\n      \"label\": \"Password reset\",\n      \"count\": 1\n    },\n    {\n      \"category\": \"slow_dashboard\",\n      \"label\": \"Slow dashboard\",\n      \"count\": 1\n    },\n    {\n      \"category\": \"invoice_copy\",\n      \"label\": \"Invoice copy issues\",\n      \"count\": 1\n    },\n    {\n      \"category\": \"team_invites\",\n      \"label\": \"Team invite failures\",\n      \"count\": 1\n    },\n    {\n      \"category\": \"search_accuracy\",\n      \"label\": \"Search accuracy\",\n      \"count\": 1\n    }\n  ],\n  \"top_recurring_issues\": [\n    {\n      \"category\": \"mobile_login_loop\",\n      \"label\": \"Mobile login loop\",\n      \"count\": 6,\n      \"resolved\": 0,\n      \"escalated\": 6,\n      \"example_quotes\": [\n        \"On my iPhone in Safari I sign in, finish 2FA, and then land back on the login screen again. I tried three times and c...\",\n        \"After I enter the texted verification code on mobile Safari, the page flashes and sends me back to sign in. Desktop C...\"\n      ]\n    },\n    {\n      \"category\": \"csv_export\",\n      \"label\": \"CSV export failures\",\n      \"count\": 4,\n      \"resolved\": 0,\n      \"escalated\": 4,\n      \"example_quotes\": [\n        \"Export to CSV completes but the downloaded file only has headers and no rows. This started today and blocks my financ...\",\n        \"The CSV file downloads, but several columns including customer name are empty even though they appear in the web table.\"\n      ]\n    },\n    {\n      \"category\": \"duplicate_billing\",\n      \"label\": \"Duplicate billing\",\n      \"count\": 3,\n      \"resolved\": 0,\n      \"escalated\": 3,\n      \"example_quotes\": [\n        \"I upgraded once this morning but my card statement shows two charges from your company. Please confirm whether one wi...\",\n        \"Our admin only clicked upgrade once, but we have two invoice emails and two identical card charges. Please fix this b...\"\n      ]\n    }\n  ],\n  \"escalation_groups\": [\n    {\n      \"category\": \"mobile_login_loop\",\n      \"label\": \"Mobile login loop\",\n      \"count\": 6,\n      \"reasons\": [\n        \"Persistent login loops on mobile Safari usually need engineering investigation.\",\n        \"Persistent login loops on mobile Safari usually need engineering investigation.\",\n        \"Persistent login loops on mobile Safari usually need engineering investigation.\"\n      ],\n      \"example_quotes\": [\n        \"On my iPhone in Safari I sign in, finish 2FA, and then land back on the login screen again. I tried three times and c...\",\n        \"After I enter the texted verification code on mobile Safari, the page flashes and sends me back to sign in. Desktop C...\"\n      ]\n    },\n    {\n      \"category\": \"csv_export\",\n      \"label\": \"CSV export failures\",\n      \"count\": 4,\n      \"reasons\": [\n        \"CSV export issues are typically product bugs that frontline support cannot patch.\",\n        \"CSV export issues are typically product bugs that frontline support cannot patch.\",\n        \"CSV export issues are typically product bugs that frontline support cannot patch.\"\n      ],\n      \"example_quotes\": [\n        \"Export to CSV completes but the downloaded file only has headers and no rows. This started today and blocks my financ...\",\n        \"The CSV file downloads, but several columns including customer name are empty even though they appear in the web table.\"\n      ]\n    },\n    {\n      \"category\": \"duplicate_billing\",\n      \"label\": \"Duplicate billing\",\n      \"count\": 3,\n      \"reasons\": [\n        \"Duplicate billing needs billing-system investigation and refund handling.\",\n        \"Duplicate billing needs billing-system investigation and refund handling.\",\n        \"Duplicate billing needs billing-system investigation and refund handling.\"\n      ],\n      \"example_quotes\": [\n        \"I upgraded once this morning but my card statement shows two charges from your company. Please confirm whether one wi...\",\n        \"Our admin only clicked upgrade once, but we have two invoice emails and two identical card charges. Please fix this b...\"\n      ]\n    }\n  ],\n  \"sparkline\": {\n    \"days\": [\n      \"12\",\n      \"13\",\n      \"14\",\n      \"15\",\n      \"16\",\n      \"17\",\n      \"18\"\n    ],\n    \"counts\": [\n      3,\n      3,\n      3,\n      3,\n      3,\n      3,\n      2\n    ],\n    \"line\": \"@@@@@@*\"\n  }\n}\n\nPipeline Output JSON:\n[\n  {\n    \"id\": \"TCK-1001\",\n    \"created_at\": \"2026-04-12T09:14:00Z\",\n    \"customer_email\": \"ava.wilson@example.com\",\n    \"subject\": \"App keeps bouncing me back to login on iPhone\",\n    \"body\": \"On my iPhone in Safari I sign in, finish 2FA, and then land back on the login screen again. I tried three times and can't stay logged in long enough to check orders.\",\n    \"triage\": {\n      \"category\": \"mobile_login_loop\",\n      \"priority\": \"high\",\n      \"resolvable\": false,\n      \"reason\": \"Persistent login loops on mobile Safari usually need engineering investigation.\"\n    },\n    \"result\": {\n      \"status\": \"escalated\",\n      \"reason\": \"Persistent login loops on mobile Safari usually need engineering investigation.\"\n    }\n  },\n  {\n    \"id\": \"TCK-1002\",\n    \"created_at\": \"2026-04-12T13:42:00Z\",\n    \"customer_email\": \"liam.turner@example.com\",\n    \"subject\": \"CSV export downloads blank file\",\n    \"body\": \"Export to CSV completes but the downloaded file only has headers and no rows. This started today and blocks my finance handoff.\",\n    \"triage\": {\n      \"category\": \"csv_export\",\n      \"priority\": \"high\",\n      \"resolvable\": false,\n      \"reason\": \"CSV export issues are typically product bugs that frontline support cannot patch.\"\n    },\n    \"result\": {\n      \"status\": \"escalated\",\n      \"reason\": \"CSV export issues are typically product bugs that frontline support cannot patch.\"\n    }\n  },\n  {\n    \"id\": \"TCK-1003\",\n    \"created_at\": \"2026-04-12T16:05:00Z\",\n    \"customer_email\": \"mia.bennett@example.com\",\n    \"subject\": \"Looks like I was billed twice\",\n    \"body\": \"I upgraded once this morning but my card statement shows two charges from your company. Please confirm whether one will be reversed automatically.\",\n    \"triage\": {\n      \"category\": \"duplicate_billing\",\n      \"priority\": \"high\",\n      \"resolvable\": false,\n      \"reason\": \"Duplicate billing needs billing-system investigation and refund handling.\"\n    },\n    \"result\": {\n      \"status\": \"escalated\",\n      \"reason\": \"Duplicate billing needs billing-system investigation and refund handling.\"\n    }\n  },\n  {\n    \"id\": \"TCK-1004\",\n    \"created_at\": \"2026-04-13T08:27:00Z\",\n    \"customer_email\": \"noah.foster@example.com\",\n    \"subject\": \"Mobile login loops after verification code\",\n    \"body\": \"After I enter the texted verification code on mobile Safari, the page flashes and sends me back to sign in. Desktop Chrome works.\",\n    \"triage\": {\n      \"category\": \"mobile_login_loop\",\n      \"priority\": \"high\",\n      \"resolvable\": false,\n      \"reason\": \"Persistent login loops on mobile Safari usually need engineering investigation.\"\n    },\n    \"result\": {\n      \"status\": \"escalated\",\n      \"reason\": \"Persistent login loops on mobile Safari usually need engineering investigation.\"\n    }\n  },\n  {\n    \"id\": \"TCK-1005\",\n    \"created_at\": \"2026-04-13T11:11:00Z\",\n    \"customer_email\": \"emma.ross@example.com\",\n    \"subject\": \"Password reset email never arrived\",\n    \"body\": \"I requested a password reset twice and nothing has hit my inbox or spam folder. Can you trigger it manually?\",\n    \"triage\": {\n      \"category\": \"password_reset\",\n      \"priority\": \"high\",\n      \"resolvable\": true,\n      \"reason\": \"Frontline support can resend the reset flow and help with inbox troubleshooting.\"\n    },\n    \"result\": {\n      \"status\": \"resolved\",\n      \"customer_response\": \"Hi emma.ross@example.com,\\n\\nThanks for reaching out. Confirm the account email, ask the customer to check spam, and resend the reset link. If still missing after 10 minutes, escalate to identity support.\\n\\nPlease let us know if that does not resolve the issue.\",\n      \"kb_article\": \"Password reset troubleshooting\",\n      \"resolution_summary\": \"Confirm the account email, ask the customer to check spam, and resend the reset link. If still missing after 10 minutes, escalate to identity support.\"\n    }\n  },\n  {\n    \"id\": \"TCK-1006\",\n    \"created_at\": \"2026-04-13T15:54:00Z\",\n    \"customer_email\": \"ethan.reed@example.com\",\n    \"subject\": \"CSV export is missing customer names\",\n    \"body\": \"The CSV file downloads, but several columns including customer name are empty even though they appear in the web table.\",\n    \"triage\": {\n      \"category\": \"csv_export\",\n      \"priority\": \"high\",\n      \"resolvable\": false,\n      \"reason\": \"CSV export issues are typically product bugs that frontline support cannot patch.\"\n    },\n    \"result\": {\n      \"status\": \"escalated\",\n      \"reason\": \"CSV export issues are typically product bugs that frontline support cannot patch.\"\n    }\n  },\n  {\n    \"id\": \"TCK-1007\",\n    \"created_at\": \"2026-04-14T09:03:00Z\",\n    \"customer_email\": \"olivia.cooper@example.com\",\n    \"subject\": \"Charged twice for monthly plan\",\n    \"body\": \"Our admin only clicked upgrade once, but we have two invoice emails and two identical card charges. Please fix this before accounting closes books.\",\n    \"triage\": {\n      \"category\": \"duplicate_billing\",\n      \"priority\": \"high\",\n      \"resolvable\": false,\n      \"reason\": \"Duplicate billing needs billing-system investigation and refund handling.\"\n    },\n    \"result\": {\n      \"status\": \"escalated\",\n      \"reason\": \"Duplicate billing needs billing-system investigation and refund handling.\"\n    }\n  },\n  {\n    \"id\": \"TCK-1008\",\n    \"created_at\": \"2026-04-14T12:36:00Z\",\n    \"customer_email\": \"james.parker@example.com\",\n    \"subject\": \"Dashboard very slow this afternoon\",\n    \"body\": \"Pages that normally load in a second are taking 15 to 20 seconds. Reports are especially slow and time out sometimes.\",\n    \"triage\": {\n      \"category\": \"slow_dashboard\",\n      \"priority\": \"high\",\n      \"resolvable\": true,\n      \"reason\": \"Frontline support can collect timing details and offer safe troubleshooting steps.\"\n    },\n    \"result\": {\n      \"status\": \"resolved\",\n      \"customer_response\": \"Hi James,\\n\\nI'm sorry to hear you're experiencing slowness and timeouts with your dashboard and reports this afternoon. To help us investigate this, could you please try accessing the dashboard during a lower-traffic period to see if the performance improves? Additionally, if you can narrow down the specific report or page that is timing out and provide the exact timestamp of when the slowness occurs, it will greatly help our team look into the root cause.\\n\\nThank you,\\nSupport Team\",\n      \"kb_article\": \"Performance troubleshooting\",\n      \"resolution_summary\": \"Requested the customer to test during lower-traffic periods, identify the specific slow reports or pages, and provide timestamps for further investigation.\"\n    }\n  },\n  {\n    \"id\": \"TCK-1009\",\n    \"created_at\": \"2026-04-14T17:22:00Z\",\n    \"customer_email\": \"sophia.mitchell@example.com\",\n    \"subject\": \"iOS login keeps kicking me out\",\n    \"body\": \"I can log in from my laptop, but on iOS Safari I get kicked out immediately after the home page appears. It feels like the session never sticks.\",\n    \"triage\": {\n      \"category\": \"mobile_login_loop\",\n      \"priority\": \"high\",\n      \"resolvable\": false,\n      \"reason\": \"Persistent login loops on mobile Safari usually need engineering investigation.\"\n    },\n    \"result\": {\n      \"status\": \"escalated\",\n      \"reason\": \"Persistent login loops on mobile Safari usually need engineering investigation.\"\n    }\n  },\n  {\n    \"id\": \"TCK-1010\",\n    \"created_at\": \"2026-04-15T07:48:00Z\",\n    \"customer_email\": \"benjamin.ward@example.com\",\n    \"subject\": \"Request for dark mode\",\n    \"body\": \"Our support team works nights and would really appreciate a dark mode. The white background is rough in low light.\",\n    \"triage\": {\n      \"category\": \"feature_request\",\n      \"priority\": \"low\",\n      \"resolvable\": true,\n      \"reason\": \"Frontline support can acknowledge the request and log product feedback.\"\n    },\n    \"result\": {\n      \"status\": \"resolved\",\n      \"customer_response\": \"Hi benjamin.ward@example.com,\\n\\nThanks for reaching out. Thank the customer, confirm the request is logged, and provide a realistic statement that there is no committed ship date yet.\\n\\nPlease let us know if that does not resolve the issue.\",\n      \"kb_article\": \"Feature request acknowledgement\",\n      \"resolution_summary\": \"Thank the customer, confirm the request is logged, and provide a realistic statement that there is no committed ship date yet.\"\n    }\n  },\n  {\n    \"id\": \"TCK-1011\",\n    \"created_at\": \"2026-04-15T10:19:00Z\",\n    \"customer_email\": \"isabella.cox@example.com\",\n    \"subject\": \"Exported CSV contains garbled characters\",\n    \"body\": \"Names with accents are coming through as broken characters in the CSV export. Excel opens it, but the encoding looks wrong.\",\n    \"triage\": {\n      \"category\": \"csv_export\",\n      \"priority\": \"high\",\n      \"resolvable\": false,\n      \"reason\": \"CSV export issues are typically product bugs that frontline support cannot patch.\"\n    },\n    \"result\": {\n      \"status\": \"escalated\",\n      \"reason\": \"CSV export issues are typically product bugs that frontline support cannot patch.\"\n    }\n  },\n  {\n    \"id\": \"TCK-1012\",\n    \"created_at\": \"2026-04-15T14:08:00Z\",\n    \"customer_email\": \"lucas.bailey@example.com\",\n    \"subject\": \"Duplicate charge and no refund confirmation\",\n    \"body\": \"I already emailed earlier this week. We were charged twice on the Pro annual plan and still have not received any refund timeline.\",\n    \"triage\": {\n      \"category\": \"duplicate_billing\",\n      \"priority\": \"high\",\n      \"resolvable\": false,\n      \"reason\": \"Duplicate billing needs billing-system investigation and refund handling.\"\n    },\n    \"result\": {\n      \"status\": \"escalated\",\n      \"reason\": \"Duplicate billing needs billing-system investigation and refund handling.\"\n    }\n  },\n  {\n    \"id\": \"TCK-1013\",\n    \"created_at\": \"2026-04-16T09:51:00Z\",\n    \"customer_email\": \"amelia.rivera@example.com\",\n    \"subject\": \"Login loop only on mobile browser\",\n    \"body\": \"This only happens on my phone browser. I sign in, see the dashboard for a split second, then the app returns to the login page again.\",\n    \"triage\": {\n      \"category\": \"mobile_login_loop\",\n      \"priority\": \"high\",\n      \"resolvable\": false,\n      \"reason\": \"Persistent login loops on mobile Safari usually need engineering investigation.\"\n    },\n    \"result\": {\n      \"status\": \"escalated\",\n      \"reason\": \"Persistent login loops on mobile Safari usually need engineering investigation.\"\n    }\n  },\n  {\n    \"id\": \"TCK-1014\",\n    \"created_at\": \"2026-04-16T12:25:00Z\",\n    \"customer_email\": \"henry.morris@example.com\",\n    \"subject\": \"Typo in invoice email\",\n    \"body\": \"Your invoice email says 'reciept' instead of 'receipt'. Not urgent, but it looks sloppy when forwarded to finance.\",\n    \"triage\": {\n      \"category\": \"invoice_copy\",\n      \"priority\": \"low\",\n      \"resolvable\": true,\n      \"reason\": \"Frontline support can confirm the typo and reassure the customer.\"\n    },\n    \"result\": {\n      \"status\": \"resolved\",\n      \"customer_response\": \"Hi henry.morris@example.com,\\n\\nThanks for reaching out. Acknowledge the typo, confirm it does not affect billing data, and note that the issue has been forwarded to the product team.\\n\\nPlease let us know if that does not resolve the issue.\",\n      \"kb_article\": \"Invoice wording issue\",\n      \"resolution_summary\": \"Acknowledge the typo, confirm it does not affect billing data, and note that the issue has been forwarded to the product team.\"\n    }\n  },\n  {\n    \"id\": \"TCK-1015\",\n    \"created_at\": \"2026-04-16T18:02:00Z\",\n    \"customer_email\": \"charlotte.price@example.com\",\n    \"subject\": \"CSV export cuts off after 200 rows\",\n    \"body\": \"Our report should have around 800 rows, but the downloaded CSV stops at 200 every time. The in-app table still shows all rows.\",\n    \"triage\": {\n      \"category\": \"csv_export\",\n      \"priority\": \"high\",\n      \"resolvable\": false,\n      \"reason\": \"CSV export issues are typically product bugs that frontline support cannot patch.\"\n    },\n    \"result\": {\n      \"status\": \"escalated\",\n      \"reason\": \"CSV export issues are typically product bugs that frontline support cannot patch.\"\n    }\n  },\n  {\n    \"id\": \"TCK-1016\",\n    \"created_at\": \"2026-04-17T08:40:00Z\",\n    \"customer_email\": \"alexander.brooks@example.com\",\n    \"subject\": \"Can't invite teammate\",\n    \"body\": \"The invite modal spins forever after I enter my teammate's email address. We are blocked from onboarding two new reps.\",\n    \"triage\": {\n      \"category\": \"team_invites\",\n      \"priority\": \"medium\",\n      \"resolvable\": true,\n      \"reason\": \"Frontline support can provide invite troubleshooting and retry guidance.\"\n    },\n    \"result\": {\n      \"status\": \"resolved\",\n      \"customer_response\": \"Hi Alexander,\\n\\nI'm sorry you're experiencing issues inviting your new reps. Please try retrying the invite from a desktop Chrome browser and verify that the teammate's email is not already in a pending state. If the spinner persists, please capture the invite timestamp and let us know so we can investigate further.\\n\\nBest,\\nSupport\",\n      \"kb_article\": \"Invite flow troubleshooting\",\n      \"resolution_summary\": \"Advised the customer to retry the invite on desktop Chrome, check for pending emails, and provide the invite timestamp if the spinner persists.\"\n    }\n  },\n  {\n    \"id\": \"TCK-1017\",\n    \"created_at\": \"2026-04-17T11:33:00Z\",\n    \"customer_email\": \"harper.long@example.com\",\n    \"subject\": \"Stuck in mobile login loop again\",\n    \"body\": \"This started after your last update. On mobile Safari the app keeps asking me to log in repeatedly and never holds the session cookie.\",\n    \"triage\": {\n      \"category\": \"mobile_login_loop\",\n      \"priority\": \"high\",\n      \"resolvable\": false,\n      \"reason\": \"Persistent login loops on mobile Safari usually need engineering investigation.\"\n    },\n    \"result\": {\n      \"status\": \"escalated\",\n      \"reason\": \"Persistent login loops on mobile Safari usually need engineering investigation.\"\n    }\n  },\n  {\n    \"id\": \"TCK-1018\",\n    \"created_at\": \"2026-04-17T16:47:00Z\",\n    \"customer_email\": \"daniel.patterson@example.com\",\n    \"subject\": \"Search results not matching exact account name\",\n    \"body\": \"Searching the exact customer account name returns unrelated records first, so reps are opening the wrong accounts.\",\n    \"triage\": {\n      \"category\": \"search_accuracy\",\n      \"priority\": \"medium\",\n      \"resolvable\": true,\n      \"reason\": \"Frontline support can provide a temporary search workaround while relevance is reviewed.\"\n    },\n    \"result\": {\n      \"status\": \"resolved\",\n      \"customer_response\": \"Hi Daniel,\\n\\nThank you for reaching out about the search results not matching the exact account name. As a temporary workaround, we recommend searching for accounts using the account ID or email address instead of the customer name. This should help ensure your reps are opening the correct accounts right away. Please note that we have flagged this issue internally for relevance tuning to improve search accuracy in the future.\\n\\nLet us know if you need any further assistance.\\n\\nBest regards,\\nSupport Team\",\n      \"kb_article\": \"Search mismatch workaround\",\n      \"resolution_summary\": \"Provided a temporary workaround to search by account ID or email and informed the customer that relevance tuning has been flagged internally.\"\n    }\n  },\n  {\n    \"id\": \"TCK-1019\",\n    \"created_at\": \"2026-04-18T09:07:00Z\",\n    \"customer_email\": \"evelyn.hughes@example.com\",\n    \"subject\": \"Mobile sign-in redirects in circles\",\n    \"body\": \"When I try signing in on my iPad, the app redirects between two pages and never lands me in the product. Desktop is fine.\",\n    \"triage\": {\n      \"category\": \"mobile_login_loop\",\n      \"priority\": \"high\",\n      \"resolvable\": false,\n      \"reason\": \"Persistent login loops on mobile Safari usually need engineering investigation.\"\n    },\n    \"result\": {\n      \"status\": \"escalated\",\n      \"reason\": \"Persistent login loops on mobile Safari usually need engineering investigation.\"\n    }\n  },\n  {\n    \"id\": \"TCK-1020\",\n    \"created_at\": \"2026-04-18T14:29:00Z\",\n    \"customer_email\": \"michael.flores@example.com\",\n    \"subject\": \"Feature request: schedule exports\",\n    \"body\": \"It would help a lot if CSV exports could be scheduled weekly instead of run manually every Friday.\",\n    \"triage\": {\n      \"category\": \"feature_request\",\n      \"priority\": \"low\",\n      \"resolvable\": true,\n      \"reason\": \"Frontline support can acknowledge the request and log product feedback.\"\n    },\n    \"result\": {\n      \"status\": \"resolved\",\n      \"customer_response\": \"Hi michael.flores@example.com,\\n\\nThanks for reaching out. Thank the customer, confirm the request is logged, and provide a realistic statement that there is no committed ship date yet.\\n\\nPlease let us know if that does not resolve the issue.\",\n      \"kb_article\": \"Feature request acknowledgement\",\n      \"resolution_summary\": \"Thank the customer, confirm the request is logged, and provide a realistic statement that there is no committed ship date yet.\"\n    }\n  }\n]",
+      "response": "```json\n{\n  \"recommendations\": [\n    {\n      \"title\": \"Fix mobile Safari session/login loop\",\n      \"reason\": \"This is the highest volume issue, accounting for 30% of all tickets (6 tickets) with a 0% resolution rate. Users on iOS/iPad Safari are repeatedly redirected to the login screen after completing 2FA or seeing a brief flash of the dashboard, indicating a broken session cookie or authentication redirect on mobile browsers. Fixing this will drastically reduce escalations and unblock mobile users.\"\n    },\n    {\n      \"title\": \"Overhaul CSV export functionality\",\n      \"reason\": \"CSV exports account for 20% of tickets (4 tickets) and are entirely escalated due to being unpatchable product bugs. The reported issues are varied\u2014blank files with headers only, missing columns, encoding errors for accented characters, and a 200-row truncation limit\u2014indicating systemic flaws in the export pipeline that require a comprehensive engineering fix rather than isolated patches.\"\n    },\n    {\n      \"title\": \"Implement idempotency keys on the billing/upgrade endpoint\",\n      \"reason\": \"Duplicate billing accounts for 15% of tickets (3 tickets) with a 0% resolution rate, and directly impacts customer trust and finances. Users are being charged twice for a single upgrade click. Adding idempotency to the payment processing will prevent race conditions or double-clicks from creating duplicate charges and invoices.\"\n    }\n  ]\n}\n```",
+      "latency_ms": 30178.36,
+      "status": "ok",
+      "run_id": "pipeline-20260419T094652Z-12ff4156"
+    }
+  ]
+}

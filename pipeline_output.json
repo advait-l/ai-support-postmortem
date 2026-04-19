@@ -134,9 +134,9 @@
     },
     "result": {
       "status": "resolved",
-      "customer_response": "Hi James,\n\nI'm sorry to hear you're experiencing slowness and timeouts with your dashboard and reports this afternoon. To help us investigate this, could you please try accessing the dashboard during a lower-traffic period to see if the performance improves? Additionally, if you can narrow down the specific report or page that is timing out and provide the exact timestamp of when the slowness occurs, it will greatly help our team look into the root cause.\n\nThank you,\nSupport Team",
+      "customer_response": "Hi James,\n\nI'm sorry to hear that your dashboard and reports are experiencing significant slowness and timeouts this afternoon. To help us investigate this issue, could you please try accessing the pages again during a lower-traffic period? Additionally, could you narrow down the specific report or page names where you are seeing the timeouts and provide the exact timestamps of when these delays occur? This information will be crucial for our team to pinpoint the cause.\n\nThank you,\nSupport Team",
       "kb_article": "Performance troubleshooting",
-      "resolution_summary": "Requested the customer to test during lower-traffic periods, identify the specific slow reports or pages, and provide timestamps for further investigation."
+      "resolution_summary": "Requested the customer to retry during a lower-traffic period and provide specific report names and timestamps for investigation."
     }
   },
   {
@@ -276,9 +276,9 @@
     },
     "result": {
       "status": "resolved",
-      "customer_response": "Hi Alexander,\n\nI'm sorry you're experiencing issues inviting your new reps. Please try retrying the invite from a desktop Chrome browser and verify that the teammate's email is not already in a pending state. If the spinner persists, please capture the invite timestamp and let us know so we can investigate further.\n\nBest,\nSupport",
+      "customer_response": "Hi Alexander,\n\nI'm sorry to hear the invite modal is stuck spinning when you try to add your new reps. Let's try a few troubleshooting steps to get this resolved.\n\nFirst, please try sending the invite again using the desktop Chrome browser. Also, double-check that the teammate's email address isn't already in a pending invite state. If the spinner still persists after these steps, please reply with the exact timestamp of when you attempted the invite so we can investigate further.\n\nBest,\nSupport Team",
       "kb_article": "Invite flow troubleshooting",
-      "resolution_summary": "Advised the customer to retry the invite on desktop Chrome, check for pending emails, and provide the invite timestamp if the spinner persists."
+      "resolution_summary": "Provided troubleshooting steps for the stuck invite modal, including retrying on desktop Chrome, checking for pending invites, and requesting a timestamp if the issue persists."
     }
   },
   {
@@ -312,9 +312,9 @@
     },
     "result": {
       "status": "resolved",
-      "customer_response": "Hi Daniel,\n\nThank you for reaching out about the search results not matching the exact account name. As a temporary workaround, we recommend searching for accounts using the account ID or email address instead of the customer name. This should help ensure your reps are opening the correct accounts right away. Please note that we have flagged this issue internally for relevance tuning to improve search accuracy in the future.\n\nLet us know if you need any further assistance.\n\nBest regards,\nSupport Team",
+      "customer_response": "Hi Daniel,\n\nThank you for reaching out about the search accuracy issue. We are aware that searching by exact account name can sometimes return unrelated records first. As a temporary workaround, we recommend searching for accounts using the account ID or email address instead, which should provide the correct results.\n\nWe have flagged this issue internally for relevance tuning to improve the search functionality. Please let us know if you need any further assistance.\n\nBest regards,\nSupport Team",
       "kb_article": "Search mismatch workaround",
-      "resolution_summary": "Provided a temporary workaround to search by account ID or email and informed the customer that relevance tuning has been flagged internally."
+      "resolution_summary": "Provided a temporary workaround to search by account ID or email and noted that relevance tuning has been flagged internally."
     }
   },
   {

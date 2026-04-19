@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>pipeline-20260419T095902Z-d2a60c63 Observability</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0a0e1a;
+      --surface: #111827;
+      --surface-raised: #1a2238;
+      --muted: #8896b3;
+      --text: #e8ecf4;
+      --accent: #60a5fa;
+      --border: #1e2d4a;
+      --good: #34d399;
+      --bad: #f87171;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+    nav {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(10, 14, 26, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+    }
+    nav .nav-inner {
+      max-width: 1120px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 56px;
+    }
+    nav .logo {
+      font-weight: 700; font-size: 1.05rem; color: var(--text);
+      display: flex; align-items: center; gap: 10px;
+    }
+    nav .logo .logo-dot {
+      width: 9px; height: 9px; border-radius: 50%;
+      background: var(--accent); display: inline-block;
+    }
+    nav a {
+      color: var(--muted); text-decoration: none; font-size: 0.9rem;
+      transition: color 0.15s;
+    }
+    nav a:hover { color: var(--accent); }
+    nav .nav-links { display: flex; gap: 24px; }
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+    .back-nav {
+      display: flex; gap: 16px; margin-bottom: 24px;
+    }
+    .back-nav a {
+      color: var(--muted); font-size: 0.9rem;
+    }
+    .back-nav a:hover { color: var(--accent); }
+    .hero h1 {
+      font-size: 1.5rem; font-weight: 700;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      margin-bottom: 8px;
+    }
+    .hero .subtitle {
+      color: var(--muted); font-size: 0.95rem;
+    }
+    .section {
+      margin-top: 36px;
+    }
+    .section-header {
+      font-size: 1rem; font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+    }
+    .stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    .stat.good .stat-value { color: var(--good); }
+    .stat.bad .stat-value { color: var(--bad); }
+    .stat-label {
+      display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em;
+      color: var(--muted); margin-bottom: 4px;
+    }
+    .stat-value {
+      display: block; font-size: 1.5rem; font-weight: 800;
+    }
+    .meta-row {
+      display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px;
+      font-size: 0.85rem; color: var(--muted);
+    }
+    .artifact-links {
+      display: flex; gap: 10px; flex-wrap: wrap;
+    }
+    .artifact-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text); text-decoration: none; font-size: 0.85rem;
+      transition: border-color 0.15s;
+    }
+    .artifact-link:hover { border-color: var(--accent); }
+    .trace-list {
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .trace-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      transition: border-color 0.15s;
+      overflow: hidden;
+    }
+    .trace-card:hover { border-color: var(--accent); }
+    .trace-card[open] {
+      border-color: rgba(96, 165, 250, 0.45);
+    }
+    .trace-card > summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 16px;
+    }
+    .trace-card > summary::-webkit-details-marker { display: none; }
+    .trace-summary-main {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+      min-width: 0;
+    }
+    .trace-summary-meta {
+      display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px;
+      color: var(--muted); font-size: 0.78rem;
+      text-align: right;
+    }
+    .trace-summary-meta span {
+      font-family: ui-monospace, SFMono-Regular, monospace;
+    }
+    .trace-body {
+      border-top: 1px solid var(--border);
+      padding: 14px 16px 16px;
+      display: grid;
+      gap: 12px;
+    }
+    .trace-body-row {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px;
+    }
+    .mini-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 8px; border-radius: 999px; border: 1px solid var(--border);
+      background: var(--surface-raised);
+      color: var(--text); font-size: 0.72rem;
+    }
+    .mini-chip.accent { border-color: var(--accent)44; background: var(--accent)18; }
+    .mini-chip.bad { border-color: var(--bad)44; background: var(--bad)18; }
+    .mini-chip-label {
+      color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em;
+      font-size: 0.65rem;
+    }
+    .mini-chip-value { font-weight: 700; }
+    .badge {
+      display: inline-block; font-size: 0.7rem; font-weight: 600;
+      padding: 3px 8px; border-radius: 6px; border: 1px solid;
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge.agent {
+      background: var(--accent)22; color: var(--accent); border-color: var(--accent)44;
+    }
+    .step {
+      font-size: 0.85rem; font-weight: 600;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+    }
+    .detail {
+      font-size: 0.8rem; display: flex; align-items: center; gap: 8px;
+    }
+    .detail .label {
+      color: var(--muted); font-weight: 600; min-width: 64px;
+    }
+    .detail code {
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-size: 0.75rem; background: var(--surface-raised);
+      padding: 2px 6px; border-radius: 4px;
+      word-break: break-all;
+    }
+    .raw-block {
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+    }
+    .raw-block.error {
+      border-color: var(--bad)44;
+    }
+    .raw-label {
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--muted); font-weight: 700; margin-bottom: 8px;
+    }
+    .raw-block pre {
+      white-space: pre-wrap; word-break: break-word;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-size: 0.75rem; line-height: 1.5; color: var(--text);
+    }
+    .raw-block.error pre {
+      color: var(--bad);
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-inner">
+      <div class="logo"><span class="logo-dot"></span>Post-Mortem</div>
+      <div class="nav-links">
+        <a href="./index.html">Run History</a>
+        <a href="../index.html">Latest Report</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <div class="back-nav">
+      <a href="./index.html">&#8592; Runs</a>
+      <a href="../index.html">&#8592; Report</a>
+    </div>
+
+    <div class="hero">
+      <h1>pipeline-20260419T095902Z-d2a60c63</h1>
+      <p class="subtitle">Observability trace details for this pipeline run.</p>
+    </div>
+
+    <section class="section">
+      <div class="section-header">Summary</div>
+      <div class="stats"><div class="stat"><span class="stat-label">Run Type</span><span class="stat-value">pipeline</span></div><div class="stat"><span class="stat-label">Tickets</span><span class="stat-value">20</span></div><div class="stat good"><span class="stat-label">Resolved</span><span class="stat-value">7</span></div><div class="stat bad"><span class="stat-label">Escalated</span><span class="stat-value">13</span></div></div>
+      <div class="meta-row">
+        <span>Started: 2026-04-19T09:59:02</span>
+        <span>Finished: 2026-04-19T10:00:00</span>
+        
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">Artifacts</div>
+      <div class="artifact-links"><a href="../pipeline-20260419T095902Z-d2a60c63-report.html" class="artifact-link">&#128196; Report</a><a href="../pipeline-20260419T095902Z-d2a60c63.traces.json" class="artifact-link">&#128196; Traces</a><a href="../pipeline-20260419T095902Z-d2a60c63.json" class="artifact-link">&#128196; Manifest</a></div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">Trace Overview</div>
+      <div class="meta-row"><span class="mini-chip accent"><span class="mini-chip-label">Trace events</span><span class="mini-chip-value">64</span></span><span class="mini-chip bad"><span class="mini-chip-label">Errors</span><span class="mini-chip-value">0</span></span><span class="mini-chip"><span class="mini-chip-label">analyst</span><span class="mini-chip-value">1</span></span><span class="mini-chip"><span class="mini-chip-label">manager</span><span class="mini-chip-value">60</span></span><span class="mini-chip"><span class="mini-chip-label">resolver</span><span class="mini-chip-value">3</span></span><span class="mini-chip"><span class="mini-chip-label">ok</span><span class="mini-chip-value">64</span></span></div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">Trace Timeline (64 events, collapsed by default)</div>
+      <div class="trace-list"><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">TCK-1001</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:02</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1001</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>-</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;action&quot;: &quot;plan&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1001&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">route</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:02</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1001</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1001</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;category&quot;: &quot;mobile_login_loop&quot;,
+  &quot;resolvable&quot;: false,
+  &quot;ticket_id&quot;: &quot;TCK-1001&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">finalize</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:02</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1001</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1001</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;result&quot;: &quot;escalated&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1001&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">TCK-1002</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:02</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1002</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>-</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;action&quot;: &quot;plan&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1002&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">route</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:02</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1002</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1002</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;category&quot;: &quot;csv_export&quot;,
+  &quot;resolvable&quot;: false,
+  &quot;ticket_id&quot;: &quot;TCK-1002&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">finalize</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:02</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1002</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1002</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;result&quot;: &quot;escalated&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1002&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">TCK-1003</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:02</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1003</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>-</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;action&quot;: &quot;plan&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1003&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">route</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:02</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1003</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1003</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;category&quot;: &quot;duplicate_billing&quot;,
+  &quot;resolvable&quot;: false,
+  &quot;ticket_id&quot;: &quot;TCK-1003&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">finalize</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:02</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1003</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1003</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;result&quot;: &quot;escalated&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1003&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">TCK-1004</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:02</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1004</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>-</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;action&quot;: &quot;plan&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1004&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">route</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:02</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1004</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1004</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;category&quot;: &quot;mobile_login_loop&quot;,
+  &quot;resolvable&quot;: false,
+  &quot;ticket_id&quot;: &quot;TCK-1004&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">finalize</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:02</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1004</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1004</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;result&quot;: &quot;escalated&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1004&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">TCK-1005</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:02</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1005</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>-</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;action&quot;: &quot;plan&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1005&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">route</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:02</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1005</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1005</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;category&quot;: &quot;password_reset&quot;,
+  &quot;resolvable&quot;: true,
+  &quot;ticket_id&quot;: &quot;TCK-1005&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">finalize</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:02</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1005</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1005</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;result&quot;: &quot;resolved&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1005&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">TCK-1006</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:02</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1006</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>-</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;action&quot;: &quot;plan&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1006&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">route</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:02</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1006</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1006</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;category&quot;: &quot;csv_export&quot;,
+  &quot;resolvable&quot;: false,
+  &quot;ticket_id&quot;: &quot;TCK-1006&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">finalize</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:02</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1006</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1006</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;result&quot;: &quot;escalated&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1006&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">TCK-1007</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:02</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1007</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>-</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;action&quot;: &quot;plan&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1007&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">route</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:02</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1007</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1007</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;category&quot;: &quot;duplicate_billing&quot;,
+  &quot;resolvable&quot;: false,
+  &quot;ticket_id&quot;: &quot;TCK-1007&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">finalize</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:02</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1007</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1007</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;result&quot;: &quot;escalated&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1007&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">TCK-1008</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:02</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1008</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>-</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;action&quot;: &quot;plan&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1008&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">route</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:02</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1008</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1008</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;category&quot;: &quot;slow_dashboard&quot;,
+  &quot;resolvable&quot;: true,
+  &quot;ticket_id&quot;: &quot;TCK-1008&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">resolver</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">resolve</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:19</span><span>17618.4ms</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1008</span></span><span class="mini-chip"><span class="mini-chip-label">Prompt tokens</span><span class="mini-chip-value">149</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1008</code></div><div class="detail"><span class="label">Provider</span><code>zen</code></div><div class="detail"><span class="label">Model</span><code>glm-5</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;attempt&quot;: 1,
+  &quot;category&quot;: &quot;slow_dashboard&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1008&quot;
+}</pre></div><div class="raw-block"><div class="raw-label">Prompts</div><pre>You are a frontline support agent drafting a customer response. Use the supplied knowledge base only. Return JSON only and do not use markdown fences. Draft a support response for this ticket. Return JSON with exactly these keys: customer_response: a concise email-style reply kb_article: the knowledge base title you used resolution_summary: one sentence summarizing the action taken Knowledge Base Entry: Title: Performance troubleshooting Summary: Ask the customer to retry during a lower-traffic period, narrow to the specific report or page, and capture the timestamp for investigation. When to use: Use for slow pages, report timeouts, or intermittent latency. Ticket ID: TCK-1008 Customer: james.parker@example.com Subject: Dashboard very slow this afternoon Body: Pages that normally load in a second are taking 15 to 20 seconds. Reports are especially slow and time out sometimes. Triage category: slow_dashboard Priority: high Resolution reason: Frontline support can collect timing details and offer safe troubleshooting steps.</pre></div><div class="raw-block"><div class="raw-label">Response</div><pre>{ &quot;customer_response&quot;: &quot;Hi James,\n\nI&#x27;m sorry to hear that your dashboard and reports are experiencing significant slowness and timeouts this afternoon. To help us investigate this issue, could you please try accessing the pages again during a lower-traffic period? Additionally, could you narrow down the specific report or page names where you are seeing the timeouts and provide the exact timestamps of when these delays occur? This information will be crucial for our team to pinpoint the cause.\n\nThank you,\nSupport Team&quot;, &quot;kb_article&quot;: &quot;Performance troubleshooting&quot;, &quot;resolution_summary&quot;: &quot;Requested the customer to retry during a lower-traffic period and provide specific report names and timestamps for investigation.&quot; }</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">finalize</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:19</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1008</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1008</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;result&quot;: &quot;resolved&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1008&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">TCK-1009</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:19</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1009</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>-</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;action&quot;: &quot;plan&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1009&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">route</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:19</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1009</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1009</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;category&quot;: &quot;mobile_login_loop&quot;,
+  &quot;resolvable&quot;: false,
+  &quot;ticket_id&quot;: &quot;TCK-1009&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">finalize</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:19</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1009</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1009</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;result&quot;: &quot;escalated&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1009&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">TCK-1010</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:19</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1010</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>-</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;action&quot;: &quot;plan&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1010&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">route</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:19</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1010</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1010</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;category&quot;: &quot;feature_request&quot;,
+  &quot;resolvable&quot;: true,
+  &quot;ticket_id&quot;: &quot;TCK-1010&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">finalize</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:19</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1010</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1010</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;result&quot;: &quot;resolved&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1010&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">TCK-1011</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:19</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1011</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>-</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;action&quot;: &quot;plan&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1011&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">route</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:19</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1011</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1011</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;category&quot;: &quot;csv_export&quot;,
+  &quot;resolvable&quot;: false,
+  &quot;ticket_id&quot;: &quot;TCK-1011&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">finalize</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:19</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1011</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1011</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;result&quot;: &quot;escalated&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1011&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">TCK-1012</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:19</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1012</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>-</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;action&quot;: &quot;plan&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1012&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">route</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:19</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1012</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1012</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;category&quot;: &quot;duplicate_billing&quot;,
+  &quot;resolvable&quot;: false,
+  &quot;ticket_id&quot;: &quot;TCK-1012&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">finalize</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:19</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1012</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1012</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;result&quot;: &quot;escalated&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1012&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">TCK-1013</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:19</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1013</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>-</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;action&quot;: &quot;plan&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1013&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">route</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:19</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1013</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1013</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;category&quot;: &quot;mobile_login_loop&quot;,
+  &quot;resolvable&quot;: false,
+  &quot;ticket_id&quot;: &quot;TCK-1013&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">finalize</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:19</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1013</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1013</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;result&quot;: &quot;escalated&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1013&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">TCK-1014</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:19</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1014</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>-</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;action&quot;: &quot;plan&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1014&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">route</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:19</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1014</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1014</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;category&quot;: &quot;invoice_copy&quot;,
+  &quot;resolvable&quot;: true,
+  &quot;ticket_id&quot;: &quot;TCK-1014&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">finalize</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:19</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1014</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1014</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;result&quot;: &quot;resolved&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1014&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">TCK-1015</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:19</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1015</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>-</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;action&quot;: &quot;plan&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1015&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">route</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:19</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1015</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1015</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;category&quot;: &quot;csv_export&quot;,
+  &quot;resolvable&quot;: false,
+  &quot;ticket_id&quot;: &quot;TCK-1015&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">finalize</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:19</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1015</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1015</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;result&quot;: &quot;escalated&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1015&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">TCK-1016</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:19</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1016</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>-</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;action&quot;: &quot;plan&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1016&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">route</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:19</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1016</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1016</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;category&quot;: &quot;team_invites&quot;,
+  &quot;resolvable&quot;: true,
+  &quot;ticket_id&quot;: &quot;TCK-1016&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">resolver</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">resolve</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:34</span><span>14803.4ms</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1016</span></span><span class="mini-chip"><span class="mini-chip-label">Prompt tokens</span><span class="mini-chip-value">148</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1016</code></div><div class="detail"><span class="label">Provider</span><code>zen</code></div><div class="detail"><span class="label">Model</span><code>glm-5</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;attempt&quot;: 1,
+  &quot;category&quot;: &quot;team_invites&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1016&quot;
+}</pre></div><div class="raw-block"><div class="raw-label">Prompts</div><pre>You are a frontline support agent drafting a customer response. Use the supplied knowledge base only. Return JSON only and do not use markdown fences. Draft a support response for this ticket. Return JSON with exactly these keys: customer_response: a concise email-style reply kb_article: the knowledge base title you used resolution_summary: one sentence summarizing the action taken Knowledge Base Entry: Title: Invite flow troubleshooting Summary: Advise the customer to retry from desktop Chrome, verify the teammate email is not already pending, and capture the invite timestamp if the spinner persists. When to use: Use for teammate invite failures or stuck invite modals. Ticket ID: TCK-1016 Customer: alexander.brooks@example.com Subject: Can&#x27;t invite teammate Body: The invite modal spins forever after I enter my teammate&#x27;s email address. We are blocked from onboarding two new reps. Triage category: team_invites Priority: medium Resolution reason: Frontline support can provide invite troubleshooting and retry guidance.</pre></div><div class="raw-block"><div class="raw-label">Response</div><pre>{ &quot;customer_response&quot;: &quot;Hi Alexander,\n\nI&#x27;m sorry to hear the invite modal is stuck spinning when you try to add your new reps. Let&#x27;s try a few troubleshooting steps to get this resolved.\n\nFirst, please try sending the invite again using the desktop Chrome browser. Also, double-check that the teammate&#x27;s email address isn&#x27;t already in a pending invite state. If the spinner still persists after these steps, please reply with the exact timestamp of when you attempted the invite so we can investigate further.\n\nBest,\nSupport Team&quot;, &quot;kb_article&quot;: &quot;Invite flow troubleshooting&quot;, &quot;resolution_summary&quot;: &quot;Provided troubleshooting steps for the stuck invite modal, including retrying on desktop Chrome, checking for pending invites, and requesting a timestamp if the issue persists.&quot; }</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">finalize</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:34</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1016</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1016</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;result&quot;: &quot;resolved&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1016&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">TCK-1017</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:34</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1017</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>-</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;action&quot;: &quot;plan&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1017&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">route</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:34</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1017</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1017</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;category&quot;: &quot;mobile_login_loop&quot;,
+  &quot;resolvable&quot;: false,
+  &quot;ticket_id&quot;: &quot;TCK-1017&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">finalize</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:34</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1017</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1017</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;result&quot;: &quot;escalated&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1017&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">TCK-1018</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:34</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1018</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>-</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;action&quot;: &quot;plan&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1018&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">route</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:34</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1018</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1018</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;category&quot;: &quot;search_accuracy&quot;,
+  &quot;resolvable&quot;: true,
+  &quot;ticket_id&quot;: &quot;TCK-1018&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">resolver</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">resolve</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:47</span><span>12776.2ms</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1018</span></span><span class="mini-chip"><span class="mini-chip-label">Prompt tokens</span><span class="mini-chip-value">151</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1018</code></div><div class="detail"><span class="label">Provider</span><code>zen</code></div><div class="detail"><span class="label">Model</span><code>glm-5</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;attempt&quot;: 1,
+  &quot;category&quot;: &quot;search_accuracy&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1018&quot;
+}</pre></div><div class="raw-block"><div class="raw-label">Prompts</div><pre>You are a frontline support agent drafting a customer response. Use the supplied knowledge base only. Return JSON only and do not use markdown fences. Draft a support response for this ticket. Return JSON with exactly these keys: customer_response: a concise email-style reply kb_article: the knowledge base title you used resolution_summary: one sentence summarizing the action taken Knowledge Base Entry: Title: Search mismatch workaround Summary: Recommend searching with the account ID or email as a temporary workaround and note that relevance tuning has been flagged internally. When to use: Use when exact-name search results are poor but the account still exists. Ticket ID: TCK-1018 Customer: daniel.patterson@example.com Subject: Search results not matching exact account name Body: Searching the exact customer account name returns unrelated records first, so reps are opening the wrong accounts. Triage category: search_accuracy Priority: medium Resolution reason: Frontline support can provide a temporary search workaround while relevance is reviewed.</pre></div><div class="raw-block"><div class="raw-label">Response</div><pre>{ &quot;customer_response&quot;: &quot;Hi Daniel,\n\nThank you for reaching out about the search accuracy issue. We are aware that searching by exact account name can sometimes return unrelated records first. As a temporary workaround, we recommend searching for accounts using the account ID or email address instead, which should provide the correct results.\n\nWe have flagged this issue internally for relevance tuning to improve the search functionality. Please let us know if you need any further assistance.\n\nBest regards,\nSupport Team&quot;, &quot;kb_article&quot;: &quot;Search mismatch workaround&quot;, &quot;resolution_summary&quot;: &quot;Provided a temporary workaround to search by account ID or email and noted that relevance tuning has been flagged internally.&quot; }</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">finalize</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:47</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1018</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1018</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;result&quot;: &quot;resolved&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1018&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">TCK-1019</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:47</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1019</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>-</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;action&quot;: &quot;plan&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1019&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">route</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:47</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1019</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1019</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;category&quot;: &quot;mobile_login_loop&quot;,
+  &quot;resolvable&quot;: false,
+  &quot;ticket_id&quot;: &quot;TCK-1019&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">finalize</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:47</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1019</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1019</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;result&quot;: &quot;escalated&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1019&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">TCK-1020</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:47</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1020</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>-</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;action&quot;: &quot;plan&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1020&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">route</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:47</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1020</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1020</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;category&quot;: &quot;feature_request&quot;,
+  &quot;resolvable&quot;: true,
+  &quot;ticket_id&quot;: &quot;TCK-1020&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">manager</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">finalize</span></div><div class="trace-summary-meta"><span>2026-04-19T09:59:47</span><span>-</span><span class="mini-chip"><span class="mini-chip-label">Ticket</span><span class="mini-chip-value">TCK-1020</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>ticket:TCK-1020</code></div><div class="detail"><span class="label">Provider</span><code>local</code></div><div class="detail"><span class="label">Model</span><code>-</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;result&quot;: &quot;resolved&quot;,
+  &quot;ticket_id&quot;: &quot;TCK-1020&quot;
+}</pre></div></div></details><details class="trace-card"><summary class="trace-summary"><div class="trace-summary-main"><span class="badge agent">analyst</span><span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">ok</span><span class="step">recommendations</span></div><div class="trace-summary-meta"><span>2026-04-19T10:00:00</span><span>12945.7ms</span><span class="mini-chip"><span class="mini-chip-label">Prompt tokens</span><span class="mini-chip-value">2619</span></span></div></summary><div class="trace-body"><div class="trace-body-row"><div class="detail"><span class="label">Parent</span><code>-</code></div><div class="detail"><span class="label">Provider</span><code>zen</code></div><div class="detail"><span class="label">Model</span><code>glm-5</code></div></div><div class="raw-block"><div class="raw-label">Metadata</div><pre>{
+  &quot;attempt&quot;: 1,
+  &quot;ticket_count&quot;: 20
+}</pre></div><div class="raw-block"><div class="raw-label">Prompts</div><pre>You are a senior support analyst writing product recommendations from support data. Return JSON only with a `recommendations` array of exactly 3 items. Each item must contain `title` and `reason`. Use this weekly support summary and ticket output to produce exactly 3 concrete product recommendations. Focus on the highest-leverage fixes, not generic process advice. Weekly Summary: { &quot;total_tickets&quot;: 20, &quot;resolved_count&quot;: 7, &quot;escalated_count&quot;: 13, &quot;resolution_rate&quot;: 35.0, &quot;escalation_rate&quot;: 65.0, &quot;category_breakdown&quot;: [ { &quot;category&quot;: &quot;mobile_login_loop&quot;, &quot;label&quot;: &quot;Mobile login loop&quot;, &quot;count&quot;: 6 }, { &quot;category&quot;: &quot;csv_export&quot;, &quot;label&quot;: &quot;CSV export failures&quot;, &quot;count&quot;: 4 }, { &quot;category&quot;: &quot;duplicate_billing&quot;, &quot;label&quot;: &quot;Duplicate billing&quot;, &quot;count&quot;: 3 }, { &quot;category&quot;: &quot;feature_request&quot;, &quot;label&quot;: &quot;Feature requests&quot;, &quot;count&quot;: 2 }, { &quot;category&quot;: &quot;password_reset&quot;, &quot;label&quot;: &quot;Password reset&quot;, &quot;count&quot;: 1 }, { &quot;category&quot;: &quot;slow_dashboard&quot;, &quot;label&quot;: &quot;Slow dashboard&quot;, &quot;count&quot;: 1 }, { &quot;category&quot;: &quot;invoice_copy&quot;, &quot;label&quot;: &quot;Invoice copy issues&quot;, &quot;count&quot;: 1 }, { &quot;category&quot;: &quot;team_invites&quot;, &quot;label&quot;: &quot;Team invite failures&quot;, &quot;count&quot;: 1 }, { &quot;category&quot;: &quot;search_accuracy&quot;, &quot;label&quot;: &quot;Search accuracy&quot;, &quot;coun...</pre></div><div class="raw-block"><div class="raw-label">Response</div><pre>```json { &quot;recommendations&quot;: [ { &quot;title&quot;: &quot;Fix session cookie handling on mobile Safari&quot;, &quot;reason&quot;: &quot;Mobile login loops represent 30% of all tickets (6 total) with a 0% resolution rate, completely locking users out on iOS. One user reported the session cookie isn&#x27;t sticking after 2FA, indicating a likely regression in mobile auth that needs immediate engineering attention.&quot; }, { &quot;title&quot;: &quot;Overhaul CSV export logic for data integrity and limits&quot;, &quot;reason&quot;: &quot;CSV exports are failing in multiple ways—missing columns, garbled encoding, and a 200-row truncation limit—accounting for 4 escalated tickets. These bugs block critical financial workflows and cannot be resolved by frontline support, requiring core fixes to the export pipeline.&quot; }, { &quot;title&quot;: &quot;Add idempotency to the billing upgrade process&quot;, &quot;reason&quot;: &quot;Duplicate billing generated 3 escalated tickets from users being double-charged for a single upgrade click. Implementing idempotency keys in the payment submission flow will prevent duplicate card charges and eliminate the need for manual billing investigations and refunds.&quot; } ] } ```</pre></div></div></details></div>
+    </section>
+  </main>
+</body>
+</html>

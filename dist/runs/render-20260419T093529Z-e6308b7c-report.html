@@ -55,17 +55,6 @@
       transition: color 0.15s;
     }
     nav a:hover { color: var(--accent); }
-    .nav-button {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 8px 14px; border-radius: 999px;
-      background: var(--accent-dim); border: 1px solid var(--accent)44;
-      color: var(--text); text-decoration: none; font-size: 0.88rem;
-      font-weight: 600;
-    }
-    .nav-button:hover {
-      border-color: var(--accent);
-      color: var(--text);
-    }
     nav .nav-links { display: flex; gap: 24px; }
     main {
       max-width: 1120px;
@@ -85,22 +74,6 @@
     .hero .subtitle {
       color: var(--muted); font-size: 1.05rem; margin-top: 8px; max-width: 640px;
     }
-    .hero-actions {
-      display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px;
-    }
-    .hero-cta {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 10px 16px; border-radius: 999px;
-      text-decoration: none; font-weight: 700; font-size: 0.92rem;
-      border: 1px solid var(--border);
-    }
-    .hero-cta.primary {
-      background: var(--accent); color: #08111f; border-color: var(--accent);
-    }
-    .hero-cta.secondary {
-      background: var(--surface); color: var(--text);
-    }
-    .hero-cta:hover { transform: translateY(-1px); }
     .section {
       margin-top: 48px;
     }
@@ -279,7 +252,7 @@
     <div class="nav-inner">
       <div class="logo"><span class="logo-dot"></span>Post-Mortem</div>
       <div class="nav-links">
-        <a href="/runs/" class="nav-button">Run History</a>
+        <a href="./runs/">Run History</a>
       </div>
     </div>
   </nav>
@@ -288,10 +261,6 @@
     <div class="hero">
       <h1>Weekly Support Post-Mortem</h1>
       <p class="subtitle">Automated triage, resolution, and escalation analysis for the past week of support tickets.</p>
-      <div class="hero-actions">
-        <a href="/runs/" class="hero-cta primary">Open Run History</a>
-        <a href="/latest-run.html" class="hero-cta secondary">Latest Run Details</a>
-      </div>
     </div>
 
     <section class="section">
@@ -354,7 +323,7 @@
         <div class="section-icon recs">&#127919;</div>
         <h2>Recommendations</h2>
       </div>
-      <div class="grid"><article class="card recommendation-card"><div class="card-header"><div class="card-icon recommendation">&#127919;</div><div class="card-title"><h3>Fix session cookie handling on mobile Safari</h3></div></div><p>Mobile login loops represent 30% of all tickets (6 total) with a 0% resolution rate, completely locking users out on iOS. One user reported the session cookie isn&#x27;t sticking after 2FA, indicating a likely regression in mobile auth that needs immediate engineering attention.</p></article><article class="card recommendation-card"><div class="card-header"><div class="card-icon recommendation">&#128640;</div><div class="card-title"><h3>Overhaul CSV export logic for data integrity and limits</h3></div></div><p>CSV exports are failing in multiple ways—missing columns, garbled encoding, and a 200-row truncation limit—accounting for 4 escalated tickets. These bugs block critical financial workflows and cannot be resolved by frontline support, requiring core fixes to the export pipeline.</p></article><article class="card recommendation-card"><div class="card-header"><div class="card-icon recommendation">&#128172;</div><div class="card-title"><h3>Add idempotency to the billing upgrade process</h3></div></div><p>Duplicate billing generated 3 escalated tickets from users being double-charged for a single upgrade click. Implementing idempotency keys in the payment submission flow will prevent duplicate card charges and eliminate the need for manual billing investigations and refunds.</p></article></div>
+      <div class="grid"><article class="card recommendation-card"><div class="card-header"><div class="card-icon recommendation">&#127919;</div><div class="card-title"><h3>Fix mobile Safari/iOS session persistence causing login loops</h3></div></div><p>Accounting for 30% of all tickets and 100% escalated, mobile users are completely blocked from logging in due to session cookies failing to persist after 2FA. Fixing this will eliminate the largest source of escalations.</p></article><article class="card recommendation-card"><div class="card-header"><div class="card-icon recommendation">&#128640;</div><div class="card-title"><h3>Resolve CSV export bugs causing missing data, encoding errors, and row limits</h3></div></div><p>CSV export failures represent 20% of tickets and are entirely escalated. The exports are fundamentally broken—outputting only headers, dropping columns, truncating at 200 rows, and mangling accented characters—which blocks critical financial reporting.</p></article><article class="card recommendation-card"><div class="card-header"><div class="card-icon recommendation">&#128172;</div><div class="card-title"><h3>Add idempotency to the billing upgrade flow to prevent duplicate charges</h3></div></div><p>Duplicate billing accounts for 3 tickets and requires manual refund handling. Implementing idempotency keys on the upgrade/payment endpoint will prevent double processing from a single click, reducing billing escalations and protecting customer trust.</p></article></div>
     </section>
 
     <footer>Generated from local pipeline output and rendered as a static site for deployment.</footer>

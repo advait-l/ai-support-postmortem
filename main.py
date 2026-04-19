@@ -1476,20 +1476,21 @@ def render_run_detail_html(manifest: dict, trace_entries: list[dict]) -> str:
     )
 
     artifact_links = []
+    artifact_prefix = "../"
     report_snapshot = manifest.get("artifacts", {}).get("report_snapshot")
     traces_snapshot = manifest.get("artifacts", {}).get("traces_snapshot")
     manifest_snapshot = manifest.get("artifacts", {}).get("manifest_snapshot")
     if report_snapshot:
         artifact_links.append(
-            f'<a href="./{escape(report_snapshot)}" class="artifact-link">&#128196; Report</a>'
+            f'<a href="{artifact_prefix}{escape(report_snapshot)}" class="artifact-link">&#128196; Report</a>'
         )
     if traces_snapshot:
         artifact_links.append(
-            f'<a href="./{escape(traces_snapshot)}" class="artifact-link">&#128196; Traces</a>'
+            f'<a href="{artifact_prefix}{escape(traces_snapshot)}" class="artifact-link">&#128196; Traces</a>'
         )
     if manifest_snapshot:
         artifact_links.append(
-            f'<a href="./{escape(manifest_snapshot)}" class="artifact-link">&#128196; Manifest</a>'
+            f'<a href="{artifact_prefix}{escape(manifest_snapshot)}" class="artifact-link">&#128196; Manifest</a>'
         )
 
     return f"""<!doctype html>
@@ -1828,7 +1829,7 @@ def render_runs_index_html(manifests: list[dict]) -> str:
                 if case_name
                 else ""
             )
-            + f'<a href="./{escape(run_id)}.html" class="run-link">View Details &#8594;</a>'
+            + f'<a href="./{escape(run_id)}/" class="run-link">View Details &#8594;</a>'
             + f"</article>"
         )
 
@@ -2014,7 +2015,7 @@ def publish_run_snapshot(context: dict, manifest: dict) -> None:
         return
 
     run_id = context["run_id"]
-    detail_html = os.path.join(DIST_RUNS_DIR, f"{run_id}.html")
+    detail_html = os.path.join(DIST_RUNS_DIR, run_id, "index.html")
     report_snapshot_html = os.path.join(DIST_RUNS_DIR, f"{run_id}-report.html")
     snapshot_json = os.path.join(DIST_RUNS_DIR, f"{run_id}.json")
     traces_snapshot_json = os.path.join(DIST_RUNS_DIR, f"{run_id}.traces.json")

@@ -1,0 +1,18 @@
+{
+  "run_id": "pipeline-20260419T094652Z-12ff4156",
+  "started_at": "2026-04-19T09:46:52.964786+00:00",
+  "finished_at": "2026-04-19T09:48:04.710243+00:00",
+  "ticket_count": 20,
+  "resolved": 7,
+  "escalated": 13,
+  "artifacts": {
+    "pipeline_output": "runs/pipeline-20260419T094652Z-12ff4156/pipeline_output.json",
+    "report_md": "runs/pipeline-20260419T094652Z-12ff4156/report.md",
+    "report_json": "runs/pipeline-20260419T094652Z-12ff4156/report.json",
+    "viewer": "runs/pipeline-20260419T094652Z-12ff4156/latest-run.html",
+    "report_snapshot": "pipeline-20260419T094652Z-12ff4156-report.html",
+    "manifest_snapshot": "pipeline-20260419T094652Z-12ff4156.json",
+    "traces_snapshot": "pipeline-20260419T094652Z-12ff4156.traces.json"
+  },
+  "trace_count": 64
+}
