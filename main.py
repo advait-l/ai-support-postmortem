@@ -1061,9 +1061,6 @@ def render_report_html(summary: dict, recommendations: list[dict]) -> str:
     .hero-cta.primary {{
       background: var(--accent); color: #08111f; border-color: var(--accent);
     }}
-    .hero-cta.secondary {{
-      background: var(--surface); color: var(--text);
-    }}
     .hero-cta:hover {{ transform: translateY(-1px); }}
     .section {{
       margin-top: 48px;
@@ -1254,7 +1251,6 @@ def render_report_html(summary: dict, recommendations: list[dict]) -> str:
       <p class="subtitle">Automated triage, resolution, and escalation analysis for the past week of support tickets.</p>
       <div class="hero-actions">
         <a href="/runs/" class="hero-cta primary">Open Run History</a>
-        <a href="/latest-run.html" class="hero-cta secondary">Latest Run Details</a>
       </div>
     </div>
 
