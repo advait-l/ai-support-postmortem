@@ -1970,6 +1970,66 @@ def render_runs_index_html(manifests: list[dict]) -> str:
         except (TypeError, ValueError):
             return "-"
 
+    def _duration_ms(manifest: dict) -> float | None:
+        started_at = manifest.get("started_at")
+        finished_at = manifest.get("finished_at")
+        if not started_at or not finished_at:
+            return None
+
+        try:
+            start = datetime.fromisoformat(str(started_at).replace("Z", "+00:00"))
+            end = datetime.fromisoformat(str(finished_at).replace("Z", "+00:00"))
+        except Exception:
+            return None
+
+        return max((end - start).total_seconds() * 1000, 0)
+
+    def _format_duration(value_ms: float | None) -> str:
+        if value_ms is None:
+            return "-"
+        if value_ms < 1000:
+            return f"{value_ms:.0f}ms"
+        return f"{value_ms / 1000:.1f}s"
+
+    def _delta_chip(delta: float | None, direction: str = "neutral") -> str:
+        if delta is None:
+            return '<span class="delta-chip">-</span>'
+
+        if delta == 0:
+            return '<span class="delta-chip">No change</span>'
+
+        if direction == "higher_better":
+            tone = "good" if delta > 0 else "bad"
+        elif direction == "lower_better":
+            tone = "good" if delta < 0 else "bad"
+        else:
+            tone = "accent"
+
+        sign = "+" if delta > 0 else "-"
+        abs_delta = abs(delta)
+        if abs_delta >= 1:
+            value = str(int(round(abs_delta)))
+        elif abs_delta.is_integer():
+            value = str(int(abs_delta))
+        else:
+            value = f"{abs_delta:.4f}"
+        return f'<span class="delta-chip {tone}">{sign}{value}</span>'
+
+    def _compare_row(
+        label: str,
+        latest_value: str,
+        previous_value: str,
+        delta_html: str,
+    ) -> str:
+        return (
+            f'<div class="compare-row">'
+            f'<div class="compare-label">{escape(label)}</div>'
+            f'<div class="compare-value">{latest_value}</div>'
+            f'<div class="compare-value">{previous_value}</div>'
+            f'<div class="compare-delta">{delta_html}</div>'
+            f"</div>"
+        )
+
     total_runs = len(manifests)
     total_traces = sum(int(manifest.get("trace_count") or 0) for manifest in manifests)
     total_estimated_cost = sum(
@@ -1984,6 +2044,111 @@ def render_runs_index_html(manifests: list[dict]) -> str:
         for manifest in manifests
         if str(manifest.get("run_id", "")).startswith("pipeline-")
     )
+
+    compare_section = ""
+    if len(manifests) >= 2:
+        latest_manifest = manifests[0]
+        previous_manifest = manifests[1]
+        latest_duration_ms = _duration_ms(latest_manifest)
+        previous_duration_ms = _duration_ms(previous_manifest)
+        latest_top_issues = latest_manifest.get("top_issues") or []
+        previous_top_issues = previous_manifest.get("top_issues") or []
+
+        compare_rows = [
+            _compare_row(
+                "Resolved",
+                _format_int(latest_manifest.get("resolved")),
+                _format_int(previous_manifest.get("resolved")),
+                _delta_chip(
+                    float(latest_manifest.get("resolved") or 0)
+                    - float(previous_manifest.get("resolved") or 0),
+                    "higher_better",
+                ),
+            ),
+            _compare_row(
+                "Escalated",
+                _format_int(latest_manifest.get("escalated")),
+                _format_int(previous_manifest.get("escalated")),
+                _delta_chip(
+                    float(latest_manifest.get("escalated") or 0)
+                    - float(previous_manifest.get("escalated") or 0),
+                    "lower_better",
+                ),
+            ),
+            _compare_row(
+                "Trace events",
+                _format_int(latest_manifest.get("trace_count")),
+                _format_int(previous_manifest.get("trace_count")),
+                _delta_chip(
+                    float(latest_manifest.get("trace_count") or 0)
+                    - float(previous_manifest.get("trace_count") or 0),
+                ),
+            ),
+            _compare_row(
+                "LLM tokens",
+                _format_int(latest_manifest.get("llm_total_tokens")),
+                _format_int(previous_manifest.get("llm_total_tokens")),
+                _delta_chip(
+                    float(latest_manifest.get("llm_total_tokens") or 0)
+                    - float(previous_manifest.get("llm_total_tokens") or 0),
+                ),
+            ),
+            _compare_row(
+                "Est. cost",
+                _format_cost(latest_manifest.get("estimated_cost_usd")),
+                _format_cost(previous_manifest.get("estimated_cost_usd")),
+                _delta_chip(
+                    float(latest_manifest.get("estimated_cost_usd") or 0.0)
+                    - float(previous_manifest.get("estimated_cost_usd") or 0.0),
+                    "lower_better",
+                ),
+            ),
+            _compare_row(
+                "Duration",
+                _format_duration(latest_duration_ms),
+                _format_duration(previous_duration_ms),
+                _delta_chip(
+                    None
+                    if latest_duration_ms is None or previous_duration_ms is None
+                    else latest_duration_ms - previous_duration_ms,
+                    "lower_better",
+                ),
+            ),
+        ]
+
+        compare_section = (
+            f'<section class="compare-section">'
+            f'<div class="compare-header">'
+            f"<div>"
+            f"<h2>Latest Two Runs</h2>"
+            f'<p class="compare-subtitle">Quick diff for the most recent snapshots on this branch.</p>'
+            f"</div>"
+            f'<div class="compare-runs">'
+            f'<span class="compare-run current">Current: {escape(latest_manifest["run_id"])}</span>'
+            f'<span class="compare-run previous">Previous: {escape(previous_manifest["run_id"])}</span>'
+            f"</div>"
+            f"</div>"
+            f'<div class="compare-table">'
+            f'<div class="compare-row compare-head">'
+            f'<div class="compare-label">Metric</div>'
+            f'<div class="compare-value">Current</div>'
+            f'<div class="compare-value">Previous</div>'
+            f'<div class="compare-delta">Delta</div>'
+            f"</div>"
+            f"{''.join(compare_rows)}"
+            f"</div>"
+            f'<div class="compare-top-issues">'
+            f'<div class="compare-issues-card">'
+            f'<div class="compare-issues-label">Current top issues</div>'
+            f'<div class="compare-issues-value">{escape(", ".join(latest_top_issues[:3]) or "Unavailable")}</div>'
+            f"</div>"
+            f'<div class="compare-issues-card">'
+            f'<div class="compare-issues-label">Previous top issues</div>'
+            f'<div class="compare-issues-value">{escape(", ".join(previous_top_issues[:3]) or "Unavailable")}</div>'
+            f"</div>"
+            f"</div>"
+            f"</section>"
+        )
 
     cards = []
     for manifest in manifests:
@@ -2005,8 +2170,6 @@ def render_runs_index_html(manifests: list[dict]) -> str:
         duration = ""
         if started_at != "unknown" and finished_at != "unknown":
             try:
-                from datetime import datetime, timezone
-
                 start = datetime.fromisoformat(started_at.replace("+00:00", ""))
                 end = datetime.fromisoformat(finished_at.replace("+00:00", ""))
                 duration_ms = (end - start).total_seconds() * 1000
@@ -2142,6 +2305,71 @@ def render_runs_index_html(manifests: list[dict]) -> str:
     .hero-stat-value {{
       display: block; font-size: 1.35rem; font-weight: 800; margin-top: 4px;
     }}
+    .compare-section {{
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 28px;
+    }}
+    .compare-header {{
+      display: flex; justify-content: space-between; gap: 16px; align-items: flex-start;
+      margin-bottom: 18px;
+    }}
+    .compare-header h2 {{
+      font-size: 1.15rem; font-weight: 800; margin-bottom: 4px;
+    }}
+    .compare-subtitle {{
+      color: var(--muted); font-size: 0.9rem;
+    }}
+    .compare-runs {{
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }}
+    .compare-run {{
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 10px; border-radius: 999px; border: 1px solid var(--border);
+      background: var(--surface-raised); font-size: 0.75rem;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+    }}
+    .compare-run.current {{ border-color: var(--accent)44; color: var(--accent); }}
+    .compare-run.previous {{ color: var(--muted); }}
+    .compare-table {{
+      display: grid; gap: 8px;
+    }}
+    .compare-row {{
+      display: grid; grid-template-columns: minmax(120px, 1.2fr) 1fr 1fr auto;
+      gap: 12px; align-items: center;
+      padding: 10px 12px; border-radius: 10px; background: var(--surface-raised);
+    }}
+    .compare-row.compare-head {{
+      background: transparent; border: 1px dashed var(--border); color: var(--muted);
+      font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em;
+    }}
+    .compare-label {{ font-weight: 700; }}
+    .compare-value {{ font-family: ui-monospace, SFMono-Regular, monospace; }}
+    .compare-delta {{ justify-self: end; }}
+    .delta-chip {{
+      display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 999px;
+      background: var(--surface); border: 1px solid var(--border); font-size: 0.74rem; font-weight: 700;
+    }}
+    .delta-chip.good {{ color: var(--good); border-color: var(--good)44; background: var(--good)18; }}
+    .delta-chip.bad {{ color: var(--bad); border-color: var(--bad)44; background: var(--bad)18; }}
+    .delta-chip.accent {{ color: var(--accent); border-color: var(--accent)44; background: var(--accent)18; }}
+    .compare-top-issues {{
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px;
+      margin-top: 16px;
+    }}
+    .compare-issues-card {{
+      background: var(--surface-raised); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px;
+    }}
+    .compare-issues-label {{
+      color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }}
+    .compare-issues-value {{
+      font-size: 0.92rem; line-height: 1.5;
+    }}
     .back-link {{
       color: var(--accent); text-decoration: none; font-size: 0.9rem;
       display: flex; align-items: center; gap: 6px;
@@ -2243,6 +2471,11 @@ def render_runs_index_html(manifests: list[dict]) -> str:
       background: color-mix(in srgb, var(--accent) 20%, var(--surface-raised));
     }}
     .empty {{ color: var(--muted); text-align: center; padding: 60px 0; }}
+    @media (max-width: 760px) {{
+      .compare-header {{ flex-direction: column; }}
+      .compare-row {{ grid-template-columns: 1fr; }}
+      .compare-delta {{ justify-self: start; }}
+    }}
   </style>
 </head>
 <body>
@@ -2270,6 +2503,7 @@ def render_runs_index_html(manifests: list[dict]) -> str:
       <div class="hero-stat"><span class="hero-stat-label">Total Est. Cost</span><span class="hero-stat-value">{_format_cost(total_estimated_cost)}</span></div>
       <div class="hero-stat"><span class="hero-stat-label">Max Run Cost</span><span class="hero-stat-value">{_format_cost(max_estimated_cost)}</span></div>
     </div>
+    {compare_section}
     <div class="grid">{"".join(cards) if cards else '<div class="empty">No run snapshots available yet.</div>'}</div>
   </main>
 </body>
@@ -2724,6 +2958,9 @@ def main() -> int:
             "started_at": context["started_at"],
             "finished_at": datetime.now(timezone.utc).isoformat(),
             "ticket_count": len(processed_tickets),
+            "top_issues": [
+                i["label"] for i in summary.get("top_recurring_issues", [])[:3]
+            ],
             "artifacts": {
                 "report_md": context["report_path"],
                 "report_json": context["report_json_path"],
@@ -2785,6 +3022,7 @@ def main() -> int:
         "escalated": sum(
             1 for t in processed_tickets if t["result"]["status"] == "escalated"
         ),
+        "top_issues": [i["label"] for i in summary.get("top_recurring_issues", [])[:3]],
         "artifacts": {
             "pipeline_output": context["pipeline_output_path"],
             "report_md": context["report_path"],

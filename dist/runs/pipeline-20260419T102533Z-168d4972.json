@@ -1,0 +1,28 @@
+{
+  "run_id": "pipeline-20260419T102533Z-168d4972",
+  "started_at": "2026-04-19T10:25:33.865696+00:00",
+  "finished_at": "2026-04-19T10:25:33.878291+00:00",
+  "ticket_count": 20,
+  "resolved": 7,
+  "escalated": 13,
+  "top_issues": [
+    "Mobile login loop",
+    "CSV export failures",
+    "Duplicate billing"
+  ],
+  "artifacts": {
+    "pipeline_output": "runs/pipeline-20260419T102533Z-168d4972/pipeline_output.json",
+    "report_md": "runs/pipeline-20260419T102533Z-168d4972/report.md",
+    "report_json": "runs/pipeline-20260419T102533Z-168d4972/report.json",
+    "viewer": "runs/pipeline-20260419T102533Z-168d4972/latest-run.html",
+    "report_snapshot": "pipeline-20260419T102533Z-168d4972-report.html",
+    "manifest_snapshot": "pipeline-20260419T102533Z-168d4972.json",
+    "traces_snapshot": "pipeline-20260419T102533Z-168d4972.traces.json"
+  },
+  "trace_count": 61,
+  "llm_prompt_tokens": 0,
+  "llm_response_tokens": 0,
+  "llm_total_tokens": 0,
+  "estimated_cost_usd": 0.0,
+  "cost_entry_count": 0
+}
