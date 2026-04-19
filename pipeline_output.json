@@ -9,11 +9,11 @@
       "category": "mobile_login_loop",
       "priority": "high",
       "resolvable": false,
-      "reason": "Frontline support can provide troubleshooting steps such as clearing Safari cache/cookies or trying an incognito window, and offer a workaround like using a desktop browser."
+      "reason": "Frontline can provide troubleshooting steps such as clearing Safari cache/cookies or adjusting cross-site tracking settings."
     },
     "result": {
       "status": "escalated",
-      "reason": "Frontline support can provide troubleshooting steps such as clearing Safari cache/cookies or trying an incognito window, and offer a workaround like using a desktop browser."
+      "reason": "Frontline can provide troubleshooting steps such as clearing Safari cache/cookies or adjusting cross-site tracking settings."
     }
   },
   {
@@ -26,11 +26,11 @@
       "category": "csv_export",
       "priority": "high",
       "resolvable": false,
-      "reason": "Requires engineering investigation to fix the export bug; frontline cannot restore missing data or alter the export logic."
+      "reason": "Fixing a blank export requires engineering investigation and code changes, which frontline support cannot perform"
     },
     "result": {
       "status": "escalated",
-      "reason": "Requires engineering investigation to fix the export bug; frontline cannot restore missing data or alter the export logic."
+      "reason": "Fixing a blank export requires engineering investigation and code changes, which frontline support cannot perform"
     }
   }
 ]
