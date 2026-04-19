@@ -32,6 +32,6 @@
   Example: "I upgraded once this morning but my card statement shows two charges from your company. Please confirm whether one wi..."
 
 ## Recommendations for Product Team
-1. **Fix the mobile login loop**: Recurring mobile sign-in loops are the clearest blocker in the queue and keep reappearing across multiple tickets.
-2. **Repair CSV export reliability**: CSV exports are repeatedly missing rows or columns, which breaks finance workflows and looks like a product bug rather than a one-off incident.
-3. **Fix the mobile login loop**: Recurring mobile sign-in loops are the clearest blocker in the queue and keep reappearing across multiple tickets.
+1. **Fix mobile Safari session/login loop**: This is the highest volume issue, accounting for 30% of all tickets (6 tickets) with a 0% resolution rate. Users on iOS/iPad Safari are repeatedly redirected to the login screen after completing 2FA or seeing a brief flash of the dashboard, indicating a broken session cookie or authentication redirect on mobile browsers. Fixing this will drastically reduce escalations and unblock mobile users.
+2. **Overhaul CSV export functionality**: CSV exports account for 20% of tickets (4 tickets) and are entirely escalated due to being unpatchable product bugs. The reported issues are varied—blank files with headers only, missing columns, encoding errors for accented characters, and a 200-row truncation limit—indicating systemic flaws in the export pipeline that require a comprehensive engineering fix rather than isolated patches.
+3. **Implement idempotency keys on the billing/upgrade endpoint**: Duplicate billing accounts for 15% of tickets (3 tickets) with a 0% resolution rate, and directly impacts customer trust and finances. Users are being charged twice for a single upgrade click. Adding idempotency to the payment processing will prevent race conditions or double-clicks from creating duplicate charges and invoices.

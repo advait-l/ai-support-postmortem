@@ -1019,6 +1019,17 @@ def render_report_html(summary: dict, recommendations: list[dict]) -> str:
       transition: color 0.15s;
     }}
     nav a:hover {{ color: var(--accent); }}
+    .nav-button {{
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 14px; border-radius: 999px;
+      background: var(--accent-dim); border: 1px solid var(--accent)44;
+      color: var(--text); text-decoration: none; font-size: 0.88rem;
+      font-weight: 600;
+    }}
+    .nav-button:hover {{
+      border-color: var(--accent);
+      color: var(--text);
+    }}
     nav .nav-links {{ display: flex; gap: 24px; }}
     main {{
       max-width: 1120px;
@@ -1038,6 +1049,22 @@ def render_report_html(summary: dict, recommendations: list[dict]) -> str:
     .hero .subtitle {{
       color: var(--muted); font-size: 1.05rem; margin-top: 8px; max-width: 640px;
     }}
+    .hero-actions {{
+      display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px;
+    }}
+    .hero-cta {{
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 16px; border-radius: 999px;
+      text-decoration: none; font-weight: 700; font-size: 0.92rem;
+      border: 1px solid var(--border);
+    }}
+    .hero-cta.primary {{
+      background: var(--accent); color: #08111f; border-color: var(--accent);
+    }}
+    .hero-cta.secondary {{
+      background: var(--surface); color: var(--text);
+    }}
+    .hero-cta:hover {{ transform: translateY(-1px); }}
     .section {{
       margin-top: 48px;
     }}
@@ -1216,7 +1243,7 @@ def render_report_html(summary: dict, recommendations: list[dict]) -> str:
     <div class="nav-inner">
       <div class="logo"><span class="logo-dot"></span>Post-Mortem</div>
       <div class="nav-links">
-        <a href="./runs/">Run History</a>
+        <a href="/runs/" class="nav-button">Run History</a>
       </div>
     </div>
   </nav>
@@ -1225,6 +1252,10 @@ def render_report_html(summary: dict, recommendations: list[dict]) -> str:
     <div class="hero">
       <h1>Weekly Support Post-Mortem</h1>
       <p class="subtitle">Automated triage, resolution, and escalation analysis for the past week of support tickets.</p>
+      <div class="hero-actions">
+        <a href="/runs/" class="hero-cta primary">Open Run History</a>
+        <a href="/latest-run.html" class="hero-cta secondary">Latest Run Details</a>
+      </div>
     </div>
 
     <section class="section">
@@ -1314,6 +1345,24 @@ def render_run_detail_html(manifest: dict, trace_entries: list[dict]) -> str:
     def _agent_badge(a: str) -> str:
         return f'<span class="badge agent">{escape(a)}</span>'
 
+    def _mini_chip(label: str, value: str, tone: str = "") -> str:
+        tone_class = f" {tone}" if tone else ""
+        return (
+            f'<span class="mini-chip{tone_class}">'
+            f'<span class="mini-chip-label">{escape(label)}</span>'
+            f'<span class="mini-chip-value">{escape(value)}</span>'
+            f"</span>"
+        )
+
+    def _preview(value: object, limit: int = 220) -> str:
+        if value is None:
+            return ""
+        text = value if isinstance(value, str) else json.dumps(value, sort_keys=True)
+        text = " ".join(str(text).split())
+        if len(text) <= limit:
+            return text
+        return text[: limit - 3].rstrip() + "..."
+
     trace_rows = []
     for entry in trace_entries:
         metadata = entry.get("metadata") or {}
@@ -1327,10 +1376,14 @@ def render_run_detail_html(manifest: dict, trace_entries: list[dict]) -> str:
 
         latency = entry.get("latency_ms")
         latency_str = f"{latency:.1f}ms" if latency is not None else "-"
+        ticket_id = metadata.get("ticket_id")
+        prompt_tokens = entry.get("prompt_tokens_estimate")
 
-        error_html = ""
-        if error:
-            error_html = f'<div class="detail error"><span class="label">Error:</span> <code>{escape(error)}</code></div>'
+        extras = []
+        if ticket_id:
+            extras.append(_mini_chip("Ticket", str(ticket_id)))
+        if prompt_tokens is not None:
+            extras.append(_mini_chip("Prompt tokens", str(prompt_tokens)))
 
         agent_badge_html = _agent_badge(str(entry.get("agent", "unknown")))
         status_badge_html = _status_badge(str(entry.get("status", "unknown")))
@@ -1338,27 +1391,69 @@ def render_run_detail_html(manifest: dict, trace_entries: list[dict]) -> str:
         provider_html = escape(str(entry.get("provider") or "local"))
         model_html = escape(str(entry.get("model") or "-"))
         parent_html = escape(str(parent or "-"))
-        metadata_html = escape(json.dumps(metadata, sort_keys=True)[:200])
+        metadata_html = escape(json.dumps(metadata, sort_keys=True, indent=2))
+        system_prompt = entry.get("system_prompt")
+        user_prompt = entry.get("user_prompt")
+        response = entry.get("response")
+        prompt_text = ""
+        if system_prompt or user_prompt:
+            prompt_text = (system_prompt or "") + (
+                "\n\n" + user_prompt if user_prompt else ""
+            )
+        prompt_block = ""
+        if system_prompt or user_prompt:
+            prompt_block = (
+                f'<div class="raw-block">'
+                f'<div class="raw-label">Prompts</div>'
+                f"<pre>{escape(_preview(prompt_text, 1200))}</pre>"
+                f"</div>"
+            )
+        response_block = ""
+        if response:
+            response_block = (
+                f'<div class="raw-block">'
+                f'<div class="raw-label">Response</div>'
+                f"<pre>{escape(_preview(response, 1200))}</pre>"
+                f"</div>"
+            )
+        error_block = ""
+        if error:
+            error_block = (
+                f'<div class="raw-block error">'
+                f'<div class="raw-label">Error</div>'
+                f"<pre>{escape(error)}</pre>"
+                f"</div>"
+            )
 
         trace_rows.append(
-            f'<article class="trace-card">'
-            f'<div class="trace-head">'
+            f'<details class="trace-card">'
+            f'<summary class="trace-summary">'
+            f'<div class="trace-summary-main">'
             f"{agent_badge_html}"
             f"{status_badge_html}"
             f'<span class="step">{escape(step_short)}</span>'
             f"</div>"
-            f'<div class="trace-meta">'
-            f'<span class="time">{timestamp_html}</span>'
-            f'<span class="latency">{escape(latency_str)}</span>'
-            f'<span class="provider">{provider_html}</span>'
-            f'<span class="model">{model_html}</span>'
+            f'<div class="trace-summary-meta">'
+            f"<span>{timestamp_html}</span>"
+            f"<span>{escape(latency_str)}</span>"
+            f"{''.join(extras)}"
             f"</div>"
-            f'<div class="trace-details">'
-            f'<div class="detail"><span class="label">Parent:</span> <code>{parent_html}</code></div>'
-            f'<div class="detail"><span class="label">Metadata:</span> <code>{metadata_html}</code></div>'
-            f"{error_html}"
+            f"</summary>"
+            f'<div class="trace-body">'
+            f'<div class="trace-body-row">'
+            f'<div class="detail"><span class="label">Parent</span><code>{parent_html}</code></div>'
+            f'<div class="detail"><span class="label">Provider</span><code>{provider_html}</code></div>'
+            f'<div class="detail"><span class="label">Model</span><code>{model_html}</code></div>'
             f"</div>"
-            f"</article>"
+            f'<div class="raw-block">'
+            f'<div class="raw-label">Metadata</div>'
+            f"<pre>{metadata_html}</pre>"
+            f"</div>"
+            f"{prompt_block}"
+            f"{response_block}"
+            f"{error_block}"
+            f"</div>"
+            f"</details>"
         )
 
     summary_cards = [
@@ -1366,19 +1461,19 @@ def render_run_detail_html(manifest: dict, trace_entries: list[dict]) -> str:
         f'<div class="stat"><span class="stat-label">Tickets</span><span class="stat-value">{escape(str(manifest.get("ticket_count", "?")))}</span></div>',
         f'<div class="stat good"><span class="stat-label">Resolved</span><span class="stat-value">{escape(str(manifest.get("resolved", "?")))}</span></div>',
         f'<div class="stat bad"><span class="stat-label">Escalated</span><span class="stat-value">{escape(str(manifest.get("escalated", "?")))}</span></div>',
-        f'<div class="stat"><span class="stat-label">Trace Events</span><span class="stat-value">{len(trace_entries)}</span></div>',
-        f'<div class="stat bad"><span class="stat-label">Errors</span><span class="stat-value">{status_counts.get("error", 0)}</span></div>',
     ]
 
-    agent_cards = [
-        f'<div class="agent-card"><span class="agent-name">{escape(agent)}</span><span class="agent-count">{count}</span></div>'
-        for agent, count in sorted(agent_counts.items())
+    trace_meta_chips = [
+        _mini_chip("Trace events", str(len(trace_entries)), "accent"),
+        _mini_chip("Errors", str(status_counts.get("error", 0)), "bad"),
     ]
-
-    status_cards = [
-        f'<div class="status-card" style="--status-color:{_status_color(s)}"><span class="status-name">{escape(s)}</span><span class="status-count">{count}</span></div>'
-        for s, count in sorted(status_counts.items())
-    ]
+    trace_meta_chips.extend(
+        _mini_chip(agent, str(count)) for agent, count in sorted(agent_counts.items())
+    )
+    trace_meta_chips.extend(
+        _mini_chip(status, str(count))
+        for status, count in sorted(status_counts.items())
+    )
 
     artifact_links = []
     report_snapshot = manifest.get("artifacts", {}).get("report_snapshot")
@@ -1499,7 +1594,7 @@ def render_run_detail_html(manifest: dict, trace_entries: list[dict]) -> str:
       display: block; font-size: 1.5rem; font-weight: 800;
     }}
     .meta-row {{
-      display: flex; gap: 24px; margin-top: 16px;
+      display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px;
       font-size: 0.85rem; color: var(--muted);
     }}
     .artifact-links {{
@@ -1515,23 +1610,6 @@ def render_run_detail_html(manifest: dict, trace_entries: list[dict]) -> str:
       transition: border-color 0.15s;
     }}
     .artifact-link:hover {{ border-color: var(--accent); }}
-    .mini-grid {{
-      display: flex; gap: 10px; flex-wrap: wrap;
-    }}
-    .agent-card, .status-card {{
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 16px;
-      display: flex; align-items: center; justify-content: space-between;
-      min-width: 140px;
-    }}
-    .agent-name, .status-name {{
-      font-size: 0.85rem; font-weight: 600;
-    }}
-    .agent-count, .status-count {{
-      font-size: 1.1rem; font-weight: 700;
-    }}
     .trace-list {{
       display: flex; flex-direction: column; gap: 10px;
     }}
@@ -1539,13 +1617,57 @@ def render_run_detail_html(manifest: dict, trace_entries: list[dict]) -> str:
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 14px;
       transition: border-color 0.15s;
+      overflow: hidden;
     }}
     .trace-card:hover {{ border-color: var(--accent); }}
-    .trace-head {{
-      display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+    .trace-card[open] {{
+      border-color: rgba(96, 165, 250, 0.45);
     }}
+    .trace-card > summary {{
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 16px;
+    }}
+    .trace-card > summary::-webkit-details-marker {{ display: none; }}
+    .trace-summary-main {{
+      display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+      min-width: 0;
+    }}
+    .trace-summary-meta {{
+      display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px;
+      color: var(--muted); font-size: 0.78rem;
+      text-align: right;
+    }}
+    .trace-summary-meta span {{
+      font-family: ui-monospace, SFMono-Regular, monospace;
+    }}
+    .trace-body {{
+      border-top: 1px solid var(--border);
+      padding: 14px 16px 16px;
+      display: grid;
+      gap: 12px;
+    }}
+    .trace-body-row {{
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px;
+    }}
+    .mini-chip {{
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 8px; border-radius: 999px; border: 1px solid var(--border);
+      background: var(--surface-raised);
+      color: var(--text); font-size: 0.72rem;
+    }}
+    .mini-chip.accent {{ border-color: var(--accent)44; background: var(--accent)18; }}
+    .mini-chip.bad {{ border-color: var(--bad)44; background: var(--bad)18; }}
+    .mini-chip-label {{
+      color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em;
+      font-size: 0.65rem;
+    }}
+    .mini-chip-value {{ font-weight: 700; }}
     .badge {{
       display: inline-block; font-size: 0.7rem; font-weight: 600;
       padding: 3px 8px; border-radius: 6px; border: 1px solid;
@@ -1558,18 +1680,11 @@ def render_run_detail_html(manifest: dict, trace_entries: list[dict]) -> str:
       font-size: 0.85rem; font-weight: 600;
       font-family: ui-monospace, SFMono-Regular, monospace;
     }}
-    .trace-meta {{
-      display: flex; gap: 14px; font-size: 0.78rem; color: var(--muted); margin-bottom: 10px;
-    }}
-    .trace-meta span {{ font-family: ui-monospace, SFMono-Regular, monospace; }}
-    .trace-details {{
-      display: flex; flex-direction: column; gap: 4px;
-    }}
     .detail {{
-      font-size: 0.8rem;
+      font-size: 0.8rem; display: flex; align-items: center; gap: 8px;
     }}
     .detail .label {{
-      color: var(--muted); font-weight: 600; margin-right: 6px;
+      color: var(--muted); font-weight: 600; min-width: 64px;
     }}
     .detail code {{
       font-family: ui-monospace, SFMono-Regular, monospace;
@@ -1577,7 +1692,25 @@ def render_run_detail_html(manifest: dict, trace_entries: list[dict]) -> str:
       padding: 2px 6px; border-radius: 4px;
       word-break: break-all;
     }}
-    .detail.error code {{
+    .raw-block {{
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+    }}
+    .raw-block.error {{
+      border-color: var(--bad)44;
+    }}
+    .raw-label {{
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--muted); font-weight: 700; margin-bottom: 8px;
+    }}
+    .raw-block pre {{
+      white-space: pre-wrap; word-break: break-word;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-size: 0.75rem; line-height: 1.5; color: var(--text);
+    }}
+    .raw-block.error pre {{
       color: var(--bad);
     }}
   </style>
@@ -1620,17 +1753,12 @@ def render_run_detail_html(manifest: dict, trace_entries: list[dict]) -> str:
     </section>
 
     <section class="section">
-      <div class="section-header">Events by Agent</div>
-      <div class="mini-grid">{"".join(agent_cards) or '<span class="muted">No trace events.</span>'}</div>
+      <div class="section-header">Trace Overview</div>
+      <div class="meta-row">{"".join(trace_meta_chips) or '<span class="muted">No trace events.</span>'}</div>
     </section>
 
     <section class="section">
-      <div class="section-header">Status Summary</div>
-      <div class="mini-grid">{"".join(status_cards) or '<span class="muted">No trace events.</span>'}</div>
-    </section>
-
-    <section class="section">
-      <div class="section-header">Trace Timeline ({len(trace_entries)} events)</div>
+      <div class="section-header">Trace Timeline ({len(trace_entries)} events, collapsed by default)</div>
       <div class="trace-list">{"".join(trace_rows) or '<span class="muted">No trace events recorded for this run.</span>'}</div>
     </section>
   </main>
