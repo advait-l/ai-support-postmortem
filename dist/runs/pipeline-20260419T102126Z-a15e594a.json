@@ -1,0 +1,23 @@
+{
+  "run_id": "pipeline-20260419T102126Z-a15e594a",
+  "started_at": "2026-04-19T10:21:26.045840+00:00",
+  "finished_at": "2026-04-19T10:22:02.318806+00:00",
+  "ticket_count": 20,
+  "resolved": 7,
+  "escalated": 13,
+  "artifacts": {
+    "pipeline_output": "runs/pipeline-20260419T102126Z-a15e594a/pipeline_output.json",
+    "report_md": "runs/pipeline-20260419T102126Z-a15e594a/report.md",
+    "report_json": "runs/pipeline-20260419T102126Z-a15e594a/report.json",
+    "viewer": "runs/pipeline-20260419T102126Z-a15e594a/latest-run.html",
+    "report_snapshot": "pipeline-20260419T102126Z-a15e594a-report.html",
+    "manifest_snapshot": "pipeline-20260419T102126Z-a15e594a.json",
+    "traces_snapshot": "pipeline-20260419T102126Z-a15e594a.traces.json"
+  },
+  "trace_count": 64,
+  "llm_prompt_tokens": 3090,
+  "llm_response_tokens": 512,
+  "llm_total_tokens": 3602,
+  "estimated_cost_usd": 0.002313,
+  "cost_entry_count": 4
+}

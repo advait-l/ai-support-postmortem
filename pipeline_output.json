@@ -134,9 +134,9 @@
     },
     "result": {
       "status": "resolved",
-      "customer_response": "Hi james.parker@example.com,\n\nThanks for reaching out. Ask the customer to retry during a lower-traffic period, narrow to the specific report or page, and capture the timestamp for investigation.\n\nPlease let us know if that does not resolve the issue.",
+      "customer_response": "Hi James,\n\nI'm sorry to hear that your dashboard and reports are experiencing significant slowdowns this afternoon. To help us investigate this issue, could you please try accessing the dashboard during a lower-traffic period to see if the performance improves? Additionally, it would be very helpful if you could narrow down the issue to the specific report or page that is timing out, and capture the exact timestamp of when the slowdown occurs. This information will allow our team to look into the logs and resolve the issue more effectively.\n\nThank you,\nSupport Team",
       "kb_article": "Performance troubleshooting",
-      "resolution_summary": "Ask the customer to retry during a lower-traffic period, narrow to the specific report or page, and capture the timestamp for investigation."
+      "resolution_summary": "Requested the customer to test during lower-traffic periods, identify the specific slow reports or pages, and provide timestamps for investigation."
     }
   },
   {
@@ -276,9 +276,9 @@
     },
     "result": {
       "status": "resolved",
-      "customer_response": "Hi alexander.brooks@example.com,\n\nThanks for reaching out. Advise the customer to retry from desktop Chrome, verify the teammate email is not already pending, and capture the invite timestamp if the spinner persists.\n\nPlease let us know if that does not resolve the issue.",
+      "customer_response": "Hi Alexander,\n\nI'm sorry to hear the invite modal is stuck spinning when you try to add your new reps. To resolve this, please try the following steps:\n\n1. Retry the invite process using a desktop Chrome browser.\n2. Verify that the teammate's email address is not already in a pending state.\n\nIf the spinner still persists after trying these steps, please reply with the exact invite timestamp so we can investigate further.\n\nBest regards,\nSupport Team",
       "kb_article": "Invite flow troubleshooting",
-      "resolution_summary": "Advise the customer to retry from desktop Chrome, verify the teammate email is not already pending, and capture the invite timestamp if the spinner persists."
+      "resolution_summary": "Provided troubleshooting steps for the stuck invite modal by advising the customer to retry on desktop Chrome, check for pending emails, and capture the timestamp if the issue persists."
     }
   },
   {
@@ -312,9 +312,9 @@
     },
     "result": {
       "status": "resolved",
-      "customer_response": "Hi daniel.patterson@example.com,\n\nThanks for reaching out. Recommend searching with the account ID or email as a temporary workaround and note that relevance tuning has been flagged internally.\n\nPlease let us know if that does not resolve the issue.",
+      "customer_response": "Hi Daniel,\n\nThank you for reaching out about the search results issue. We understand that searching by exact account name is currently returning unrelated records, which can lead to reps opening the wrong accounts.\n\nAs a temporary workaround, we recommend searching for accounts using the account ID or email address instead of the account name. This should provide much more accurate results.\n\nWe have flagged this relevance issue internally, and our team is reviewing the search tuning to improve exact-name matches in the future.\n\nThank you for your patience,\n\nSupport Team",
       "kb_article": "Search mismatch workaround",
-      "resolution_summary": "Recommend searching with the account ID or email as a temporary workaround and note that relevance tuning has been flagged internally."
+      "resolution_summary": "Provided a temporary workaround to search by account ID or email and flagged the search relevance issue internally for review."
     }
   },
   {
