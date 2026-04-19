@@ -3,34 +3,172 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Recent Runs</title>
+  <title>Run History</title>
   <style>
     :root {
       color-scheme: dark;
-      --bg: #0b1020;
-      --panel: #131a2e;
-      --muted: #8d99b8;
-      --text: #edf2ff;
-      --border: #283252;
-      --accent: #7cc7ff;
+      --bg: #0a0e1a;
+      --surface: #111827;
+      --surface-raised: #1a2238;
+      --muted: #8896b3;
+      --text: #e8ecf4;
+      --accent: #60a5fa;
+      --border: #1e2d4a;
+      --good: #34d399;
+      --bad: #f87171;
     }
-    * { box-sizing: border-box; }
-    body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, sans-serif; background: linear-gradient(180deg, #0b1020 0%, #11172a 100%); color: var(--text); }
-    main { max-width: 980px; margin: 0 auto; padding: 40px 20px 64px; }
-    h1 { margin: 0 0 10px; font-size: 2.2rem; }
-    .lede { color: var(--muted); max-width: 760px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-top: 24px; }
-    .card { background: rgba(19, 26, 46, 0.88); border: 1px solid var(--border); border-radius: 16px; padding: 18px; }
-    .meta { color: var(--muted); }
-    a { color: var(--accent); text-decoration: none; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+    nav {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(10, 14, 26, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+    }
+    nav .nav-inner {
+      max-width: 1120px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 56px;
+    }
+    nav .logo {
+      font-weight: 700; font-size: 1.05rem; color: var(--text);
+      display: flex; align-items: center; gap: 10px;
+    }
+    nav .logo .logo-dot {
+      width: 9px; height: 9px; border-radius: 50%;
+      background: var(--accent); display: inline-block;
+    }
+    nav a {
+      color: var(--muted); text-decoration: none; font-size: 0.9rem;
+      transition: color 0.15s;
+    }
+    nav a:hover { color: var(--accent); }
+    nav .nav-links { display: flex; gap: 24px; }
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+    .hero {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 32px;
+    }
+    .hero h1 {
+      font-size: 2rem; font-weight: 800; letter-spacing: -0.02em;
+    }
+    .hero .subtitle {
+      color: var(--muted); font-size: 0.95rem;
+    }
+    .back-link {
+      color: var(--accent); text-decoration: none; font-size: 0.9rem;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .back-link:hover { text-decoration: underline; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 16px;
+    }
+    .run-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      transition: border-color 0.2s, transform 0.15s;
+    }
+    .run-card:hover {
+      border-color: var(--kind-color);
+      transform: translateY(-2px);
+    }
+    .run-header {
+      display: flex; align-items: center; gap: 14px; margin-bottom: 16px;
+    }
+    .run-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: color-mix(in srgb, var(--kind-color) 15%, transparent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+    }
+    .run-title h3 {
+      font-size: 0.9rem; font-weight: 700;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      letter-spacing: -0.02em;
+    }
+    .run-kind {
+      font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+    .run-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .run-stat {
+      text-align: center;
+      padding: 8px;
+      background: var(--surface-raised);
+      border-radius: 8px;
+    }
+    .run-stat-label {
+      display: block; font-size: 0.68rem; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .run-stat-value {
+      display: block; font-size: 1.1rem; font-weight: 700;
+    }
+    .run-stat-value.resolved { color: var(--good); }
+    .run-stat-value.escalated { color: var(--bad); }
+    .run-meta {
+      display: flex; justify-content: space-between;
+      font-size: 0.78rem; color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .run-case {
+      font-size: 0.82rem; color: var(--accent);
+      padding: 6px 10px; background: var(--accent);
+      background: color-mix(in srgb, var(--accent) 15%, transparent);
+      border-radius: 6px; display: inline-block; margin-bottom: 12px;
+    }
+    .run-link {
+      display: block; text-align: center;
+      padding: 10px; background: var(--surface-raised);
+      border-radius: 8px; color: var(--text);
+      text-decoration: none; font-weight: 600; font-size: 0.9rem;
+      transition: background 0.15s;
+    }
+    .run-link:hover {
+      background: color-mix(in srgb, var(--accent) 20%, var(--surface-raised));
+    }
+    .empty { color: var(--muted); text-align: center; padding: 60px 0; }
   </style>
 </head>
 <body>
+  <nav>
+    <div class="nav-inner">
+      <div class="logo"><span class="logo-dot"></span>Post-Mortem</div>
+      <div class="nav-links">
+        <a href="../index.html">Latest Report</a>
+      </div>
+    </div>
+  </nav>
+
   <main>
-    <h1>Recent Pipeline Runs</h1>
-    <p class="lede">This snapshot page is generated during the build so a reviewer can inspect recent pipeline and eval runs without opening local files.</p>
-    <p><a href="../index.html">Open latest report</a></p>
-    <div class="grid"><article class="card"><h2>render-20260419T090716Z-4a7ca456</h2><p class="meta">render run</p><p><strong>Tickets:</strong> 20</p><p><strong>Resolved:</strong> ? | <strong>Escalated:</strong> ?</p><p><strong>Traces:</strong> 1</p><p><strong>Started:</strong> 2026-04-19T09:07:16.396619+00:00</p><p><strong>Finished:</strong> 2026-04-19T09:07:16.400743+00:00</p><p><a href="./render-20260419T090716Z-4a7ca456.html">Open run detail</a></p></article><article class="card"><h2>eval-20260419T090712Z-7ba59fb3</h2><p class="meta">eval run</p><p><strong>Tickets:</strong> 6</p><p><strong>Resolved:</strong> 6 | <strong>Escalated:</strong> 0</p><p><strong>Traces:</strong> 19</p><p><strong>Started:</strong> 2026-04-19T09:07:12.549551+00:00</p><p><strong>Finished:</strong> 2026-04-19T09:07:12.552637+00:00</p><p><strong>Case:</strong> frontline_resolvable.json</p><p><a href="./eval-20260419T090712Z-7ba59fb3.html">Open run detail</a></p></article><article class="card"><h2>eval-20260419T090712Z-8895c32c</h2><p class="meta">eval run</p><p><strong>Tickets:</strong> 6</p><p><strong>Resolved:</strong> 0 | <strong>Escalated:</strong> 6</p><p><strong>Traces:</strong> 19</p><p><strong>Started:</strong> 2026-04-19T09:07:12.542329+00:00</p><p><strong>Finished:</strong> 2026-04-19T09:07:12.546647+00:00</p><p><strong>Case:</strong> escalation_heavy.json</p><p><a href="./eval-20260419T090712Z-8895c32c.html">Open run detail</a></p></article><article class="card"><h2>eval-20260419T090712Z-c70c4429</h2><p class="meta">eval run</p><p><strong>Tickets:</strong> 6</p><p><strong>Resolved:</strong> 0 | <strong>Escalated:</strong> 6</p><p><strong>Traces:</strong> 20</p><p><strong>Started:</strong> 2026-04-19T09:07:12.536525+00:00</p><p><strong>Finished:</strong> 2026-04-19T09:07:12.539907+00:00</p><p><strong>Case:</strong> core_recurring.json</p><p><a href="./eval-20260419T090712Z-c70c4429.html">Open run detail</a></p></article><article class="card"><h2>pipeline-20260419T090452Z-d789aa4b</h2><p class="meta">pipeline run</p><p><strong>Tickets:</strong> 20</p><p><strong>Resolved:</strong> 7 | <strong>Escalated:</strong> 13</p><p><strong>Traces:</strong> 61</p><p><strong>Started:</strong> 2026-04-19T09:04:52.424441+00:00</p><p><strong>Finished:</strong> 2026-04-19T09:04:52.436623+00:00</p><p><a href="./pipeline-20260419T090452Z-d789aa4b.html">Open run detail</a></p></article><article class="card"><h2>render-20260419T090142Z-04d7e1c3</h2><p class="meta">render run</p><p><strong>Tickets:</strong> 20</p><p><strong>Resolved:</strong> ? | <strong>Escalated:</strong> ?</p><p><strong>Traces:</strong> 1</p><p><strong>Started:</strong> 2026-04-19T09:01:42.998271+00:00</p><p><strong>Finished:</strong> 2026-04-19T09:01:43.003899+00:00</p><p><a href="./render-20260419T090142Z-04d7e1c3.html">Open run detail</a></p></article><article class="card"><h2>pipeline-20260419T083633Z-0b7366cc</h2><p class="meta">pipeline run</p><p><strong>Tickets:</strong> 20</p><p><strong>Resolved:</strong> 7 | <strong>Escalated:</strong> 13</p><p><strong>Traces:</strong> ?</p><p><strong>Started:</strong> 2026-04-19T08:36:33.309523+00:00</p><p><strong>Finished:</strong> 2026-04-19T08:36:33.323673+00:00</p><p><a href="./pipeline-20260419T083633Z-0b7366cc.html">Open run detail</a></p></article><article class="card"><h2>eval-20260419T083040Z-21726a84</h2><p class="meta">eval run</p><p><strong>Tickets:</strong> 6</p><p><strong>Resolved:</strong> 6 | <strong>Escalated:</strong> 0</p><p><strong>Traces:</strong> ?</p><p><strong>Started:</strong> 2026-04-19T08:30:40.341660+00:00</p><p><strong>Finished:</strong> 2026-04-19T08:31:33.101715+00:00</p><p><strong>Case:</strong> frontline_resolvable.json</p><p><a href="./eval-20260419T083040Z-21726a84.html">Open run detail</a></p></article><article class="card"><h2>eval-20260419T083033Z-d08d7972</h2><p class="meta">eval run</p><p><strong>Tickets:</strong> 6</p><p><strong>Resolved:</strong> 0 | <strong>Escalated:</strong> 6</p><p><strong>Traces:</strong> ?</p><p><strong>Started:</strong> 2026-04-19T08:30:33.698591+00:00</p><p><strong>Finished:</strong> 2026-04-19T08:30:40.340058+00:00</p><p><strong>Case:</strong> escalation_heavy.json</p><p><a href="./eval-20260419T083033Z-d08d7972.html">Open run detail</a></p></article><article class="card"><h2>eval-20260419T082653Z-9c62762c</h2><p class="meta">eval run</p><p><strong>Tickets:</strong> 6</p><p><strong>Resolved:</strong> 0 | <strong>Escalated:</strong> 6</p><p><strong>Traces:</strong> ?</p><p><strong>Started:</strong> 2026-04-19T08:26:53.802694+00:00</p><p><strong>Finished:</strong> 2026-04-19T08:30:33.662768+00:00</p><p><strong>Case:</strong> core_recurring.json</p><p><a href="./eval-20260419T082653Z-9c62762c.html">Open run detail</a></p></article></div>
+    <div class="hero">
+      <div>
+        <h1>Run History</h1>
+        <p class="subtitle">Recent pipeline and eval runs with observability data.</p>
+      </div>
+      <a href="../index.html" class="back-link">&#8592; Back to Report</a>
+    </div>
+    <div class="grid"><article class="run-card" style="--kind-color:#34d399"><div class="run-header"><div class="run-icon">&#127912;</div><div class="run-title"><h3>render-20260419T093529Z-e6308b7c</h3><span class="run-kind" style="color:#34d399">render</span></div></div><div class="run-stats"><div class="run-stat"><span class="run-stat-label">Tickets</span><span class="run-stat-value">20</span></div><div class="run-stat"><span class="run-stat-label">Resolved</span><span class="run-stat-value resolved">?</span></div><div class="run-stat"><span class="run-stat-label">Escalated</span><span class="run-stat-value escalated">?</span></div><div class="run-stat"><span class="run-stat-label">Traces</span><span class="run-stat-value">1</span></div></div><div class="run-meta"><span>Started: 2026-04-19T09:35:29</span><span>9.8s</span></div><a href="./render-20260419T093529Z-e6308b7c.html" class="run-link">View Details &#8594;</a></article><article class="run-card" style="--kind-color:#34d399"><div class="run-header"><div class="run-icon">&#127912;</div><div class="run-title"><h3>render-20260419T090716Z-4a7ca456</h3><span class="run-kind" style="color:#34d399">render</span></div></div><div class="run-stats"><div class="run-stat"><span class="run-stat-label">Tickets</span><span class="run-stat-value">20</span></div><div class="run-stat"><span class="run-stat-label">Resolved</span><span class="run-stat-value resolved">?</span></div><div class="run-stat"><span class="run-stat-label">Escalated</span><span class="run-stat-value escalated">?</span></div><div class="run-stat"><span class="run-stat-label">Traces</span><span class="run-stat-value">1</span></div></div><div class="run-meta"><span>Started: 2026-04-19T09:07:16</span><span>4ms</span></div><a href="./render-20260419T090716Z-4a7ca456.html" class="run-link">View Details &#8594;</a></article><article class="run-card" style="--kind-color:#a78bfa"><div class="run-header"><div class="run-icon">&#128203;</div><div class="run-title"><h3>eval-20260419T090712Z-7ba59fb3</h3><span class="run-kind" style="color:#a78bfa">eval</span></div></div><div class="run-stats"><div class="run-stat"><span class="run-stat-label">Tickets</span><span class="run-stat-value">6</span></div><div class="run-stat"><span class="run-stat-label">Resolved</span><span class="run-stat-value resolved">6</span></div><div class="run-stat"><span class="run-stat-label">Escalated</span><span class="run-stat-value escalated">0</span></div><div class="run-stat"><span class="run-stat-label">Traces</span><span class="run-stat-value">19</span></div></div><div class="run-meta"><span>Started: 2026-04-19T09:07:12</span><span>3ms</span></div><div class="run-case">Case: frontline_resolvable.json</div><a href="./eval-20260419T090712Z-7ba59fb3.html" class="run-link">View Details &#8594;</a></article><article class="run-card" style="--kind-color:#a78bfa"><div class="run-header"><div class="run-icon">&#128203;</div><div class="run-title"><h3>eval-20260419T090712Z-8895c32c</h3><span class="run-kind" style="color:#a78bfa">eval</span></div></div><div class="run-stats"><div class="run-stat"><span class="run-stat-label">Tickets</span><span class="run-stat-value">6</span></div><div class="run-stat"><span class="run-stat-label">Resolved</span><span class="run-stat-value resolved">0</span></div><div class="run-stat"><span class="run-stat-label">Escalated</span><span class="run-stat-value escalated">6</span></div><div class="run-stat"><span class="run-stat-label">Traces</span><span class="run-stat-value">19</span></div></div><div class="run-meta"><span>Started: 2026-04-19T09:07:12</span><span>4ms</span></div><div class="run-case">Case: escalation_heavy.json</div><a href="./eval-20260419T090712Z-8895c32c.html" class="run-link">View Details &#8594;</a></article><article class="run-card" style="--kind-color:#a78bfa"><div class="run-header"><div class="run-icon">&#128203;</div><div class="run-title"><h3>eval-20260419T090712Z-c70c4429</h3><span class="run-kind" style="color:#a78bfa">eval</span></div></div><div class="run-stats"><div class="run-stat"><span class="run-stat-label">Tickets</span><span class="run-stat-value">6</span></div><div class="run-stat"><span class="run-stat-label">Resolved</span><span class="run-stat-value resolved">0</span></div><div class="run-stat"><span class="run-stat-label">Escalated</span><span class="run-stat-value escalated">6</span></div><div class="run-stat"><span class="run-stat-label">Traces</span><span class="run-stat-value">20</span></div></div><div class="run-meta"><span>Started: 2026-04-19T09:07:12</span><span>3ms</span></div><div class="run-case">Case: core_recurring.json</div><a href="./eval-20260419T090712Z-c70c4429.html" class="run-link">View Details &#8594;</a></article><article class="run-card" style="--kind-color:#60a5fa"><div class="run-header"><div class="run-icon">&#128230;</div><div class="run-title"><h3>pipeline-20260419T090452Z-d789aa4b</h3><span class="run-kind" style="color:#60a5fa">pipeline</span></div></div><div class="run-stats"><div class="run-stat"><span class="run-stat-label">Tickets</span><span class="run-stat-value">20</span></div><div class="run-stat"><span class="run-stat-label">Resolved</span><span class="run-stat-value resolved">7</span></div><div class="run-stat"><span class="run-stat-label">Escalated</span><span class="run-stat-value escalated">13</span></div><div class="run-stat"><span class="run-stat-label">Traces</span><span class="run-stat-value">61</span></div></div><div class="run-meta"><span>Started: 2026-04-19T09:04:52</span><span>12ms</span></div><a href="./pipeline-20260419T090452Z-d789aa4b.html" class="run-link">View Details &#8594;</a></article><article class="run-card" style="--kind-color:#34d399"><div class="run-header"><div class="run-icon">&#127912;</div><div class="run-title"><h3>render-20260419T090142Z-04d7e1c3</h3><span class="run-kind" style="color:#34d399">render</span></div></div><div class="run-stats"><div class="run-stat"><span class="run-stat-label">Tickets</span><span class="run-stat-value">20</span></div><div class="run-stat"><span class="run-stat-label">Resolved</span><span class="run-stat-value resolved">?</span></div><div class="run-stat"><span class="run-stat-label">Escalated</span><span class="run-stat-value escalated">?</span></div><div class="run-stat"><span class="run-stat-label">Traces</span><span class="run-stat-value">1</span></div></div><div class="run-meta"><span>Started: 2026-04-19T09:01:42</span><span>6ms</span></div><a href="./render-20260419T090142Z-04d7e1c3.html" class="run-link">View Details &#8594;</a></article><article class="run-card" style="--kind-color:#60a5fa"><div class="run-header"><div class="run-icon">&#128230;</div><div class="run-title"><h3>pipeline-20260419T083633Z-0b7366cc</h3><span class="run-kind" style="color:#60a5fa">pipeline</span></div></div><div class="run-stats"><div class="run-stat"><span class="run-stat-label">Tickets</span><span class="run-stat-value">20</span></div><div class="run-stat"><span class="run-stat-label">Resolved</span><span class="run-stat-value resolved">7</span></div><div class="run-stat"><span class="run-stat-label">Escalated</span><span class="run-stat-value escalated">13</span></div><div class="run-stat"><span class="run-stat-label">Traces</span><span class="run-stat-value">?</span></div></div><div class="run-meta"><span>Started: 2026-04-19T08:36:33</span><span>14ms</span></div><a href="./pipeline-20260419T083633Z-0b7366cc.html" class="run-link">View Details &#8594;</a></article><article class="run-card" style="--kind-color:#a78bfa"><div class="run-header"><div class="run-icon">&#128203;</div><div class="run-title"><h3>eval-20260419T083040Z-21726a84</h3><span class="run-kind" style="color:#a78bfa">eval</span></div></div><div class="run-stats"><div class="run-stat"><span class="run-stat-label">Tickets</span><span class="run-stat-value">6</span></div><div class="run-stat"><span class="run-stat-label">Resolved</span><span class="run-stat-value resolved">6</span></div><div class="run-stat"><span class="run-stat-label">Escalated</span><span class="run-stat-value escalated">0</span></div><div class="run-stat"><span class="run-stat-label">Traces</span><span class="run-stat-value">?</span></div></div><div class="run-meta"><span>Started: 2026-04-19T08:30:40</span><span>52.8s</span></div><div class="run-case">Case: frontline_resolvable.json</div><a href="./eval-20260419T083040Z-21726a84.html" class="run-link">View Details &#8594;</a></article><article class="run-card" style="--kind-color:#a78bfa"><div class="run-header"><div class="run-icon">&#128203;</div><div class="run-title"><h3>eval-20260419T083033Z-d08d7972</h3><span class="run-kind" style="color:#a78bfa">eval</span></div></div><div class="run-stats"><div class="run-stat"><span class="run-stat-label">Tickets</span><span class="run-stat-value">6</span></div><div class="run-stat"><span class="run-stat-label">Resolved</span><span class="run-stat-value resolved">0</span></div><div class="run-stat"><span class="run-stat-label">Escalated</span><span class="run-stat-value escalated">6</span></div><div class="run-stat"><span class="run-stat-label">Traces</span><span class="run-stat-value">?</span></div></div><div class="run-meta"><span>Started: 2026-04-19T08:30:33</span><span>6.6s</span></div><div class="run-case">Case: escalation_heavy.json</div><a href="./eval-20260419T083033Z-d08d7972.html" class="run-link">View Details &#8594;</a></article></div>
   </main>
 </body>
 </html>

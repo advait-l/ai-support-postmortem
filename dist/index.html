@@ -7,68 +7,323 @@
   <style>
     :root {
       color-scheme: dark;
-      --bg: #0b1020;
-      --panel: #131a2e;
-      --muted: #8d99b8;
-      --text: #edf2ff;
-      --accent: #7cc7ff;
-      --border: #283252;
-      --good: #7fe3b0;
-      --warn: #ffd37a;
+      --bg: #0a0e1a;
+      --surface: #111827;
+      --surface-raised: #1a2238;
+      --muted: #8896b3;
+      --text: #e8ecf4;
+      --accent: #60a5fa;
+      --accent-dim: #60a5fa22;
+      --border: #1e2d4a;
+      --good: #34d399;
+      --good-dim: #34d39922;
+      --warn: #fbbf24;
+      --warn-dim: #fbbf2422;
+      --bad: #f87171;
+      --bad-dim: #f8717122;
     }
-    * { box-sizing: border-box; }
-    body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, sans-serif; background: linear-gradient(180deg, #0b1020 0%, #11172a 100%); color: var(--text); }
-    main { max-width: 980px; margin: 0 auto; padding: 40px 20px 64px; }
-    h1 { font-size: 2.4rem; margin: 0 0 8px; }
-    h2 { font-size: 1.4rem; margin: 36px 0 16px; }
-    h3 { margin: 0 0 8px; font-size: 1.05rem; }
-    p, li, blockquote { line-height: 1.55; }
-    .lede { color: var(--muted); max-width: 720px; }
-    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 20px; }
-    .stat, .card { background: rgba(19, 26, 46, 0.88); border: 1px solid var(--border); border-radius: 16px; padding: 16px; backdrop-filter: blur(6px); }
-    .stat strong { display: block; font-size: 1.6rem; margin-top: 8px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
-    .meta { color: var(--muted); font-size: 0.95rem; }
-    .sparkline { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; background: #0e1428; border: 1px solid var(--border); border-radius: 16px; padding: 16px; color: var(--accent); overflow-x: auto; }
-    blockquote { margin: 12px 0 0; padding-left: 12px; border-left: 3px solid var(--accent); color: #d7def7; }
-    .recommendation h3 { color: var(--warn); }
-    footer { margin-top: 40px; color: var(--muted); font-size: 0.92rem; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    nav {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(10, 14, 26, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+    }
+    nav .nav-inner {
+      max-width: 1120px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 56px;
+    }
+    nav .logo {
+      font-weight: 700; font-size: 1.05rem; color: var(--text);
+      display: flex; align-items: center; gap: 10px;
+    }
+    nav .logo .logo-dot {
+      width: 9px; height: 9px; border-radius: 50%;
+      background: var(--accent); display: inline-block;
+    }
+    nav a {
+      color: var(--muted); text-decoration: none; font-size: 0.9rem;
+      transition: color 0.15s;
+    }
+    nav a:hover { color: var(--accent); }
+    nav .nav-links { display: flex; gap: 24px; }
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+    .hero {
+      position: relative;
+      padding: 48px 0 40px;
+    }
+    .hero h1 {
+      font-size: 2.25rem; font-weight: 800; letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #e8ecf4 0%, #60a5fa 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero .subtitle {
+      color: var(--muted); font-size: 1.05rem; margin-top: 8px; max-width: 640px;
+    }
+    .section {
+      margin-top: 48px;
+    }
+    .section-header {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
+    }
+    .section-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+    }
+    .section-icon.glance { background: var(--accent-dim); }
+    .section-icon.issues { background: var(--bad-dim); }
+    .section-icon.escalated { background: var(--warn-dim); }
+    .section-icon.recs { background: var(--good-dim); }
+    .section-icon.breakdown { background: #a78bfa22; }
+    h2 {
+      font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    .stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 24px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .stat:hover { border-color: var(--accent); }
+    .stat .stat-label {
+      font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--muted); font-weight: 600;
+    }
+    .stat .stat-value {
+      font-size: 2rem; font-weight: 800; margin-top: 4px; letter-spacing: -0.02em;
+    }
+    .stat .stat-sub {
+      font-size: 0.82rem; color: var(--muted); margin-top: 2px;
+    }
+    .stat.good .stat-value { color: var(--good); }
+    .stat.bad .stat-value { color: var(--bad); }
+    .stat.accent .stat-value { color: var(--accent); }
+    .stat .stat-glow {
+      position: absolute; top: -20px; right: -20px; width: 80px; height: 80px;
+      border-radius: 50%; filter: blur(30px); opacity: 0.15;
+    }
+    .stat.good .stat-glow { background: var(--good); }
+    .stat.bad .stat-glow { background: var(--bad); }
+    .stat.accent .stat-glow { background: var(--accent); }
+    .sparkline {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      margin-top: 16px;
+    }
+    .sparkline-header {
+      font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--muted); font-weight: 600; margin-bottom: 16px;
+    }
+    .bar-chart {
+      display: flex; align-items: flex-end; gap: 4px;
+    }
+    .bar-col {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 4px;
+    }
+    .bar-value { font-size: 0.75rem; color: var(--muted); font-weight: 600; }
+    .bar-day { font-size: 0.72rem; color: var(--muted); }
+    .bar-svg { display: block; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      transition: border-color 0.2s, transform 0.15s;
+    }
+    .card:hover { border-color: rgba(96, 165, 250, 0.3); transform: translateY(-1px); }
+    .card-header {
+      display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px;
+    }
+    .card-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .card-icon.issue { background: var(--bad-dim); }
+    .card-icon.escalation { background: var(--warn-dim); }
+    .card-icon.recommendation { background: var(--good-dim); }
+    .card-title h3 {
+      font-size: 1rem; font-weight: 700; margin-bottom: 2px;
+    }
+    .card-title .meta {
+      font-size: 0.82rem; color: var(--muted);
+    }
+    .badge {
+      display: inline-block; font-size: 0.72rem; font-weight: 600;
+      padding: 2px 8px; border-radius: 6px; border: 1px solid;
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .bar-track {
+      height: 6px; background: var(--surface-raised); border-radius: 3px;
+      position: relative; overflow: hidden; margin: 10px 0;
+    }
+    .bar-fill {
+      position: absolute; top: 0; height: 100%; border-radius: 3px;
+    }
+    .bar-fill.resolved { background: var(--good); left: 0; }
+    .bar-fill.escalated { background: var(--bad); }
+    .bar-labels {
+      display: flex; justify-content: space-between;
+      font-size: 0.75rem; color: var(--muted);
+    }
+    .quotes {
+      margin-top: 12px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .quote-item {
+      font-size: 0.88rem; color: #b4bdd4; padding-left: 12px;
+      border-left: 2px solid var(--accent); line-height: 1.5;
+    }
+    .reason {
+      font-size: 0.92rem; color: var(--muted); margin-bottom: 10px;
+    }
+    .escalation-card .quote-item {
+      border-left-color: var(--warn);
+    }
+    .recommendation-card .card-title h3 {
+      color: var(--good);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 14px;
+    }
+    .cat-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+    }
+    .cat-row {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+    }
+    .cat-label {
+      font-size: 0.82rem; color: var(--text); min-width: 140px; text-align: right;
+    }
+    .cat-bar-track {
+      flex: 1; height: 8px; background: var(--surface-raised); border-radius: 4px;
+      overflow: hidden;
+    }
+    .cat-bar-fill {
+      height: 100%; border-radius: 4px;
+      background: linear-gradient(90deg, var(--accent), #a78bfa);
+      transition: width 0.4s ease;
+    }
+    .cat-count {
+      font-size: 0.82rem; color: var(--muted); font-weight: 700; min-width: 24px;
+    }
+    footer {
+      margin-top: 56px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
   </style>
 </head>
 <body>
-  <main>
-    <header>
-      <h1>Weekly Support Post-Mortem</h1>
-      <p class="lede">A week of support tickets went through triage, resolve/escalate, and analysis. This static report is the deployed demo artifact.</p>
-    </header>
+  <nav>
+    <div class="nav-inner">
+      <div class="logo"><span class="logo-dot"></span>Post-Mortem</div>
+      <div class="nav-links">
+        <a href="./runs/">Run History</a>
+      </div>
+    </div>
+  </nav>
 
-    <section>
-      <h2>This Week at a Glance</h2>
+  <main>
+    <div class="hero">
+      <h1>Weekly Support Post-Mortem</h1>
+      <p class="subtitle">Automated triage, resolution, and escalation analysis for the past week of support tickets.</p>
+    </div>
+
+    <section class="section">
+      <div class="section-header">
+        <div class="section-icon glance">&#128202;</div>
+        <h2>This Week at a Glance</h2>
+      </div>
       <div class="stats">
-        <div class="stat"><span>Total Ticket Volume</span><strong>20</strong></div>
-        <div class="stat"><span>Resolution Rate</span><strong>35.0%</strong></div>
-        <div class="stat"><span>Escalation Rate</span><strong>65.0%</strong></div>
+        <div class="stat accent">
+          <div class="stat-glow"></div>
+          <div class="stat-label">Total Volume</div>
+          <div class="stat-value">20</div>
+          <div class="stat-sub">tickets processed</div>
+        </div>
+        <div class="stat good">
+          <div class="stat-glow"></div>
+          <div class="stat-label">Resolution Rate</div>
+          <div class="stat-value">35.0%</div>
+          <div class="stat-sub">7 resolved</div>
+        </div>
+        <div class="stat bad">
+          <div class="stat-glow"></div>
+          <div class="stat-label">Escalation Rate</div>
+          <div class="stat-value">65.0%</div>
+          <div class="stat-sub">13 escalated</div>
+        </div>
       </div>
       <div class="sparkline">
-        <div>Volume by day: @@@@@@*</div>
-        <div>Days:          12 13 14 15 16 17 18</div>
-        <div>Counts:        3 3 3 3 3 3 2</div>
+        <div class="sparkline-header">Daily Ticket Volume</div>
+        <div class="bar-chart"><div class="bar-col" style="width:14.285714285714286%"><svg viewBox="0 0 40 48" class="bar-svg"><rect x="8" y="0" width="24" height="48" rx="4" fill="var(--accent)" opacity="0.85"/></svg><span class="bar-value">3</span><span class="bar-day">12</span></div><div class="bar-col" style="width:14.285714285714286%"><svg viewBox="0 0 40 48" class="bar-svg"><rect x="8" y="0" width="24" height="48" rx="4" fill="var(--accent)" opacity="0.85"/></svg><span class="bar-value">3</span><span class="bar-day">13</span></div><div class="bar-col" style="width:14.285714285714286%"><svg viewBox="0 0 40 48" class="bar-svg"><rect x="8" y="0" width="24" height="48" rx="4" fill="var(--accent)" opacity="0.85"/></svg><span class="bar-value">3</span><span class="bar-day">14</span></div><div class="bar-col" style="width:14.285714285714286%"><svg viewBox="0 0 40 48" class="bar-svg"><rect x="8" y="0" width="24" height="48" rx="4" fill="var(--accent)" opacity="0.85"/></svg><span class="bar-value">3</span><span class="bar-day">15</span></div><div class="bar-col" style="width:14.285714285714286%"><svg viewBox="0 0 40 48" class="bar-svg"><rect x="8" y="0" width="24" height="48" rx="4" fill="var(--accent)" opacity="0.85"/></svg><span class="bar-value">3</span><span class="bar-day">16</span></div><div class="bar-col" style="width:14.285714285714286%"><svg viewBox="0 0 40 48" class="bar-svg"><rect x="8" y="0" width="24" height="48" rx="4" fill="var(--accent)" opacity="0.85"/></svg><span class="bar-value">3</span><span class="bar-day">17</span></div><div class="bar-col" style="width:14.285714285714286%"><svg viewBox="0 0 40 48" class="bar-svg"><rect x="8" y="16" width="24" height="32" rx="4" fill="var(--accent)" opacity="0.85"/></svg><span class="bar-value">2</span><span class="bar-day">18</span></div></div>
       </div>
     </section>
 
-    <section>
-      <h2>Top 3 Recurring Issues</h2>
-      <div class="grid"><article class="card"><h3>Mobile login loop</h3><p class="meta">6 tickets, 0 resolved, 6 escalated</p><ul><li>On my iPhone in Safari I sign in, finish 2FA, and then land back on the login screen again. I tried three times and c...</li><li>After I enter the texted verification code on mobile Safari, the page flashes and sends me back to sign in. Desktop C...</li></ul></article><article class="card"><h3>CSV export failures</h3><p class="meta">4 tickets, 0 resolved, 4 escalated</p><ul><li>Export to CSV completes but the downloaded file only has headers and no rows. This started today and blocks my financ...</li><li>The CSV file downloads, but several columns including customer name are empty even though they appear in the web table.</li></ul></article><article class="card"><h3>Duplicate billing</h3><p class="meta">3 tickets, 0 resolved, 3 escalated</p><ul><li>I upgraded once this morning but my card statement shows two charges from your company. Please confirm whether one wi...</li><li>Our admin only clicked upgrade once, but we have two invoice emails and two identical card charges. Please fix this b...</li></ul></article></div>
+    <section class="section">
+      <div class="section-header">
+        <div class="section-icon breakdown">&#128202;</div>
+        <h2>Category Breakdown</h2>
+      </div>
+      <div class="cat-section"><div class="cat-row"><span class="cat-label">Mobile login loop</span><div class="cat-bar-track"><div class="cat-bar-fill" style="width:100%"></div></div><span class="cat-count">6</span></div><div class="cat-row"><span class="cat-label">CSV export failures</span><div class="cat-bar-track"><div class="cat-bar-fill" style="width:67%"></div></div><span class="cat-count">4</span></div><div class="cat-row"><span class="cat-label">Duplicate billing</span><div class="cat-bar-track"><div class="cat-bar-fill" style="width:50%"></div></div><span class="cat-count">3</span></div><div class="cat-row"><span class="cat-label">Feature requests</span><div class="cat-bar-track"><div class="cat-bar-fill" style="width:33%"></div></div><span class="cat-count">2</span></div><div class="cat-row"><span class="cat-label">Password reset</span><div class="cat-bar-track"><div class="cat-bar-fill" style="width:17%"></div></div><span class="cat-count">1</span></div><div class="cat-row"><span class="cat-label">Slow dashboard</span><div class="cat-bar-track"><div class="cat-bar-fill" style="width:17%"></div></div><span class="cat-count">1</span></div></div>
     </section>
 
-    <section>
-      <h2>What's Getting Escalated and Why</h2>
-      <div class="grid"><article class="card"><h3>Mobile login loop</h3><p class="meta">6 escalations</p><p>Persistent login loops on mobile Safari usually need engineering investigation.</p><blockquote>On my iPhone in Safari I sign in, finish 2FA, and then land back on the login screen again. I tried three times and c...</blockquote></article><article class="card"><h3>CSV export failures</h3><p class="meta">4 escalations</p><p>CSV export issues are typically product bugs that frontline support cannot patch.</p><blockquote>Export to CSV completes but the downloaded file only has headers and no rows. This started today and blocks my financ...</blockquote></article><article class="card"><h3>Duplicate billing</h3><p class="meta">3 escalations</p><p>Duplicate billing needs billing-system investigation and refund handling.</p><blockquote>I upgraded once this morning but my card statement shows two charges from your company. Please confirm whether one wi...</blockquote></article></div>
+    <section class="section">
+      <div class="section-header">
+        <div class="section-icon issues">&#9888;</div>
+        <h2>Top Recurring Issues</h2>
+      </div>
+      <div class="grid"><article class="card"><div class="card-header"><div class="card-icon issue">&#9888;</div><div class="card-title"><h3>Mobile login loop</h3><p class="meta">6 tickets</p></div></div><div class="bar-track"><div class="bar-fill resolved" style="width:0%"></div><div class="bar-fill escalated" style="width:100%;left:0%"></div></div><div class="bar-labels"><span class="resolved-label">Resolved 0</span><span class="escalated-label">Escalated 6</span></div><div class="quotes"><div class="quote-item">&ldquo;On my iPhone in Safari I sign in, finish 2FA, and then land back on the login screen again. I tried three times and c...&rdquo;</div><div class="quote-item">&ldquo;After I enter the texted verification code on mobile Safari, the page flashes and sends me back to sign in. Desktop C...&rdquo;</div></div></article><article class="card"><div class="card-header"><div class="card-icon issue">&#9888;</div><div class="card-title"><h3>CSV export failures</h3><p class="meta">4 tickets</p></div></div><div class="bar-track"><div class="bar-fill resolved" style="width:0%"></div><div class="bar-fill escalated" style="width:100%;left:0%"></div></div><div class="bar-labels"><span class="resolved-label">Resolved 0</span><span class="escalated-label">Escalated 4</span></div><div class="quotes"><div class="quote-item">&ldquo;Export to CSV completes but the downloaded file only has headers and no rows. This started today and blocks my financ...&rdquo;</div><div class="quote-item">&ldquo;The CSV file downloads, but several columns including customer name are empty even though they appear in the web table.&rdquo;</div></div></article><article class="card"><div class="card-header"><div class="card-icon issue">&#9888;</div><div class="card-title"><h3>Duplicate billing</h3><p class="meta">3 tickets</p></div></div><div class="bar-track"><div class="bar-fill resolved" style="width:0%"></div><div class="bar-fill escalated" style="width:100%;left:0%"></div></div><div class="bar-labels"><span class="resolved-label">Resolved 0</span><span class="escalated-label">Escalated 3</span></div><div class="quotes"><div class="quote-item">&ldquo;I upgraded once this morning but my card statement shows two charges from your company. Please confirm whether one wi...&rdquo;</div><div class="quote-item">&ldquo;Our admin only clicked upgrade once, but we have two invoice emails and two identical card charges. Please fix this b...&rdquo;</div></div></article></div>
     </section>
 
-    <section>
-      <h2>Recommendations for Product Team</h2>
-      <div class="grid"><article class="card recommendation"><h3>Fix the mobile login loop</h3><p>Recurring mobile sign-in loops are the clearest blocker in the queue and keep reappearing across multiple tickets.</p></article><article class="card recommendation"><h3>Repair CSV export reliability</h3><p>CSV exports are repeatedly missing rows or columns, which breaks finance workflows and looks like a product bug rather than a one-off incident.</p></article><article class="card recommendation"><h3>Fix the mobile login loop</h3><p>Recurring mobile sign-in loops are the clearest blocker in the queue and keep reappearing across multiple tickets.</p></article></div>
+    <section class="section">
+      <div class="section-header">
+        <div class="section-icon escalated">&#128293;</div>
+        <h2>What's Getting Escalated</h2>
+      </div>
+      <div class="grid"><article class="card escalation-card"><div class="card-header"><div class="card-icon escalation">&#128274;</div><div class="card-title"><h3>Mobile login loop</h3><span class="badge" style="background:#ff8d8d22;color:#ff8d8d;border-color:#ff8d8d44">6 escalated</span></div></div><p class="reason">Persistent login loops on mobile Safari usually need engineering investigation.</p><div class="quote-item">&ldquo;On my iPhone in Safari I sign in, finish 2FA, and then land back on the login screen again. I tried three times and c...&rdquo;</div></article><article class="card escalation-card"><div class="card-header"><div class="card-icon escalation">&#128196;</div><div class="card-title"><h3>CSV export failures</h3><span class="badge" style="background:#ff8d8d22;color:#ff8d8d;border-color:#ff8d8d44">4 escalated</span></div></div><p class="reason">CSV export issues are typically product bugs that frontline support cannot patch.</p><div class="quote-item">&ldquo;Export to CSV completes but the downloaded file only has headers and no rows. This started today and blocks my financ...&rdquo;</div></article><article class="card escalation-card"><div class="card-header"><div class="card-icon escalation">&#128179;</div><div class="card-title"><h3>Duplicate billing</h3><span class="badge" style="background:#ff8d8d22;color:#ff8d8d;border-color:#ff8d8d44">3 escalated</span></div></div><p class="reason">Duplicate billing needs billing-system investigation and refund handling.</p><div class="quote-item">&ldquo;I upgraded once this morning but my card statement shows two charges from your company. Please confirm whether one wi...&rdquo;</div></article></div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <div class="section-icon recs">&#127919;</div>
+        <h2>Recommendations</h2>
+      </div>
+      <div class="grid"><article class="card recommendation-card"><div class="card-header"><div class="card-icon recommendation">&#127919;</div><div class="card-title"><h3>Fix mobile Safari/iOS session persistence causing login loops</h3></div></div><p>Accounting for 30% of all tickets and 100% escalated, mobile users are completely blocked from logging in due to session cookies failing to persist after 2FA. Fixing this will eliminate the largest source of escalations.</p></article><article class="card recommendation-card"><div class="card-header"><div class="card-icon recommendation">&#128640;</div><div class="card-title"><h3>Resolve CSV export bugs causing missing data, encoding errors, and row limits</h3></div></div><p>CSV export failures represent 20% of tickets and are entirely escalated. The exports are fundamentally broken—outputting only headers, dropping columns, truncating at 200 rows, and mangling accented characters—which blocks critical financial reporting.</p></article><article class="card recommendation-card"><div class="card-header"><div class="card-icon recommendation">&#128172;</div><div class="card-title"><h3>Add idempotency to the billing upgrade flow to prevent duplicate charges</h3></div></div><p>Duplicate billing accounts for 3 tickets and requires manual refund handling. Implementing idempotency keys on the upgrade/payment endpoint will prevent double processing from a single click, reducing billing escalations and protecting customer trust.</p></article></div>
     </section>
 
     <footer>Generated from local pipeline output and rendered as a static site for deployment.</footer>

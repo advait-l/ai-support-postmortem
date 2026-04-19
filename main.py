@@ -851,55 +851,116 @@ def render_postmortem(summary: dict, recommendations: list[dict]) -> str:
 
 
 def render_report_html(summary: dict, recommendations: list[dict]) -> str:
+    def _priority_badge(priority: str) -> str:
+        colors = {
+            "high": "#ff8d8d",
+            "medium": "#ffd37a",
+            "low": "#7fe3b0",
+            "urgent": "#ff6b6b",
+        }
+        c = colors.get(priority, "#8d99b8")
+        return f'<span class="badge" style="background:{c}22;color:{c};border-color:{c}44">{escape(priority.title())}</span>'
+
+    def _severity_bar(resolved: int, escalated: int, total: int) -> str:
+        if total == 0:
+            return ""
+        r_pct = round((resolved / total) * 100)
+        e_pct = round((escalated / total) * 100)
+        return (
+            f'<div class="bar-track">'
+            f'<div class="bar-fill resolved" style="width:{r_pct}%"></div>'
+            f'<div class="bar-fill escalated" style="width:{e_pct}%;left:{r_pct}%"></div>'
+            f"</div>"
+            f'<div class="bar-labels"><span class="resolved-label">Resolved {resolved}</span>'
+            f'<span class="escalated-label">Escalated {escalated}</span></div>'
+        )
+
     issue_items = []
     for issue in summary["top_recurring_issues"]:
-        quotes = "".join(
-            f"<li>{escape(quote)}</li>" for quote in issue["example_quotes"]
+        quotes_html = "".join(
+            f'<div class="quote-item">&ldquo;{escape(quote)}&rdquo;</div>'
+            for quote in issue["example_quotes"]
         )
         issue_items.append(
-            "".join(
-                [
-                    '<article class="card">',
-                    f"<h3>{escape(issue['label'])}</h3>",
-                    f'<p class="meta">{issue["count"]} tickets, {issue["resolved"]} resolved, {issue["escalated"]} escalated</p>',
-                    f"<ul>{quotes}</ul>",
-                    "</article>",
-                ]
-            )
+            f'<article class="card">'
+            f'<div class="card-header">'
+            f'<div class="card-icon issue">&#9888;</div>'
+            f'<div class="card-title"><h3>{escape(issue["label"])}</h3>'
+            f'<p class="meta">{issue["count"]} tickets</p></div></div>'
+            f"{_severity_bar(issue['resolved'], issue['escalated'], issue['count'])}"
+            f'<div class="quotes">{quotes_html}</div>'
+            f"</article>"
         )
 
     escalation_items = []
+    escalation_icons = {
+        "mobile_login_loop": "&#128274;",
+        "csv_export": "&#128196;",
+        "duplicate_billing": "&#128179;",
+        "password_reset": "&#128272;",
+        "feature_request": "&#128161;",
+        "invoice_copy": "&#128203;",
+        "slow_dashboard": "&#9201;",
+        "team_invites": "&#128101;",
+        "search_accuracy": "&#128269;",
+        "other": "&#10067;",
+    }
     for group in summary["escalation_groups"][:5]:
         reason = escape(group["reasons"][0]) if group["reasons"] else ""
         quote = escape(group["example_quotes"][0]) if group["example_quotes"] else ""
+        icon = escalation_icons.get(group["category"], "&#9888;")
         escalation_items.append(
-            "".join(
-                [
-                    '<article class="card">',
-                    f"<h3>{escape(group['label'])}</h3>",
-                    f'<p class="meta">{group["count"]} escalations</p>',
-                    f"<p>{reason}</p>",
-                    f"<blockquote>{quote}</blockquote>",
-                    "</article>",
-                ]
-            )
+            f'<article class="card escalation-card">'
+            f'<div class="card-header">'
+            f'<div class="card-icon escalation">{icon}</div>'
+            f'<div class="card-title"><h3>{escape(group["label"])}</h3>'
+            f'<span class="badge" style="background:#ff8d8d22;color:#ff8d8d;border-color:#ff8d8d44">{group["count"]} escalated</span></div></div>'
+            f'<p class="reason">{reason}</p>'
+            f'<div class="quote-item">&ldquo;{quote}&rdquo;</div>'
+            f"</article>"
         )
 
     recommendation_items = []
-    for recommendation in recommendations[:3]:
+    rec_icons = ["&#127919;", "&#128640;", "&#128172;"]
+    for i, recommendation in enumerate(recommendations[:3]):
         recommendation_items.append(
-            "".join(
-                [
-                    '<article class="card recommendation">',
-                    f"<h3>{escape(recommendation['title'])}</h3>",
-                    f"<p>{escape(recommendation['reason'])}</p>",
-                    "</article>",
-                ]
-            )
+            f'<article class="card recommendation-card">'
+            f'<div class="card-header">'
+            f'<div class="card-icon recommendation">{rec_icons[i % len(rec_icons)]}</div>'
+            f'<div class="card-title"><h3>{escape(recommendation["title"])}</h3></div></div>'
+            f"<p>{escape(recommendation['reason'])}</p>"
+            f"</article>"
         )
 
-    sparkline_days = " ".join(summary["sparkline"]["days"])
-    sparkline_counts = " ".join(str(count) for count in summary["sparkline"]["counts"])
+    counts = summary["sparkline"]["counts"]
+    days = summary["sparkline"]["days"]
+    max_count = max(counts) if counts else 1
+    bar_height = 48
+    bar_width = 100 / len(counts) if counts else 1
+    sparkline_bars = ""
+    for i, (day, count) in enumerate(zip(days, counts)):
+        h = round((count / max_count) * bar_height) if max_count else 0
+        sparkline_bars += (
+            f'<div class="bar-col" style="width:{bar_width}%">'
+            f'<svg viewBox="0 0 40 {bar_height}" class="bar-svg"><rect x="8" y="{bar_height - h}" width="24" height="{h}" rx="4" fill="var(--accent)" opacity="0.85"/></svg>'
+            f'<span class="bar-value">{count}</span>'
+            f'<span class="bar-day">{escape(day)}</span>'
+            f"</div>"
+        )
+
+    category_bars = ""
+    breakdown = summary.get("category_breakdown", [])
+    if breakdown:
+        max_cat = breakdown[0]["count"]
+        for cat in breakdown[:6]:
+            w = round((cat["count"] / max_cat) * 100)
+            category_bars += (
+                f'<div class="cat-row">'
+                f'<span class="cat-label">{escape(cat["label"])}</span>'
+                f'<div class="cat-bar-track"><div class="cat-bar-fill" style="width:{w}%"></div></div>'
+                f'<span class="cat-count">{cat["count"]}</span>'
+                f"</div>"
+            )
 
     return f"""<!doctype html>
 <html lang=\"en\">
@@ -910,68 +971,323 @@ def render_report_html(summary: dict, recommendations: list[dict]) -> str:
   <style>
     :root {{
       color-scheme: dark;
-      --bg: #0b1020;
-      --panel: #131a2e;
-      --muted: #8d99b8;
-      --text: #edf2ff;
-      --accent: #7cc7ff;
-      --border: #283252;
-      --good: #7fe3b0;
-      --warn: #ffd37a;
+      --bg: #0a0e1a;
+      --surface: #111827;
+      --surface-raised: #1a2238;
+      --muted: #8896b3;
+      --text: #e8ecf4;
+      --accent: #60a5fa;
+      --accent-dim: #60a5fa22;
+      --border: #1e2d4a;
+      --good: #34d399;
+      --good-dim: #34d39922;
+      --warn: #fbbf24;
+      --warn-dim: #fbbf2422;
+      --bad: #f87171;
+      --bad-dim: #f8717122;
     }}
-    * {{ box-sizing: border-box; }}
-    body {{ margin: 0; font-family: Inter, ui-sans-serif, system-ui, sans-serif; background: linear-gradient(180deg, #0b1020 0%, #11172a 100%); color: var(--text); }}
-    main {{ max-width: 980px; margin: 0 auto; padding: 40px 20px 64px; }}
-    h1 {{ font-size: 2.4rem; margin: 0 0 8px; }}
-    h2 {{ font-size: 1.4rem; margin: 36px 0 16px; }}
-    h3 {{ margin: 0 0 8px; font-size: 1.05rem; }}
-    p, li, blockquote {{ line-height: 1.55; }}
-    .lede {{ color: var(--muted); max-width: 720px; }}
-    .stats {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 20px; }}
-    .stat, .card {{ background: rgba(19, 26, 46, 0.88); border: 1px solid var(--border); border-radius: 16px; padding: 16px; backdrop-filter: blur(6px); }}
-    .stat strong {{ display: block; font-size: 1.6rem; margin-top: 8px; }}
-    .grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }}
-    .meta {{ color: var(--muted); font-size: 0.95rem; }}
-    .sparkline {{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; background: #0e1428; border: 1px solid var(--border); border-radius: 16px; padding: 16px; color: var(--accent); overflow-x: auto; }}
-    blockquote {{ margin: 12px 0 0; padding-left: 12px; border-left: 3px solid var(--accent); color: #d7def7; }}
-    .recommendation h3 {{ color: var(--warn); }}
-    footer {{ margin-top: 40px; color: var(--muted); font-size: 0.92rem; }}
+    * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+    body {{
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }}
+    nav {{
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(10, 14, 26, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+    }}
+    nav .nav-inner {{
+      max-width: 1120px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 56px;
+    }}
+    nav .logo {{
+      font-weight: 700; font-size: 1.05rem; color: var(--text);
+      display: flex; align-items: center; gap: 10px;
+    }}
+    nav .logo .logo-dot {{
+      width: 9px; height: 9px; border-radius: 50%;
+      background: var(--accent); display: inline-block;
+    }}
+    nav a {{
+      color: var(--muted); text-decoration: none; font-size: 0.9rem;
+      transition: color 0.15s;
+    }}
+    nav a:hover {{ color: var(--accent); }}
+    nav .nav-links {{ display: flex; gap: 24px; }}
+    main {{
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }}
+    .hero {{
+      position: relative;
+      padding: 48px 0 40px;
+    }}
+    .hero h1 {{
+      font-size: 2.25rem; font-weight: 800; letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #e8ecf4 0%, #60a5fa 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }}
+    .hero .subtitle {{
+      color: var(--muted); font-size: 1.05rem; margin-top: 8px; max-width: 640px;
+    }}
+    .section {{
+      margin-top: 48px;
+    }}
+    .section-header {{
+      display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
+    }}
+    .section-icon {{
+      width: 32px; height: 32px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+    }}
+    .section-icon.glance {{ background: var(--accent-dim); }}
+    .section-icon.issues {{ background: var(--bad-dim); }}
+    .section-icon.escalated {{ background: var(--warn-dim); }}
+    .section-icon.recs {{ background: var(--good-dim); }}
+    .section-icon.breakdown {{ background: #a78bfa22; }}
+    h2 {{
+      font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em;
+    }}
+    .stats {{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }}
+    .stat {{
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 24px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }}
+    .stat:hover {{ border-color: var(--accent); }}
+    .stat .stat-label {{
+      font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--muted); font-weight: 600;
+    }}
+    .stat .stat-value {{
+      font-size: 2rem; font-weight: 800; margin-top: 4px; letter-spacing: -0.02em;
+    }}
+    .stat .stat-sub {{
+      font-size: 0.82rem; color: var(--muted); margin-top: 2px;
+    }}
+    .stat.good .stat-value {{ color: var(--good); }}
+    .stat.bad .stat-value {{ color: var(--bad); }}
+    .stat.accent .stat-value {{ color: var(--accent); }}
+    .stat .stat-glow {{
+      position: absolute; top: -20px; right: -20px; width: 80px; height: 80px;
+      border-radius: 50%; filter: blur(30px); opacity: 0.15;
+    }}
+    .stat.good .stat-glow {{ background: var(--good); }}
+    .stat.bad .stat-glow {{ background: var(--bad); }}
+    .stat.accent .stat-glow {{ background: var(--accent); }}
+    .sparkline {{
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      margin-top: 16px;
+    }}
+    .sparkline-header {{
+      font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--muted); font-weight: 600; margin-bottom: 16px;
+    }}
+    .bar-chart {{
+      display: flex; align-items: flex-end; gap: 4px;
+    }}
+    .bar-col {{
+      display: flex; flex-direction: column; align-items: center;
+      gap: 4px;
+    }}
+    .bar-value {{ font-size: 0.75rem; color: var(--muted); font-weight: 600; }}
+    .bar-day {{ font-size: 0.72rem; color: var(--muted); }}
+    .bar-svg {{ display: block; }}
+    .card {{
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      transition: border-color 0.2s, transform 0.15s;
+    }}
+    .card:hover {{ border-color: rgba(96, 165, 250, 0.3); transform: translateY(-1px); }}
+    .card-header {{
+      display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px;
+    }}
+    .card-icon {{
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }}
+    .card-icon.issue {{ background: var(--bad-dim); }}
+    .card-icon.escalation {{ background: var(--warn-dim); }}
+    .card-icon.recommendation {{ background: var(--good-dim); }}
+    .card-title h3 {{
+      font-size: 1rem; font-weight: 700; margin-bottom: 2px;
+    }}
+    .card-title .meta {{
+      font-size: 0.82rem; color: var(--muted);
+    }}
+    .badge {{
+      display: inline-block; font-size: 0.72rem; font-weight: 600;
+      padding: 2px 8px; border-radius: 6px; border: 1px solid;
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }}
+    .bar-track {{
+      height: 6px; background: var(--surface-raised); border-radius: 3px;
+      position: relative; overflow: hidden; margin: 10px 0;
+    }}
+    .bar-fill {{
+      position: absolute; top: 0; height: 100%; border-radius: 3px;
+    }}
+    .bar-fill.resolved {{ background: var(--good); left: 0; }}
+    .bar-fill.escalated {{ background: var(--bad); }}
+    .bar-labels {{
+      display: flex; justify-content: space-between;
+      font-size: 0.75rem; color: var(--muted);
+    }}
+    .quotes {{
+      margin-top: 12px;
+      display: flex; flex-direction: column; gap: 6px;
+    }}
+    .quote-item {{
+      font-size: 0.88rem; color: #b4bdd4; padding-left: 12px;
+      border-left: 2px solid var(--accent); line-height: 1.5;
+    }}
+    .reason {{
+      font-size: 0.92rem; color: var(--muted); margin-bottom: 10px;
+    }}
+    .escalation-card .quote-item {{
+      border-left-color: var(--warn);
+    }}
+    .recommendation-card .card-title h3 {{
+      color: var(--good);
+    }}
+    .grid {{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 14px;
+    }}
+    .cat-section {{
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+    }}
+    .cat-row {{
+      display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+    }}
+    .cat-label {{
+      font-size: 0.82rem; color: var(--text); min-width: 140px; text-align: right;
+    }}
+    .cat-bar-track {{
+      flex: 1; height: 8px; background: var(--surface-raised); border-radius: 4px;
+      overflow: hidden;
+    }}
+    .cat-bar-fill {{
+      height: 100%; border-radius: 4px;
+      background: linear-gradient(90deg, var(--accent), #a78bfa);
+      transition: width 0.4s ease;
+    }}
+    .cat-count {{
+      font-size: 0.82rem; color: var(--muted); font-weight: 700; min-width: 24px;
+    }}
+    footer {{
+      margin-top: 56px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.82rem;
+    }}
   </style>
 </head>
 <body>
+  <nav>
+    <div class="nav-inner">
+      <div class="logo"><span class="logo-dot"></span>Post-Mortem</div>
+      <div class="nav-links">
+        <a href="./runs/">Run History</a>
+      </div>
+    </div>
+  </nav>
+
   <main>
-    <header>
+    <div class="hero">
       <h1>Weekly Support Post-Mortem</h1>
-      <p class=\"lede\">A week of support tickets went through triage, resolve/escalate, and analysis. This static report is the deployed demo artifact.</p>
-    </header>
+      <p class="subtitle">Automated triage, resolution, and escalation analysis for the past week of support tickets.</p>
+    </div>
 
-    <section>
-      <h2>This Week at a Glance</h2>
-      <div class=\"stats\">
-        <div class=\"stat\"><span>Total Ticket Volume</span><strong>{summary["total_tickets"]}</strong></div>
-        <div class=\"stat\"><span>Resolution Rate</span><strong>{summary["resolution_rate"]}%</strong></div>
-        <div class=\"stat\"><span>Escalation Rate</span><strong>{summary["escalation_rate"]}%</strong></div>
+    <section class="section">
+      <div class="section-header">
+        <div class="section-icon glance">&#128202;</div>
+        <h2>This Week at a Glance</h2>
       </div>
-      <div class=\"sparkline\">
-        <div>Volume by day: {escape(summary["sparkline"]["line"])}</div>
-        <div>Days:          {escape(sparkline_days)}</div>
-        <div>Counts:        {escape(sparkline_counts)}</div>
+      <div class="stats">
+        <div class="stat accent">
+          <div class="stat-glow"></div>
+          <div class="stat-label">Total Volume</div>
+          <div class="stat-value">{summary["total_tickets"]}</div>
+          <div class="stat-sub">tickets processed</div>
+        </div>
+        <div class="stat good">
+          <div class="stat-glow"></div>
+          <div class="stat-label">Resolution Rate</div>
+          <div class="stat-value">{summary["resolution_rate"]}%</div>
+          <div class="stat-sub">{summary["resolved_count"]} resolved</div>
+        </div>
+        <div class="stat bad">
+          <div class="stat-glow"></div>
+          <div class="stat-label">Escalation Rate</div>
+          <div class="stat-value">{summary["escalation_rate"]}%</div>
+          <div class="stat-sub">{summary["escalated_count"]} escalated</div>
+        </div>
+      </div>
+      <div class="sparkline">
+        <div class="sparkline-header">Daily Ticket Volume</div>
+        <div class="bar-chart">{sparkline_bars}</div>
       </div>
     </section>
 
-    <section>
-      <h2>Top 3 Recurring Issues</h2>
-      <div class=\"grid\">{"".join(issue_items)}</div>
+    <section class="section">
+      <div class="section-header">
+        <div class="section-icon breakdown">&#128202;</div>
+        <h2>Category Breakdown</h2>
+      </div>
+      <div class="cat-section">{category_bars}</div>
     </section>
 
-    <section>
-      <h2>What's Getting Escalated and Why</h2>
-      <div class=\"grid\">{"".join(escalation_items)}</div>
+    <section class="section">
+      <div class="section-header">
+        <div class="section-icon issues">&#9888;</div>
+        <h2>Top Recurring Issues</h2>
+      </div>
+      <div class="grid">{"".join(issue_items)}</div>
     </section>
 
-    <section>
-      <h2>Recommendations for Product Team</h2>
-      <div class=\"grid\">{"".join(recommendation_items)}</div>
+    <section class="section">
+      <div class="section-header">
+        <div class="section-icon escalated">&#128293;</div>
+        <h2>What's Getting Escalated</h2>
+      </div>
+      <div class="grid">{"".join(escalation_items)}</div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <div class="section-icon recs">&#127919;</div>
+        <h2>Recommendations</h2>
+      </div>
+      <div class="grid">{"".join(recommendation_items)}</div>
     </section>
 
     <footer>Generated from local pipeline output and rendered as a static site for deployment.</footer>
@@ -987,43 +1303,81 @@ def render_run_detail_html(manifest: dict, trace_entries: list[dict]) -> str:
     status_counts = Counter(entry.get("status", "unknown") for entry in trace_entries)
     agent_counts = Counter(entry.get("agent", "unknown") for entry in trace_entries)
 
+    def _status_color(s: str) -> str:
+        colors = {"ok": "#34d399", "fallback": "#fbbf24", "error": "#f87171"}
+        return colors.get(s, "#8896b3")
+
+    def _status_badge(s: str) -> str:
+        c = _status_color(s)
+        return f'<span class="badge" style="background:{c}22;color:{c};border-color:{c}44">{escape(s)}</span>'
+
+    def _agent_badge(a: str) -> str:
+        return f'<span class="badge agent">{escape(a)}</span>'
+
     trace_rows = []
     for entry in trace_entries:
         metadata = entry.get("metadata") or {}
+        step = str(entry.get("step", ""))
+        parent = entry.get("parent_step")
+        error = entry.get("error")
+
+        step_short = step.split(":")[-1] if ":" in step else step[:24]
+        if len(step) > 24:
+            step_short += "..."
+
+        latency = entry.get("latency_ms")
+        latency_str = f"{latency:.1f}ms" if latency is not None else "-"
+
+        error_html = ""
+        if error:
+            error_html = f'<div class="detail error"><span class="label">Error:</span> <code>{escape(error)}</code></div>'
+
+        agent_badge_html = _agent_badge(str(entry.get("agent", "unknown")))
+        status_badge_html = _status_badge(str(entry.get("status", "unknown")))
+        timestamp_html = escape(str(entry.get("timestamp", "unknown"))[:19])
+        provider_html = escape(str(entry.get("provider") or "local"))
+        model_html = escape(str(entry.get("model") or "-"))
+        parent_html = escape(str(parent or "-"))
+        metadata_html = escape(json.dumps(metadata, sort_keys=True)[:200])
+
         trace_rows.append(
-            "".join(
-                [
-                    '<article class="trace-card">',
-                    '<div class="trace-head">',
-                    f'<span class="pill agent">{escape(str(entry.get("agent", "unknown")))}</span>',
-                    f'<span class="pill status {escape(str(entry.get("status", "unknown")))}">{escape(str(entry.get("status", "unknown")))}</span>',
-                    f'<span class="step">{escape(str(entry.get("step", "")))}</span>',
-                    "</div>",
-                    '<div class="trace-meta">',
-                    f"<span>{escape(str(entry.get('timestamp', 'unknown')))}</span>",
-                    f"<span>{escape(str(entry.get('latency_ms') or '-'))} ms</span>",
-                    f"<span>{escape(str(entry.get('provider') or 'local'))}</span>",
-                    f"<span>{escape(str(entry.get('model') or '-'))}</span>",
-                    "</div>",
-                    f'<p class="trace-line"><strong>Parent:</strong> {escape(str(entry.get("parent_step") or "-"))}</p>',
-                    f'<p class="trace-line"><strong>Metadata:</strong> {escape(json.dumps(metadata, sort_keys=True))}</p>',
-                    (
-                        f'<p class="trace-line error"><strong>Error:</strong> {escape(str(entry.get("error")))}</p>'
-                        if entry.get("error")
-                        else ""
-                    ),
-                    "</article>",
-                ]
-            )
+            f'<article class="trace-card">'
+            f'<div class="trace-head">'
+            f"{agent_badge_html}"
+            f"{status_badge_html}"
+            f'<span class="step">{escape(step_short)}</span>'
+            f"</div>"
+            f'<div class="trace-meta">'
+            f'<span class="time">{timestamp_html}</span>'
+            f'<span class="latency">{escape(latency_str)}</span>'
+            f'<span class="provider">{provider_html}</span>'
+            f'<span class="model">{model_html}</span>'
+            f"</div>"
+            f'<div class="trace-details">'
+            f'<div class="detail"><span class="label">Parent:</span> <code>{parent_html}</code></div>'
+            f'<div class="detail"><span class="label">Metadata:</span> <code>{metadata_html}</code></div>'
+            f"{error_html}"
+            f"</div>"
+            f"</article>"
         )
 
     summary_cards = [
-        f'<div class="stat"><span>Run Type</span><strong>{escape(run_kind)}</strong></div>',
-        f'<div class="stat"><span>Tickets</span><strong>{escape(str(manifest.get("ticket_count", "?")))}</strong></div>',
-        f'<div class="stat"><span>Resolved</span><strong>{escape(str(manifest.get("resolved", "?")))}</strong></div>',
-        f'<div class="stat"><span>Escalated</span><strong>{escape(str(manifest.get("escalated", "?")))}</strong></div>',
-        f'<div class="stat"><span>Trace Events</span><strong>{len(trace_entries)}</strong></div>',
-        f'<div class="stat"><span>Errors</span><strong>{status_counts.get("error", 0)}</strong></div>',
+        f'<div class="stat"><span class="stat-label">Run Type</span><span class="stat-value">{escape(run_kind)}</span></div>',
+        f'<div class="stat"><span class="stat-label">Tickets</span><span class="stat-value">{escape(str(manifest.get("ticket_count", "?")))}</span></div>',
+        f'<div class="stat good"><span class="stat-label">Resolved</span><span class="stat-value">{escape(str(manifest.get("resolved", "?")))}</span></div>',
+        f'<div class="stat bad"><span class="stat-label">Escalated</span><span class="stat-value">{escape(str(manifest.get("escalated", "?")))}</span></div>',
+        f'<div class="stat"><span class="stat-label">Trace Events</span><span class="stat-value">{len(trace_entries)}</span></div>',
+        f'<div class="stat bad"><span class="stat-label">Errors</span><span class="stat-value">{status_counts.get("error", 0)}</span></div>',
+    ]
+
+    agent_cards = [
+        f'<div class="agent-card"><span class="agent-name">{escape(agent)}</span><span class="agent-count">{count}</span></div>'
+        for agent, count in sorted(agent_counts.items())
+    ]
+
+    status_cards = [
+        f'<div class="status-card" style="--status-color:{_status_color(s)}"><span class="status-name">{escape(s)}</span><span class="status-count">{count}</span></div>'
+        for s, count in sorted(status_counts.items())
     ]
 
     artifact_links = []
@@ -1032,87 +1386,252 @@ def render_run_detail_html(manifest: dict, trace_entries: list[dict]) -> str:
     manifest_snapshot = manifest.get("artifacts", {}).get("manifest_snapshot")
     if report_snapshot:
         artifact_links.append(
-            f'<a href="./{escape(report_snapshot)}">Open report snapshot</a>'
+            f'<a href="./{escape(report_snapshot)}" class="artifact-link">&#128196; Report</a>'
         )
     if traces_snapshot:
         artifact_links.append(
-            f'<a href="./{escape(traces_snapshot)}">Open traces JSON</a>'
+            f'<a href="./{escape(traces_snapshot)}" class="artifact-link">&#128196; Traces</a>'
         )
     if manifest_snapshot:
         artifact_links.append(
-            f'<a href="./{escape(manifest_snapshot)}">Open run manifest</a>'
+            f'<a href="./{escape(manifest_snapshot)}" class="artifact-link">&#128196; Manifest</a>'
         )
 
     return f"""<!doctype html>
-<html lang=\"en\">
+<html lang="en">
 <head>
-  <meta charset=\"utf-8\">
-  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{escape(run_id)} Observability</title>
   <style>
     :root {{
       color-scheme: dark;
-      --bg: #0b1020;
-      --panel: #131a2e;
-      --panel-2: #0e1428;
-      --muted: #8d99b8;
-      --text: #edf2ff;
-      --border: #283252;
-      --accent: #7cc7ff;
-      --good: #7fe3b0;
-      --warn: #ffd37a;
-      --bad: #ff8d8d;
+      --bg: #0a0e1a;
+      --surface: #111827;
+      --surface-raised: #1a2238;
+      --muted: #8896b3;
+      --text: #e8ecf4;
+      --accent: #60a5fa;
+      --border: #1e2d4a;
+      --good: #34d399;
+      --bad: #f87171;
     }}
-    * {{ box-sizing: border-box; }}
-    body {{ margin: 0; font-family: Inter, ui-sans-serif, system-ui, sans-serif; background: linear-gradient(180deg, #0b1020 0%, #11172a 100%); color: var(--text); }}
-    main {{ max-width: 1100px; margin: 0 auto; padding: 40px 20px 64px; }}
-    h1 {{ margin: 0 0 10px; font-size: 2.1rem; }}
-    h2 {{ margin: 34px 0 14px; font-size: 1.25rem; }}
-    p {{ line-height: 1.55; }}
-    a {{ color: var(--accent); text-decoration: none; }}
-    .lede, .meta {{ color: var(--muted); }}
-    .stats, .agents, .links {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }}
-    .stat, .agent-card, .trace-card, .link-card {{ background: rgba(19, 26, 46, 0.88); border: 1px solid var(--border); border-radius: 16px; padding: 16px; }}
-    .stat strong, .agent-card strong {{ display: block; font-size: 1.45rem; margin-top: 8px; }}
-    .trace-list {{ display: grid; gap: 12px; }}
-    .trace-card {{ background: var(--panel-2); }}
-    .trace-head {{ display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }}
-    .trace-meta {{ display: flex; flex-wrap: wrap; gap: 12px; color: var(--muted); font-size: 0.92rem; margin-bottom: 10px; }}
-    .pill {{ border-radius: 999px; padding: 4px 10px; font-size: 0.8rem; border: 1px solid var(--border); }}
-    .pill.agent {{ color: var(--accent); }}
-    .pill.status.ok {{ color: var(--good); border-color: rgba(127, 227, 176, 0.35); }}
-    .pill.status.error {{ color: var(--bad); border-color: rgba(255, 141, 141, 0.35); }}
-    .pill.status.fallback {{ color: var(--warn); border-color: rgba(255, 211, 122, 0.35); }}
-    .step {{ font-weight: 600; }}
-    .trace-line {{ margin: 8px 0 0; word-break: break-word; }}
-    .trace-line.error {{ color: var(--bad); }}
+    * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+    body {{
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+    }}
+    nav {{
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(10, 14, 26, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+    }}
+    nav .nav-inner {{
+      max-width: 1120px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 56px;
+    }}
+    nav .logo {{
+      font-weight: 700; font-size: 1.05rem; color: var(--text);
+      display: flex; align-items: center; gap: 10px;
+    }}
+    nav .logo .logo-dot {{
+      width: 9px; height: 9px; border-radius: 50%;
+      background: var(--accent); display: inline-block;
+    }}
+    nav a {{
+      color: var(--muted); text-decoration: none; font-size: 0.9rem;
+      transition: color 0.15s;
+    }}
+    nav a:hover {{ color: var(--accent); }}
+    nav .nav-links {{ display: flex; gap: 24px; }}
+    main {{
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }}
+    .back-nav {{
+      display: flex; gap: 16px; margin-bottom: 24px;
+    }}
+    .back-nav a {{
+      color: var(--muted); font-size: 0.9rem;
+    }}
+    .back-nav a:hover {{ color: var(--accent); }}
+    .hero h1 {{
+      font-size: 1.5rem; font-weight: 700;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      margin-bottom: 8px;
+    }}
+    .hero .subtitle {{
+      color: var(--muted); font-size: 0.95rem;
+    }}
+    .section {{
+      margin-top: 36px;
+    }}
+    .section-header {{
+      font-size: 1rem; font-weight: 700;
+      margin-bottom: 14px;
+    }}
+    .stats {{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+    }}
+    .stat {{
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }}
+    .stat.good .stat-value {{ color: var(--good); }}
+    .stat.bad .stat-value {{ color: var(--bad); }}
+    .stat-label {{
+      display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em;
+      color: var(--muted); margin-bottom: 4px;
+    }}
+    .stat-value {{
+      display: block; font-size: 1.5rem; font-weight: 800;
+    }}
+    .meta-row {{
+      display: flex; gap: 24px; margin-top: 16px;
+      font-size: 0.85rem; color: var(--muted);
+    }}
+    .artifact-links {{
+      display: flex; gap: 10px; flex-wrap: wrap;
+    }}
+    .artifact-link {{
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text); text-decoration: none; font-size: 0.85rem;
+      transition: border-color 0.15s;
+    }}
+    .artifact-link:hover {{ border-color: var(--accent); }}
+    .mini-grid {{
+      display: flex; gap: 10px; flex-wrap: wrap;
+    }}
+    .agent-card, .status-card {{
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+      min-width: 140px;
+    }}
+    .agent-name, .status-name {{
+      font-size: 0.85rem; font-weight: 600;
+    }}
+    .agent-count, .status-count {{
+      font-size: 1.1rem; font-weight: 700;
+    }}
+    .trace-list {{
+      display: flex; flex-direction: column; gap: 10px;
+    }}
+    .trace-card {{
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      transition: border-color 0.15s;
+    }}
+    .trace-card:hover {{ border-color: var(--accent); }}
+    .trace-head {{
+      display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+    }}
+    .badge {{
+      display: inline-block; font-size: 0.7rem; font-weight: 600;
+      padding: 3px 8px; border-radius: 6px; border: 1px solid;
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }}
+    .badge.agent {{
+      background: var(--accent)22; color: var(--accent); border-color: var(--accent)44;
+    }}
+    .step {{
+      font-size: 0.85rem; font-weight: 600;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+    }}
+    .trace-meta {{
+      display: flex; gap: 14px; font-size: 0.78rem; color: var(--muted); margin-bottom: 10px;
+    }}
+    .trace-meta span {{ font-family: ui-monospace, SFMono-Regular, monospace; }}
+    .trace-details {{
+      display: flex; flex-direction: column; gap: 4px;
+    }}
+    .detail {{
+      font-size: 0.8rem;
+    }}
+    .detail .label {{
+      color: var(--muted); font-weight: 600; margin-right: 6px;
+    }}
+    .detail code {{
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-size: 0.75rem; background: var(--surface-raised);
+      padding: 2px 6px; border-radius: 4px;
+      word-break: break-all;
+    }}
+    .detail.error code {{
+      color: var(--bad);
+    }}
   </style>
 </head>
 <body>
+  <nav>
+    <div class="nav-inner">
+      <div class="logo"><span class="logo-dot"></span>Post-Mortem</div>
+      <div class="nav-links">
+        <a href="./index.html">Run History</a>
+        <a href="../index.html">Latest Report</a>
+      </div>
+    </div>
+  </nav>
+
   <main>
-    <p><a href="./index.html">Back to runs</a> | <a href="../index.html">Latest report</a></p>
-    <h1>{escape(run_id)}</h1>
-    <p class=\"lede\">Static observability view for one pipeline run, including the recorded step timeline that was written during processing.</p>
+    <div class="back-nav">
+      <a href="./index.html">&#8592; Runs</a>
+      <a href="../index.html">&#8592; Report</a>
+    </div>
 
-    <section>
-      <div class=\"stats\">{"".join(summary_cards)}</div>
-      <p class=\"meta\">Started: {escape(str(manifest.get("started_at", "unknown")))} | Finished: {escape(str(manifest.get("finished_at", "unknown")))}</p>
-      {f'<p class="meta">Case: {escape(str(manifest.get("case")))}</p>' if manifest.get("case") else ""}
+    <div class="hero">
+      <h1>{escape(run_id)}</h1>
+      <p class="subtitle">Observability trace details for this pipeline run.</p>
+    </div>
+
+    <section class="section">
+      <div class="section-header">Summary</div>
+      <div class="stats">{"".join(summary_cards)}</div>
+      <div class="meta-row">
+        <span>Started: {escape(str(manifest.get("started_at", "unknown"))[:19])}</span>
+        <span>Finished: {escape(str(manifest.get("finished_at", "unknown"))[:19])}</span>
+        {"<span>Case: " + escape(str(manifest.get("case"))) + "</span>" if manifest.get("case") else ""}
+      </div>
     </section>
 
-    <section>
-      <h2>Artifacts</h2>
-      <div class=\"links\">{"".join(f'<div class="link-card">{link}</div>' for link in artifact_links) or '<div class="link-card">No deployed artifacts available.</div>'}</div>
+    <section class="section">
+      <div class="section-header">Artifacts</div>
+      <div class="artifact-links">{"".join(artifact_links) or '<span class="muted">No artifacts available.</span>'}</div>
     </section>
 
-    <section>
-      <h2>Events By Agent</h2>
-      <div class=\"agents\">{"".join(f'<div class="agent-card"><span>{escape(agent)}</span><strong>{count}</strong></div>' for agent, count in sorted(agent_counts.items())) or '<p class="meta">No trace events recorded.</p>'}</div>
+    <section class="section">
+      <div class="section-header">Events by Agent</div>
+      <div class="mini-grid">{"".join(agent_cards) or '<span class="muted">No trace events.</span>'}</div>
     </section>
 
-    <section>
-      <h2>Trace Timeline</h2>
-      <div class=\"trace-list\">{"".join(trace_rows) or '<p class="meta">No trace events recorded for this run.</p>'}</div>
+    <section class="section">
+      <div class="section-header">Status Summary</div>
+      <div class="mini-grid">{"".join(status_cards) or '<span class="muted">No trace events.</span>'}</div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">Trace Timeline ({len(trace_entries)} events)</div>
+      <div class="trace-list">{"".join(trace_rows) or '<span class="muted">No trace events recorded for this run.</span>'}</div>
     </section>
   </main>
 </body>
@@ -1121,6 +1640,14 @@ def render_run_detail_html(manifest: dict, trace_entries: list[dict]) -> str:
 
 
 def render_runs_index_html(manifests: list[dict]) -> str:
+    def _kind_icon(k: str) -> str:
+        icons = {"pipeline": "&#128230;", "eval": "&#128203;", "render": "&#127912;"}
+        return icons.get(k, "&#9881;")
+
+    def _kind_color(k: str) -> str:
+        colors = {"pipeline": "#60a5fa", "eval": "#a78bfa", "render": "#34d399"}
+        return colors.get(k, "#8896b3")
+
     cards = []
     for manifest in manifests:
         run_id = manifest["run_id"]
@@ -1128,62 +1655,226 @@ def render_runs_index_html(manifests: list[dict]) -> str:
         ticket_count = manifest.get("ticket_count", "?")
         resolved = manifest.get("resolved", "?")
         escalated = manifest.get("escalated", "?")
+        trace_count = manifest.get("trace_count", "?")
         started_at = manifest.get("started_at", "unknown")
         finished_at = manifest.get("finished_at", "unknown")
         case_name = manifest.get("case")
+        icon = _kind_icon(run_kind)
+        color = _kind_color(run_kind)
+
+        duration = ""
+        if started_at != "unknown" and finished_at != "unknown":
+            try:
+                from datetime import datetime, timezone
+
+                start = datetime.fromisoformat(started_at.replace("+00:00", ""))
+                end = datetime.fromisoformat(finished_at.replace("+00:00", ""))
+                duration_ms = (end - start).total_seconds() * 1000
+                if duration_ms < 1000:
+                    duration = f"{duration_ms:.0f}ms"
+                else:
+                    duration = f"{duration_ms / 1000:.1f}s"
+            except Exception:
+                pass
+
         cards.append(
-            "".join(
-                [
-                    '<article class="card">',
-                    f"<h2>{escape(run_id)}</h2>",
-                    f'<p class="meta">{escape(run_kind)} run</p>',
-                    f"<p><strong>Tickets:</strong> {ticket_count}</p>",
-                    f"<p><strong>Resolved:</strong> {resolved} | <strong>Escalated:</strong> {escalated}</p>",
-                    f"<p><strong>Traces:</strong> {manifest.get('trace_count', '?')}</p>",
-                    f"<p><strong>Started:</strong> {escape(str(started_at))}</p>",
-                    f"<p><strong>Finished:</strong> {escape(str(finished_at))}</p>",
-                    f"<p><strong>Case:</strong> {escape(case_name)}</p>"
-                    if case_name
-                    else "",
-                    f'<p><a href="./{escape(run_id)}.html">Open run detail</a></p>',
-                    "</article>",
-                ]
+            f'<article class="run-card" style="--kind-color:{color}">'
+            f'<div class="run-header">'
+            f'<div class="run-icon">{icon}</div>'
+            f'<div class="run-title">'
+            f"<h3>{escape(run_id)}</h3>"
+            f'<span class="run-kind" style="color:{color}">{run_kind}</span>'
+            f"</div></div>"
+            f'<div class="run-stats">'
+            f'<div class="run-stat"><span class="run-stat-label">Tickets</span><span class="run-stat-value">{ticket_count}</span></div>'
+            f'<div class="run-stat"><span class="run-stat-label">Resolved</span><span class="run-stat-value resolved">{resolved}</span></div>'
+            f'<div class="run-stat"><span class="run-stat-label">Escalated</span><span class="run-stat-value escalated">{escalated}</span></div>'
+            f'<div class="run-stat"><span class="run-stat-label">Traces</span><span class="run-stat-value">{trace_count}</span></div>'
+            f"</div>"
+            f'<div class="run-meta">'
+            f"<span>Started: {escape(str(started_at)[:19])}</span>"
+            f"<span>{duration}</span>"
+            f"</div>"
+            + (
+                f'<div class="run-case">Case: {escape(case_name)}</div>'
+                if case_name
+                else ""
             )
+            + f'<a href="./{escape(run_id)}.html" class="run-link">View Details &#8594;</a>'
+            + f"</article>"
         )
 
     return f"""<!doctype html>
-<html lang=\"en\">
+<html lang="en">
 <head>
-  <meta charset=\"utf-8\">
-  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
-  <title>Recent Runs</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Run History</title>
   <style>
     :root {{
       color-scheme: dark;
-      --bg: #0b1020;
-      --panel: #131a2e;
-      --muted: #8d99b8;
-      --text: #edf2ff;
-      --border: #283252;
-      --accent: #7cc7ff;
+      --bg: #0a0e1a;
+      --surface: #111827;
+      --surface-raised: #1a2238;
+      --muted: #8896b3;
+      --text: #e8ecf4;
+      --accent: #60a5fa;
+      --border: #1e2d4a;
+      --good: #34d399;
+      --bad: #f87171;
     }}
-    * {{ box-sizing: border-box; }}
-    body {{ margin: 0; font-family: Inter, ui-sans-serif, system-ui, sans-serif; background: linear-gradient(180deg, #0b1020 0%, #11172a 100%); color: var(--text); }}
-    main {{ max-width: 980px; margin: 0 auto; padding: 40px 20px 64px; }}
-    h1 {{ margin: 0 0 10px; font-size: 2.2rem; }}
-    .lede {{ color: var(--muted); max-width: 760px; }}
-    .grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-top: 24px; }}
-    .card {{ background: rgba(19, 26, 46, 0.88); border: 1px solid var(--border); border-radius: 16px; padding: 18px; }}
-    .meta {{ color: var(--muted); }}
-    a {{ color: var(--accent); text-decoration: none; }}
+    * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+    body {{
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+    }}
+    nav {{
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(10, 14, 26, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+    }}
+    nav .nav-inner {{
+      max-width: 1120px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 56px;
+    }}
+    nav .logo {{
+      font-weight: 700; font-size: 1.05rem; color: var(--text);
+      display: flex; align-items: center; gap: 10px;
+    }}
+    nav .logo .logo-dot {{
+      width: 9px; height: 9px; border-radius: 50%;
+      background: var(--accent); display: inline-block;
+    }}
+    nav a {{
+      color: var(--muted); text-decoration: none; font-size: 0.9rem;
+      transition: color 0.15s;
+    }}
+    nav a:hover {{ color: var(--accent); }}
+    nav .nav-links {{ display: flex; gap: 24px; }}
+    main {{
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }}
+    .hero {{
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 32px;
+    }}
+    .hero h1 {{
+      font-size: 2rem; font-weight: 800; letter-spacing: -0.02em;
+    }}
+    .hero .subtitle {{
+      color: var(--muted); font-size: 0.95rem;
+    }}
+    .back-link {{
+      color: var(--accent); text-decoration: none; font-size: 0.9rem;
+      display: flex; align-items: center; gap: 6px;
+    }}
+    .back-link:hover {{ text-decoration: underline; }}
+    .grid {{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 16px;
+    }}
+    .run-card {{
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      transition: border-color 0.2s, transform 0.15s;
+    }}
+    .run-card:hover {{
+      border-color: var(--kind-color);
+      transform: translateY(-2px);
+    }}
+    .run-header {{
+      display: flex; align-items: center; gap: 14px; margin-bottom: 16px;
+    }}
+    .run-icon {{
+      width: 40px; height: 40px; border-radius: 10px;
+      background: color-mix(in srgb, var(--kind-color) 15%, transparent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+    }}
+    .run-title h3 {{
+      font-size: 0.9rem; font-weight: 700;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      letter-spacing: -0.02em;
+    }}
+    .run-kind {{
+      font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;
+      font-weight: 600;
+    }}
+    .run-stats {{
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }}
+    .run-stat {{
+      text-align: center;
+      padding: 8px;
+      background: var(--surface-raised);
+      border-radius: 8px;
+    }}
+    .run-stat-label {{
+      display: block; font-size: 0.68rem; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }}
+    .run-stat-value {{
+      display: block; font-size: 1.1rem; font-weight: 700;
+    }}
+    .run-stat-value.resolved {{ color: var(--good); }}
+    .run-stat-value.escalated {{ color: var(--bad); }}
+    .run-meta {{
+      display: flex; justify-content: space-between;
+      font-size: 0.78rem; color: var(--muted);
+      margin-bottom: 10px;
+    }}
+    .run-case {{
+      font-size: 0.82rem; color: var(--accent);
+      padding: 6px 10px; background: var(--accent);
+      background: color-mix(in srgb, var(--accent) 15%, transparent);
+      border-radius: 6px; display: inline-block; margin-bottom: 12px;
+    }}
+    .run-link {{
+      display: block; text-align: center;
+      padding: 10px; background: var(--surface-raised);
+      border-radius: 8px; color: var(--text);
+      text-decoration: none; font-weight: 600; font-size: 0.9rem;
+      transition: background 0.15s;
+    }}
+    .run-link:hover {{
+      background: color-mix(in srgb, var(--accent) 20%, var(--surface-raised));
+    }}
+    .empty {{ color: var(--muted); text-align: center; padding: 60px 0; }}
   </style>
 </head>
 <body>
+  <nav>
+    <div class="nav-inner">
+      <div class="logo"><span class="logo-dot"></span>Post-Mortem</div>
+      <div class="nav-links">
+        <a href="../index.html">Latest Report</a>
+      </div>
+    </div>
+  </nav>
+
   <main>
-    <h1>Recent Pipeline Runs</h1>
-    <p class=\"lede\">This snapshot page is generated during the build so a reviewer can inspect recent pipeline and eval runs without opening local files.</p>
-    <p><a href=\"../index.html\">Open latest report</a></p>
-    <div class=\"grid\">{"".join(cards) or "<p>No run snapshots available yet.</p>"}</div>
+    <div class="hero">
+      <div>
+        <h1>Run History</h1>
+        <p class="subtitle">Recent pipeline and eval runs with observability data.</p>
+      </div>
+      <a href="../index.html" class="back-link">&#8592; Back to Report</a>
+    </div>
+    <div class="grid">{"".join(cards) if cards else '<div class="empty">No run snapshots available yet.</div>'}</div>
   </main>
 </body>
 </html>
