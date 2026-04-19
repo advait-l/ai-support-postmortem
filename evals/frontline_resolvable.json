@@ -1,0 +1,44 @@
+[
+  {
+    "id": "EVAL-2101",
+    "created_at": "2026-04-13T11:11:00Z",
+    "customer_email": "emma.ross@example.com",
+    "subject": "Password reset email never arrived",
+    "body": "I requested a password reset twice and nothing has hit my inbox or spam folder."
+  },
+  {
+    "id": "EVAL-2102",
+    "created_at": "2026-04-14T12:36:00Z",
+    "customer_email": "james.parker@example.com",
+    "subject": "Dashboard very slow this afternoon",
+    "body": "Pages that normally load in a second are taking 15 to 20 seconds. Reports are especially slow and time out sometimes."
+  },
+  {
+    "id": "EVAL-2103",
+    "created_at": "2026-04-15T07:48:00Z",
+    "customer_email": "benjamin.ward@example.com",
+    "subject": "Request for dark mode",
+    "body": "Our support team works nights and would really appreciate a dark mode."
+  },
+  {
+    "id": "EVAL-2104",
+    "created_at": "2026-04-16T12:25:00Z",
+    "customer_email": "henry.morris@example.com",
+    "subject": "Typo in invoice email",
+    "body": "Your invoice email says 'reciept' instead of 'receipt'."
+  },
+  {
+    "id": "EVAL-2105",
+    "created_at": "2026-04-17T08:40:00Z",
+    "customer_email": "alexander.brooks@example.com",
+    "subject": "Can't invite teammate",
+    "body": "The invite modal spins forever after I enter my teammate's email address."
+  },
+  {
+    "id": "EVAL-2106",
+    "created_at": "2026-04-17T16:47:00Z",
+    "customer_email": "daniel.patterson@example.com",
+    "subject": "Search results not matching exact account name",
+    "body": "Searching the exact customer account name returns unrelated records first, so reps are opening the wrong accounts."
+  }
+]

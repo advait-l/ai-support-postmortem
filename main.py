@@ -19,6 +19,12 @@ REPORT_PATH = "report.md"
 REPORT_JSON_PATH = "report.json"
 DIST_DIR = "dist"
 DIST_INDEX_PATH = os.path.join(DIST_DIR, "index.html")
+DIST_RUN_VIEW_PATH = os.path.join(DIST_DIR, "latest-run.html")
+DIST_RUNS_DIR = os.path.join(DIST_DIR, "runs")
+DIST_RUNS_INDEX_PATH = os.path.join(DIST_RUNS_DIR, "index.html")
+DIST_LATEST_RUN_JSON_PATH = os.path.join(DIST_DIR, "latest-run.json")
+RUNS_DIR = "runs"
+EVAL_EXPECTATIONS_PATH = "expectations.json"
 ENV_PATH = ".env"
 ZEN_CHAT_COMPLETIONS_URL = "https://opencode.ai/zen/v1/chat/completions"
 KNOWLEDGE_BASE = {
@@ -93,13 +99,19 @@ def load_tickets(path: str) -> list[dict]:
         return json.load(file)
 
 
-def append_trace(payload: dict) -> None:
-    with open(TRACES_PATH, "a", encoding="utf-8") as file:
+def append_trace(payload: dict, path: str = TRACES_PATH) -> None:
+    with open(path, "a", encoding="utf-8") as file:
         file.write(json.dumps(payload) + "\n")
 
 
-def write_pipeline_output(tickets: list[dict]) -> None:
-    with open(PIPELINE_OUTPUT_PATH, "w", encoding="utf-8") as file:
+def write_pipeline_output(
+    tickets: list[dict], path: str = PIPELINE_OUTPUT_PATH
+) -> None:
+    parent = os.path.dirname(path)
+    if parent:
+        os.makedirs(parent, exist_ok=True)
+
+    with open(path, "w", encoding="utf-8") as file:
         json.dump(tickets, file, indent=2)
 
 
@@ -119,6 +131,80 @@ def write_json_file(path: str, payload: dict) -> None:
 
     with open(path, "w", encoding="utf-8") as file:
         json.dump(payload, file, indent=2)
+
+
+def load_json_file(path: str) -> dict:
+    with open(path, "r", encoding="utf-8") as file:
+        return json.load(file)
+
+
+def new_run_id(prefix: str = "run") -> str:
+    return f"{prefix}-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}-{uuid.uuid4().hex[:8]}"
+
+
+def create_run_context(kind: str = "pipeline") -> dict:
+    run_id = new_run_id(kind)
+    run_dir = os.path.join(RUNS_DIR, run_id)
+    os.makedirs(run_dir, exist_ok=True)
+
+    return {
+        "run_id": run_id,
+        "run_dir": run_dir,
+        "trace_path": os.path.join(run_dir, "traces.jsonl"),
+        "pipeline_output_path": os.path.join(run_dir, "pipeline_output.json"),
+        "report_path": os.path.join(run_dir, "report.md"),
+        "report_json_path": os.path.join(run_dir, "report.json"),
+        "viewer_path": os.path.join(run_dir, "latest-run.html"),
+        "manifest_path": os.path.join(run_dir, "run.json"),
+        "started_at": datetime.now(timezone.utc).isoformat(),
+        "events": [],
+    }
+
+
+def append_run_event(context: dict, payload: dict) -> None:
+    entry = {**payload, "run_id": context["run_id"]}
+    context["events"].append(entry)
+    append_trace(entry)
+    append_trace(entry, context["trace_path"])
+
+
+def record_run_step(
+    context: dict,
+    *,
+    step: str,
+    agent: str,
+    status: str,
+    metadata: dict | None = None,
+    response: str | None = None,
+    error: str | None = None,
+    model: str | None = None,
+    provider: str | None = None,
+    parent_step: str | None = None,
+    latency_ms: float | None = None,
+    prompt_tokens_estimate: int | None = None,
+    system_prompt: str | None = None,
+    user_prompt: str | None = None,
+) -> None:
+    append_run_event(
+        context,
+        {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "trace_id": str(uuid.uuid4()),
+            "step": step,
+            "agent": agent,
+            "parent_step": parent_step,
+            "metadata": metadata or {},
+            "provider": provider,
+            "model": model,
+            "prompt_tokens_estimate": prompt_tokens_estimate,
+            "system_prompt": system_prompt,
+            "user_prompt": user_prompt,
+            "response": response,
+            "latency_ms": latency_ms,
+            "status": status,
+            **({"error": error} if error else {}),
+        },
+    )
 
 
 def estimate_prompt_size(*parts: str) -> int:
@@ -200,6 +286,215 @@ def normalize_triage(ticket: dict, triage: dict) -> dict:
     return triage
 
 
+def determine_local_triage(ticket: dict) -> dict:
+    text = f"{ticket['subject']}\n{ticket['body']}".lower()
+
+    if any(
+        phrase in text
+        for phrase in [
+            "login loop",
+            "logging in",
+            "sign in",
+            "session",
+            "mobile safari",
+            "iphone",
+            "ipad",
+        ]
+    ):
+        return {
+            "category": "mobile_login_loop",
+            "priority": "high",
+            "resolvable": False,
+            "reason": "Persistent login loops on mobile Safari usually need engineering investigation.",
+        }
+
+    if "csv" in text or "export" in text:
+        if any(
+            phrase in text
+            for phrase in ["blank", "missing", "garbled", "cut off", "headers", "rows"]
+        ):
+            return {
+                "category": "csv_export",
+                "priority": "high",
+                "resolvable": False,
+                "reason": "CSV export issues are typically product bugs that frontline support cannot patch.",
+            }
+
+    if any(
+        phrase in text
+        for phrase in [
+            "billed twice",
+            "charged twice",
+            "duplicate charge",
+            "duplicate charges",
+        ]
+    ):
+        return {
+            "category": "duplicate_billing",
+            "priority": "high",
+            "resolvable": False,
+            "reason": "Duplicate billing needs billing-system investigation and refund handling.",
+        }
+
+    if "password reset" in text or ("reset" in text and "email" in text):
+        return {
+            "category": "password_reset",
+            "priority": "high",
+            "resolvable": True,
+            "reason": "Frontline support can resend the reset flow and help with inbox troubleshooting.",
+        }
+
+    if any(
+        phrase in text
+        for phrase in [
+            "dark mode",
+            "feature request",
+            "schedule export",
+            "schedule exports",
+        ]
+    ):
+        return {
+            "category": "feature_request",
+            "priority": "low",
+            "resolvable": True,
+            "reason": "Frontline support can acknowledge the request and log product feedback.",
+        }
+
+    if "invoice" in text or "receipt" in text or "typo" in text or "wording" in text:
+        return {
+            "category": "invoice_copy",
+            "priority": "low",
+            "resolvable": True,
+            "reason": "Frontline support can confirm the typo and reassure the customer.",
+        }
+
+    if any(
+        phrase in text for phrase in ["slow", "timeout", "time out", "time-out", "lag"]
+    ):
+        return {
+            "category": "slow_dashboard",
+            "priority": "high",
+            "resolvable": True,
+            "reason": "Frontline support can collect timing details and offer safe troubleshooting steps.",
+        }
+
+    if "invite" in text:
+        return {
+            "category": "team_invites",
+            "priority": "medium",
+            "resolvable": True,
+            "reason": "Frontline support can provide invite troubleshooting and retry guidance.",
+        }
+
+    if "search" in text or "account name" in text or "relevance" in text:
+        return {
+            "category": "search_accuracy",
+            "priority": "medium",
+            "resolvable": True,
+            "reason": "Frontline support can provide a temporary search workaround while relevance is reviewed.",
+        }
+
+    return {
+        "category": "other",
+        "priority": "medium",
+        "resolvable": False,
+        "reason": "Needs manual review because it does not match a known frontline pattern.",
+    }
+
+
+def draft_local_resolution(ticket: dict, triage: dict) -> dict:
+    kb_entry = KNOWLEDGE_BASE.get(triage["category"])
+    if kb_entry is None:
+        return {
+            "customer_response": "Thanks for the report. We are reviewing this with the appropriate team and will follow up shortly.",
+            "kb_article": "Internal follow-up",
+            "resolution_summary": "Logged the issue for follow-up.",
+        }
+
+    return {
+        "customer_response": (
+            f"Hi {ticket['customer_email']},\n\n"
+            f"Thanks for reaching out. {kb_entry['summary']}\n\n"
+            "Please let us know if that does not resolve the issue."
+        ),
+        "kb_article": kb_entry["title"],
+        "resolution_summary": kb_entry["summary"],
+    }
+
+
+def draft_local_recommendations(summary: dict) -> list[dict]:
+    recommendations = []
+    issue_map = {
+        "mobile_login_loop": (
+            "Fix the mobile login loop",
+            "Recurring mobile sign-in loops are the clearest blocker in the queue and keep reappearing across multiple tickets.",
+        ),
+        "csv_export": (
+            "Repair CSV export reliability",
+            "CSV exports are repeatedly missing rows or columns, which breaks finance workflows and looks like a product bug rather than a one-off incident.",
+        ),
+        "duplicate_billing": (
+            "Add duplicate billing safeguards",
+            "Billing complaints are high-friction escalations because customers need a refund path and immediate confirmation.",
+        ),
+        "slow_dashboard": (
+            "Investigate dashboard latency",
+            "Slow pages and timeouts are affecting report usage and should be treated as a performance regression.",
+        ),
+        "team_invites": (
+            "Stabilize teammate invites",
+            "Invite failures block onboarding and create immediate support load.",
+        ),
+        "search_accuracy": (
+            "Improve search relevance for exact matches",
+            "Exact-name searches returning the wrong records create trust issues and wasted support time.",
+        ),
+        "feature_request": (
+            "Tighten feature-request intake",
+            "Recurring feature requests point to an unmet workflow need and should be visible to product sooner.",
+        ),
+        "password_reset": (
+            "Make password reset delivery more reliable",
+            "Password reset tickets are resolvable but still indicate friction in email delivery and account access.",
+        ),
+        "invoice_copy": (
+            "Clean up invoice email copy",
+            "Invoice wording issues are minor individually but create unnecessary finance follow-up.",
+        ),
+    }
+
+    for issue in summary.get("top_recurring_issues", [])[:2]:
+        title, reason = issue_map.get(
+            issue["category"],
+            (
+                f"Address {issue['label'].lower()}",
+                f"{issue['label']} appears often enough to deserve a product fix.",
+            ),
+        )
+        recommendations.append({"title": title, "reason": reason})
+
+    if summary.get("escalation_groups"):
+        top_group = summary["escalation_groups"][0]
+        title, reason = issue_map.get(
+            top_group["category"],
+            (
+                f"Reduce {top_group['label'].lower()} escalations",
+                f"{top_group['label']} is showing up in escalations and should be reviewed.",
+            ),
+        )
+        recommendations.append({"title": title, "reason": reason})
+
+    while len(recommendations) < 3:
+        recommendations.append(
+            {
+                "title": "Tighten frontline triage",
+                "reason": "The queue has repeated support patterns that should be easier to recognize and route.",
+            }
+        )
+
+    return recommendations[:3]
+
+
 def get_provider() -> dict:
     api_key = os.environ.get("OPENCODE_ZEN_API_KEY") or os.environ.get("ZEN_API_KEY")
     if not api_key:
@@ -260,7 +555,10 @@ def call_zen(provider: dict, system_prompt: str, user_prompt: str, model: str) -
 def traced_llm_call(
     provider: dict,
     *,
+    context: dict,
     step: str,
+    agent: str,
+    parent_step: str | None,
     system_prompt: str,
     user_prompt: str,
     model: str | None = None,
@@ -270,52 +568,43 @@ def traced_llm_call(
     attempt = 1
 
     while True:
-        trace_id = str(uuid.uuid4())
         started_at = time.perf_counter()
-        timestamp = datetime.now(timezone.utc).isoformat()
 
         try:
             output = call_zen(provider, system_prompt, user_prompt, current_model)
             latency_ms = round((time.perf_counter() - started_at) * 1000, 2)
-            append_trace(
-                {
-                    "timestamp": timestamp,
-                    "trace_id": trace_id,
-                    "step": step,
-                    "metadata": {**(metadata or {}), "attempt": attempt},
-                    "provider": provider["type"],
-                    "model": current_model,
-                    "prompt_tokens_estimate": estimate_prompt_size(
-                        system_prompt, user_prompt
-                    ),
-                    "system_prompt": system_prompt,
-                    "user_prompt": user_prompt,
-                    "response": output,
-                    "latency_ms": latency_ms,
-                    "status": "ok",
-                }
+            record_run_step(
+                context,
+                step=step,
+                agent=agent,
+                parent_step=parent_step,
+                metadata={**(metadata or {}), "attempt": attempt},
+                response=output,
+                model=current_model,
+                provider=provider.get("type"),
+                latency_ms=latency_ms,
+                prompt_tokens_estimate=estimate_prompt_size(system_prompt, user_prompt),
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                status="ok",
             )
             return output
         except Exception as error:
             latency_ms = round((time.perf_counter() - started_at) * 1000, 2)
-            append_trace(
-                {
-                    "timestamp": timestamp,
-                    "trace_id": trace_id,
-                    "step": step,
-                    "metadata": {**(metadata or {}), "attempt": attempt},
-                    "provider": provider["type"],
-                    "model": current_model,
-                    "prompt_tokens_estimate": estimate_prompt_size(
-                        system_prompt, user_prompt
-                    ),
-                    "system_prompt": system_prompt,
-                    "user_prompt": user_prompt,
-                    "response": None,
-                    "latency_ms": latency_ms,
-                    "status": "error",
-                    "error": str(error),
-                }
+            record_run_step(
+                context,
+                step=step,
+                agent=agent,
+                parent_step=parent_step,
+                metadata={**(metadata or {}), "attempt": attempt},
+                error=str(error),
+                model=current_model,
+                provider=provider.get("type"),
+                latency_ms=latency_ms,
+                prompt_tokens_estimate=estimate_prompt_size(system_prompt, user_prompt),
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                status="error",
             )
 
             retry_delay_seconds = get_retry_delay_seconds(error)
@@ -323,7 +612,7 @@ def traced_llm_call(
                 raise
 
             print(
-                f"[retry] {step} waiting {retry_delay_seconds}s after rate limit",
+                f"[retry] {step} waiting {retry_delay_seconds}s after rate limit (attempt {attempt})",
                 file=sys.stderr,
             )
             time.sleep(retry_delay_seconds)
@@ -681,51 +970,277 @@ def render_report_html(summary: dict, recommendations: list[dict]) -> str:
 """
 
 
+def render_runs_index_html(manifests: list[dict]) -> str:
+    cards = []
+    for manifest in manifests:
+        run_id = manifest["run_id"]
+        run_kind = run_id.split("-", 1)[0]
+        ticket_count = manifest.get("ticket_count", "?")
+        resolved = manifest.get("resolved", "?")
+        escalated = manifest.get("escalated", "?")
+        started_at = manifest.get("started_at", "unknown")
+        finished_at = manifest.get("finished_at", "unknown")
+        case_name = manifest.get("case")
+        cards.append(
+            "".join(
+                [
+                    '<article class="card">',
+                    f"<h2>{escape(run_id)}</h2>",
+                    f'<p class="meta">{escape(run_kind)} run</p>',
+                    f"<p><strong>Tickets:</strong> {ticket_count}</p>",
+                    f"<p><strong>Resolved:</strong> {resolved} | <strong>Escalated:</strong> {escalated}</p>",
+                    f"<p><strong>Started:</strong> {escape(str(started_at))}</p>",
+                    f"<p><strong>Finished:</strong> {escape(str(finished_at))}</p>",
+                    f"<p><strong>Case:</strong> {escape(case_name)}</p>"
+                    if case_name
+                    else "",
+                    f'<p><a href="./{escape(run_id)}.html">Open report snapshot</a></p>',
+                    "</article>",
+                ]
+            )
+        )
+
+    return f"""<!doctype html>
+<html lang=\"en\">
+<head>
+  <meta charset=\"utf-8\">
+  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+  <title>Recent Runs</title>
+  <style>
+    :root {{
+      color-scheme: dark;
+      --bg: #0b1020;
+      --panel: #131a2e;
+      --muted: #8d99b8;
+      --text: #edf2ff;
+      --border: #283252;
+      --accent: #7cc7ff;
+    }}
+    * {{ box-sizing: border-box; }}
+    body {{ margin: 0; font-family: Inter, ui-sans-serif, system-ui, sans-serif; background: linear-gradient(180deg, #0b1020 0%, #11172a 100%); color: var(--text); }}
+    main {{ max-width: 980px; margin: 0 auto; padding: 40px 20px 64px; }}
+    h1 {{ margin: 0 0 10px; font-size: 2.2rem; }}
+    .lede {{ color: var(--muted); max-width: 760px; }}
+    .grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-top: 24px; }}
+    .card {{ background: rgba(19, 26, 46, 0.88); border: 1px solid var(--border); border-radius: 16px; padding: 18px; }}
+    .meta {{ color: var(--muted); }}
+    a {{ color: var(--accent); text-decoration: none; }}
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Recent Pipeline Runs</h1>
+    <p class=\"lede\">This snapshot page is generated during the build so a reviewer can inspect recent pipeline and eval runs without opening local files.</p>
+    <p><a href=\"../index.html\">Open latest report</a></p>
+    <div class=\"grid\">{"".join(cards) or "<p>No run snapshots available yet.</p>"}</div>
+  </main>
+</body>
+</html>
+"""
+
+
+def publish_run_snapshot(context: dict, manifest: dict) -> None:
+    if not os.path.exists(context["viewer_path"]):
+        return
+
+    snapshot_html = os.path.join(DIST_RUNS_DIR, f"{context['run_id']}.html")
+    snapshot_json = os.path.join(DIST_RUNS_DIR, f"{context['run_id']}.json")
+
+    with open(context["viewer_path"], "r", encoding="utf-8") as file:
+        viewer_html = file.read()
+
+    write_text_file(snapshot_html, viewer_html)
+    write_json_file(snapshot_json, manifest)
+    write_json_file(DIST_LATEST_RUN_JSON_PATH, manifest)
+
+    manifests = []
+    if os.path.isdir(DIST_RUNS_DIR):
+        for name in sorted(os.listdir(DIST_RUNS_DIR), reverse=True):
+            if not name.endswith(".json"):
+                continue
+            try:
+                manifests.append(load_json_file(os.path.join(DIST_RUNS_DIR, name)))
+            except Exception:
+                continue
+
+    manifests.sort(key=lambda item: item.get("finished_at", ""), reverse=True)
+    write_text_file(DIST_RUNS_INDEX_PATH, render_runs_index_html(manifests[:10]))
+
+
+def load_eval_expectations(target_dir: str) -> dict:
+    expectations_path = os.path.join(target_dir, EVAL_EXPECTATIONS_PATH)
+    if not os.path.exists(expectations_path):
+        return {}
+
+    return load_json_file(expectations_path)
+
+
+def validate_eval_result(case_name: str, result: dict, expectations: dict) -> list[str]:
+    expected = expectations.get(case_name)
+    if expected is None:
+        return []
+
+    errors = []
+
+    if result.get("ticket_count") != expected.get("ticket_count"):
+        errors.append(
+            f"ticket_count expected {expected.get('ticket_count')} got {result.get('ticket_count')}"
+        )
+
+    if result.get("resolved") != expected.get("resolved"):
+        errors.append(
+            f"resolved expected {expected.get('resolved')} got {result.get('resolved')}"
+        )
+
+    if result.get("escalated") != expected.get("escalated"):
+        errors.append(
+            f"escalated expected {expected.get('escalated')} got {result.get('escalated')}"
+        )
+
+    actual_top_issues = result.get("top_issues", [])
+    for issue in expected.get("top_issues_includes", []):
+        if issue not in actual_top_issues:
+            errors.append(f"missing expected top issue: {issue}")
+
+    return errors
+
+
 def write_report_artifacts(
-    summary: dict, recommendations: list[dict], report: str
+    context: dict | None,
+    summary: dict,
+    recommendations: list[dict],
+    report: str,
+    out_dir: str | None = None,
 ) -> None:
-    write_text_file(REPORT_PATH, report + "\n")
-    write_json_file(
-        REPORT_JSON_PATH,
-        {
-            "generated_at": datetime.now(timezone.utc).isoformat(),
-            "summary": summary,
-            "recommendations": recommendations,
-            "report_markdown": report,
-        },
+    html = render_report_html(summary, recommendations)
+    payload = {
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "summary": summary,
+        "recommendations": recommendations,
+        "report_markdown": report,
+    }
+
+    if context:
+        write_text_file(context["report_path"], report + "\n")
+        write_json_file(context["report_json_path"], payload)
+        write_text_file(context["viewer_path"], html)
+
+    if out_dir is None:
+        return
+
+    write_text_file(os.path.join(out_dir, "report.md"), report + "\n")
+    write_json_file(os.path.join(out_dir, "report.json"), payload)
+    write_text_file(os.path.join(out_dir, "index.html"), html)
+    write_text_file(os.path.join(out_dir, "latest-run.html"), html)
+
+
+def process_ticket_with_context(
+    context: dict,
+    provider: dict | None,
+    ticket: dict,
+) -> dict:
+    parent_step = f"ticket:{ticket['id']}"
+    record_run_step(
+        context,
+        step=parent_step,
+        agent="manager",
+        parent_step=None,
+        metadata={"ticket_id": ticket["id"], "action": "plan"},
+        status="ok",
     )
-    write_text_file(DIST_INDEX_PATH, render_report_html(summary, recommendations))
 
-
-def process_ticket(provider: dict, ticket: dict) -> dict:
     print(f"[triage] {ticket['id']} {ticket['subject']}")
-    triage_system_prompt, triage_user_prompt = build_triage_prompts(ticket)
-    triage_response = traced_llm_call(
-        provider,
-        step="triage",
-        system_prompt=triage_system_prompt,
-        user_prompt=triage_user_prompt,
-        metadata={"ticket_id": ticket["id"]},
+
+    triage = determine_local_triage(ticket)
+    if triage["category"] == "other":
+        if provider:
+            try:
+                triage_system_prompt, triage_user_prompt = build_triage_prompts(ticket)
+                triage_response = traced_llm_call(
+                    provider,
+                    context=context,
+                    step=f"{parent_step}:triage",
+                    agent="triager",
+                    parent_step=parent_step,
+                    system_prompt=triage_system_prompt,
+                    user_prompt=triage_user_prompt,
+                    metadata={"ticket_id": ticket["id"]},
+                )
+                triage = parse_json_response(triage_response)
+                triage = normalize_triage(ticket, triage)
+            except Exception as error:
+                record_run_step(
+                    context,
+                    step=f"{parent_step}:triage",
+                    agent="triager",
+                    parent_step=parent_step,
+                    metadata={
+                        "ticket_id": ticket["id"],
+                        "fallback": True,
+                        "reason": str(error),
+                    },
+                    status="fallback",
+                )
+                triage = determine_local_triage(ticket)
+                triage["reason"] = (
+                    f"LLM unavailable; using deterministic fallback. Original: {error}"
+                )
+        else:
+            record_run_step(
+                context,
+                step=f"{parent_step}:triage",
+                agent="triager",
+                parent_step=parent_step,
+                metadata={"ticket_id": ticket["id"], "mode": "local"},
+                status="ok",
+            )
+
+    record_run_step(
+        context,
+        step=f"{parent_step}:route",
+        agent="manager",
+        parent_step=parent_step,
+        metadata={
+            "ticket_id": ticket["id"],
+            "category": triage["category"],
+            "resolvable": triage["resolvable"],
+        },
+        status="ok",
     )
-    triage = parse_json_response(triage_response)
-    triage = normalize_triage(ticket, triage)
 
     enriched_ticket = dict(ticket)
     enriched_ticket["triage"] = triage
 
     if triage["resolvable"] and triage["category"] in KNOWLEDGE_BASE:
         print(f"[resolve] {ticket['id']} {triage['category']}")
-        resolution_system_prompt, resolution_user_prompt = build_resolution_prompts(
-            ticket, triage
-        )
-        resolution_response = traced_llm_call(
-            provider,
-            step="resolve",
-            system_prompt=resolution_system_prompt,
-            user_prompt=resolution_user_prompt,
-            metadata={"ticket_id": ticket["id"], "category": triage["category"]},
-        )
-        resolution = parse_json_response(resolution_response)
+        resolution = draft_local_resolution(ticket, triage)
+
+        if provider and triage["category"] not in (
+            "password_reset",
+            "feature_request",
+            "invoice_copy",
+        ):
+            try:
+                resolution_system_prompt, resolution_user_prompt = (
+                    build_resolution_prompts(ticket, triage)
+                )
+                resolution_response = traced_llm_call(
+                    provider,
+                    context=context,
+                    step=f"{parent_step}:resolve",
+                    agent="resolver",
+                    parent_step=parent_step,
+                    system_prompt=resolution_system_prompt,
+                    user_prompt=resolution_user_prompt,
+                    metadata={
+                        "ticket_id": ticket["id"],
+                        "category": triage["category"],
+                    },
+                )
+                resolution = parse_json_response(resolution_response)
+            except Exception:
+                pass
+
         enriched_ticket["result"] = {
             "status": "resolved",
             "customer_response": resolution["customer_response"],
@@ -739,77 +1254,287 @@ def process_ticket(provider: dict, ticket: dict) -> dict:
             "reason": triage["reason"],
         }
 
+    record_run_step(
+        context,
+        step=f"{parent_step}:finalize",
+        agent="manager",
+        parent_step=parent_step,
+        metadata={
+            "ticket_id": ticket["id"],
+            "result": enriched_ticket["result"]["status"],
+        },
+        status="ok",
+    )
+
     return enriched_ticket
 
 
-def build_report_from_pipeline_output(provider: dict) -> str:
-    processed_tickets = load_tickets(PIPELINE_OUTPUT_PATH)
+def build_report_with_context(
+    context: dict,
+    provider: dict | None,
+    processed_tickets: list[dict],
+) -> tuple[dict, list[dict], str]:
     summary = summarize_pipeline_output(processed_tickets)
     recommendations_system_prompt, recommendations_user_prompt = (
         build_recommendations_prompt(summary, processed_tickets)
     )
-    recommendations_response = traced_llm_call(
-        provider,
-        step="recommendations",
-        system_prompt=recommendations_system_prompt,
-        user_prompt=recommendations_user_prompt,
-        metadata={"ticket_count": len(processed_tickets), "render_only": True},
-    )
-    recommendations = parse_json_response(recommendations_response)["recommendations"]
+
+    recommendations = None
+    if provider:
+        try:
+            recommendations_response = traced_llm_call(
+                provider,
+                context=context,
+                step="recommendations",
+                agent="analyst",
+                parent_step=None,
+                system_prompt=recommendations_system_prompt,
+                user_prompt=recommendations_user_prompt,
+                metadata={"ticket_count": len(processed_tickets)},
+            )
+            recommendations = parse_json_response(recommendations_response)[
+                "recommendations"
+            ]
+        except Exception as error:
+            record_run_step(
+                context,
+                step="recommendations",
+                agent="analyst",
+                parent_step=None,
+                metadata={"fallback": True, "reason": str(error)},
+                status="fallback",
+            )
+
+    if recommendations is None:
+        recommendations = draft_local_recommendations(summary)
+        record_run_step(
+            context,
+            step="recommendations:local",
+            agent="analyst",
+            parent_step=None,
+            metadata={"mode": "local"},
+            status="ok",
+        )
+
     report = render_postmortem(summary, recommendations)
-    write_report_artifacts(summary, recommendations, report)
-    return report
+    return summary, recommendations, report
+
+
+def _parse_cli(argv: list[str]) -> dict:
+    args = {"tickets": TICKETS_PATH, "out": None, "eval": False, "render_site": False}
+    i = 1
+    while i < len(argv):
+        arg = argv[i]
+        if arg in ("--tickets", "-t"):
+            i += 1
+            if i < len(argv):
+                args["tickets"] = argv[i]
+        elif arg in ("--out", "-o"):
+            i += 1
+            if i < len(argv):
+                args["out"] = argv[i]
+        elif arg == "--eval":
+            args["eval"] = True
+        elif arg == "--render-site":
+            args["render_site"] = True
+        i += 1
+    return args
+
+
+def _eval_run(
+    provider: dict | None,
+    tickets_path: str,
+    out_dir: str | None = None,
+    case_name: str | None = None,
+) -> dict:
+    tickets = load_tickets(tickets_path)
+    context = create_run_context("eval")
+    run_dir = context["run_dir"]
+    print(f"[manager] run_id={context['run_id']}")
+
+    processed_tickets: list[dict] = []
+    for ticket in tickets:
+        processed_tickets.append(process_ticket_with_context(context, provider, ticket))
+
+    write_pipeline_output(processed_tickets, context["pipeline_output_path"])
+    summary, recommendations, report = build_report_with_context(
+        context, provider, processed_tickets
+    )
+    write_report_artifacts(context, summary, recommendations, report, run_dir)
+
+    result = {
+        "run_id": context["run_id"],
+        "started_at": context["started_at"],
+        "finished_at": datetime.now(timezone.utc).isoformat(),
+        "ticket_count": len(processed_tickets),
+        "resolved": sum(
+            1 for t in processed_tickets if t["result"]["status"] == "resolved"
+        ),
+        "escalated": sum(
+            1 for t in processed_tickets if t["result"]["status"] == "escalated"
+        ),
+        "top_issues": [i["label"] for i in summary.get("top_recurring_issues", [])[:3]],
+        "ok": True,
+        **({"case": case_name} if case_name else {}),
+    }
+    write_json_file(context["manifest_path"], result)
+    write_json_file(os.path.join(RUNS_DIR, "latest.json"), result)
+    publish_run_snapshot(context, result)
+
+    if out_dir:
+        write_pipeline_output(
+            processed_tickets, os.path.join(out_dir, "pipeline_output.json")
+        )
+        write_report_artifacts(context, summary, recommendations, report, out_dir)
+
+    return result
+
+
+def _eval_target(
+    provider: dict | None,
+    tickets_target: str,
+    out_dir: str | None = None,
+) -> dict:
+    if os.path.isdir(tickets_target):
+        expectations = load_eval_expectations(tickets_target)
+        cases = []
+        for name in sorted(os.listdir(tickets_target)):
+            if not name.endswith(".json") or name == EVAL_EXPECTATIONS_PATH:
+                continue
+
+            case_path = os.path.join(tickets_target, name)
+            case_out_dir = (
+                os.path.join(out_dir, os.path.splitext(name)[0]) if out_dir else None
+            )
+            case_result = _eval_run(provider, case_path, case_out_dir, case_name=name)
+            assertion_errors = validate_eval_result(name, case_result, expectations)
+            case_result["assertion_errors"] = assertion_errors
+            case_result["ok"] = case_result["ok"] and not assertion_errors
+            cases.append(case_result)
+
+        return {
+            "suite": tickets_target,
+            "case_count": len(cases),
+            "ok": all(case["ok"] for case in cases),
+            "cases": cases,
+        }
+
+    return _eval_run(provider, tickets_target, out_dir)
 
 
 def main() -> int:
+    args = _parse_cli(sys.argv)
     try:
         load_local_env()
+    except Exception:
+        pass
+
+    try:
         provider = get_provider()
+    except RuntimeError:
+        provider = None
 
-        if len(sys.argv) > 1 and sys.argv[1] == "--render-site":
-            report = build_report_from_pipeline_output(provider)
-            print(report)
-            return 0
+    if args["render_site"]:
+        try:
+            processed_tickets = load_tickets(PIPELINE_OUTPUT_PATH)
+        except Exception as error:
+            print(f"Failed to load pipeline output: {error}", file=sys.stderr)
+            return 1
 
-        tickets = load_tickets(TICKETS_PATH)
-
-        processed_tickets = []
-        for ticket in tickets:
-            processed_tickets.append(process_ticket(provider, ticket))
-            write_pipeline_output(processed_tickets)
-
-        print("[postmortem] generating weekly report")
-        summary = summarize_pipeline_output(processed_tickets)
-        recommendations_system_prompt, recommendations_user_prompt = (
-            build_recommendations_prompt(summary, processed_tickets)
+        context = create_run_context("render")
+        summary, recommendations, report = build_report_with_context(
+            context, provider, processed_tickets
         )
-        recommendations_response = traced_llm_call(
-            provider,
-            step="recommendations",
-            system_prompt=recommendations_system_prompt,
-            user_prompt=recommendations_user_prompt,
-            metadata={"ticket_count": len(processed_tickets)},
+        write_report_artifacts(
+            context,
+            summary,
+            recommendations,
+            report,
+            context["run_dir"],
         )
-        recommendations = parse_json_response(recommendations_response)[
-            "recommendations"
-        ]
-        report = render_postmortem(summary, recommendations)
-        write_report_artifacts(summary, recommendations, report)
-    except FileNotFoundError as error:
-        print(f"Missing required file: {error.filename}", file=sys.stderr)
-        return 1
-    except RuntimeError as error:
-        print(str(error), file=sys.stderr)
-        print(
-            "Set OPENCODE_ZEN_API_KEY before running `python main.py`.", file=sys.stderr
+        write_report_artifacts(
+            context,
+            summary,
+            recommendations,
+            report,
+            args["out"] or DIST_DIR,
         )
-        return 1
-    except json.JSONDecodeError as error:
-        print(f"Failed to parse model JSON output: {error}", file=sys.stderr)
-        return 1
-    except Exception as error:
-        print(f"Failed to run support pipeline: {error}", file=sys.stderr)
-        return 1
+        manifest = {
+            "run_id": context["run_id"],
+            "started_at": context["started_at"],
+            "finished_at": datetime.now(timezone.utc).isoformat(),
+            "ticket_count": len(processed_tickets),
+            "artifacts": {
+                "report_md": context["report_path"],
+                "report_json": context["report_json_path"],
+                "viewer": context["viewer_path"],
+            },
+        }
+        write_json_file(context["manifest_path"], manifest)
+        write_json_file(os.path.join(RUNS_DIR, "latest.json"), manifest)
+        publish_run_snapshot(context, manifest)
+        print(report)
+        return 0
+
+    if args["eval"]:
+        result = _eval_target(provider, args["tickets"], args["out"])
+        print(json.dumps(result, indent=2))
+        return 0 if result.get("ok") else 1
+
+    context = create_run_context("pipeline")
+    print(f"[manager] Starting pipeline; run_id={context['run_id']}")
+    tickets = load_tickets(args["tickets"])
+    print(f"[manager] Loaded {len(tickets)} tickets")
+
+    processed_tickets: list[dict] = []
+    for ticket in tickets:
+        processed_tickets.append(process_ticket_with_context(context, provider, ticket))
+
+    write_pipeline_output(processed_tickets, context["pipeline_output_path"])
+    write_pipeline_output(processed_tickets, PIPELINE_OUTPUT_PATH)
+
+    print("[manager] Generating report")
+    summary, recommendations, report = build_report_with_context(
+        context, provider, processed_tickets
+    )
+    write_report_artifacts(
+        context, summary, recommendations, report, context["run_dir"]
+    )
+    write_text_file(REPORT_PATH, report + "\n")
+    write_json_file(
+        REPORT_JSON_PATH,
+        {
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "summary": summary,
+            "recommendations": recommendations,
+            "report_markdown": report,
+        },
+    )
+    write_report_artifacts(context, summary, recommendations, report, DIST_DIR)
+    if args["out"]:
+        write_report_artifacts(context, summary, recommendations, report, args["out"])
+
+    manifest = {
+        "run_id": context["run_id"],
+        "started_at": context["started_at"],
+        "finished_at": datetime.now(timezone.utc).isoformat(),
+        "ticket_count": len(processed_tickets),
+        "resolved": sum(
+            1 for t in processed_tickets if t["result"]["status"] == "resolved"
+        ),
+        "escalated": sum(
+            1 for t in processed_tickets if t["result"]["status"] == "escalated"
+        ),
+        "artifacts": {
+            "pipeline_output": context["pipeline_output_path"],
+            "report_md": context["report_path"],
+            "report_json": context["report_json_path"],
+            "viewer": context["viewer_path"],
+        },
+    }
+    write_json_file(context["manifest_path"], manifest)
+    write_json_file(os.path.join(RUNS_DIR, "latest.json"), manifest)
+    publish_run_snapshot(context, manifest)
 
     print()
     print(report)

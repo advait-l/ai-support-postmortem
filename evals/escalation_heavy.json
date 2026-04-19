@@ -1,0 +1,44 @@
+[
+  {
+    "id": "EVAL-2201",
+    "created_at": "2026-04-12T16:05:00Z",
+    "customer_email": "mia.bennett@example.com",
+    "subject": "Looks like I was billed twice",
+    "body": "I upgraded once this morning but my card statement shows two charges from your company."
+  },
+  {
+    "id": "EVAL-2202",
+    "created_at": "2026-04-14T09:03:00Z",
+    "customer_email": "olivia.cooper@example.com",
+    "subject": "Charged twice for monthly plan",
+    "body": "We have two invoice emails and two identical card charges."
+  },
+  {
+    "id": "EVAL-2203",
+    "created_at": "2026-04-15T10:19:00Z",
+    "customer_email": "isabella.cox@example.com",
+    "subject": "Exported CSV contains garbled characters",
+    "body": "Names with accents are coming through as broken characters in the CSV export."
+  },
+  {
+    "id": "EVAL-2204",
+    "created_at": "2026-04-15T14:08:00Z",
+    "customer_email": "lucas.bailey@example.com",
+    "subject": "Duplicate charge and no refund confirmation",
+    "body": "We were charged twice on the Pro annual plan and still have not received any refund timeline."
+  },
+  {
+    "id": "EVAL-2205",
+    "created_at": "2026-04-17T11:33:00Z",
+    "customer_email": "harper.long@example.com",
+    "subject": "Stuck in mobile login loop again",
+    "body": "On mobile Safari the app keeps asking me to log in repeatedly and never holds the session cookie."
+  },
+  {
+    "id": "EVAL-2206",
+    "created_at": "2026-04-18T09:07:00Z",
+    "customer_email": "evelyn.hughes@example.com",
+    "subject": "Mobile sign-in redirects in circles",
+    "body": "When I try signing in on my iPad, the app redirects between two pages and never lands me in the product."
+  }
+]

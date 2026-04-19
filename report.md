@@ -22,16 +22,16 @@
 
 ## What's Getting Escalated and Why
 - **Mobile login loop** (6 escalations)
-  Reason: Frontline can provide troubleshooting steps such as clearing Safari cache/cookies or trying a different browser, and offer a workaround like using the native app or desktop site.
+  Reason: Persistent login loops on mobile Safari usually need engineering investigation.
   Example: "On my iPhone in Safari I sign in, finish 2FA, and then land back on the login screen again. I tried three times and c..."
 - **CSV export failures** (4 escalations)
-  Reason: Issue is likely a system bug requiring engineering changes to fix; frontline cannot provide a workaround to restore data export functionality.
+  Reason: CSV export issues are typically product bugs that frontline support cannot patch.
   Example: "Export to CSV completes but the downloaded file only has headers and no rows. This started today and blocks my financ..."
 - **Duplicate billing** (3 escalations)
-  Reason: Resolving a duplicate charge requires a billing system change to issue a refund or reversal.
+  Reason: Duplicate billing needs billing-system investigation and refund handling.
   Example: "I upgraded once this morning but my card statement shows two charges from your company. Please confirm whether one wi..."
 
 ## Recommendations for Product Team
-1. **Fix session persistence regression on mobile Safari/iOS browsers**: Mobile login loops account for 30% of all tickets (6 tickets) and 100% are escalated. Users report being redirected back to the login screen immediately after 2FA, with one noting the issue started after a recent update. Fixing this session cookie bug will eliminate the highest-volume escalation driver.
-2. **Overhaul CSV export logic to resolve missing data, truncation, and encoding issues**: CSV export failures account for 20% of tickets (4 tickets) and completely block financial workflows. The issues are varied—blank files, missing columns, 200-row truncation limits, and UTF-8 encoding garbling—requiring a comprehensive engineering fix to the export logic.
-3. **Implement duplicate charge prevention and enable frontline refund capabilities**: Duplicate billing accounts for 15% of tickets (3 tickets) and severely impacts customer trust. All cases are escalated because frontline support lacks billing system access to issue refunds. Adding idempotency keys to the upgrade flow will prevent double-charges, and granting refund permissions will allow immediate resolution of existing cases.
+1. **Fix the mobile login loop**: Recurring mobile sign-in loops are the clearest blocker in the queue and keep reappearing across multiple tickets.
+2. **Repair CSV export reliability**: CSV exports are repeatedly missing rows or columns, which breaks finance workflows and looks like a product bug rather than a one-off incident.
+3. **Fix the mobile login loop**: Recurring mobile sign-in loops are the clearest blocker in the queue and keep reappearing across multiple tickets.

@@ -9,11 +9,11 @@
       "category": "mobile_login_loop",
       "priority": "high",
       "resolvable": false,
-      "reason": "Frontline can provide troubleshooting steps such as clearing Safari cache/cookies or adjusting cross-site tracking settings."
+      "reason": "Persistent login loops on mobile Safari usually need engineering investigation."
     },
     "result": {
       "status": "escalated",
-      "reason": "Frontline can provide troubleshooting steps such as clearing Safari cache/cookies or adjusting cross-site tracking settings."
+      "reason": "Persistent login loops on mobile Safari usually need engineering investigation."
     }
   },
   {
@@ -26,11 +26,331 @@
       "category": "csv_export",
       "priority": "high",
       "resolvable": false,
-      "reason": "Fixing a blank export requires engineering investigation and code changes, which frontline support cannot perform"
+      "reason": "CSV export issues are typically product bugs that frontline support cannot patch."
     },
     "result": {
       "status": "escalated",
-      "reason": "Fixing a blank export requires engineering investigation and code changes, which frontline support cannot perform"
+      "reason": "CSV export issues are typically product bugs that frontline support cannot patch."
+    }
+  },
+  {
+    "id": "TCK-1003",
+    "created_at": "2026-04-12T16:05:00Z",
+    "customer_email": "mia.bennett@example.com",
+    "subject": "Looks like I was billed twice",
+    "body": "I upgraded once this morning but my card statement shows two charges from your company. Please confirm whether one will be reversed automatically.",
+    "triage": {
+      "category": "duplicate_billing",
+      "priority": "high",
+      "resolvable": false,
+      "reason": "Duplicate billing needs billing-system investigation and refund handling."
+    },
+    "result": {
+      "status": "escalated",
+      "reason": "Duplicate billing needs billing-system investigation and refund handling."
+    }
+  },
+  {
+    "id": "TCK-1004",
+    "created_at": "2026-04-13T08:27:00Z",
+    "customer_email": "noah.foster@example.com",
+    "subject": "Mobile login loops after verification code",
+    "body": "After I enter the texted verification code on mobile Safari, the page flashes and sends me back to sign in. Desktop Chrome works.",
+    "triage": {
+      "category": "mobile_login_loop",
+      "priority": "high",
+      "resolvable": false,
+      "reason": "Persistent login loops on mobile Safari usually need engineering investigation."
+    },
+    "result": {
+      "status": "escalated",
+      "reason": "Persistent login loops on mobile Safari usually need engineering investigation."
+    }
+  },
+  {
+    "id": "TCK-1005",
+    "created_at": "2026-04-13T11:11:00Z",
+    "customer_email": "emma.ross@example.com",
+    "subject": "Password reset email never arrived",
+    "body": "I requested a password reset twice and nothing has hit my inbox or spam folder. Can you trigger it manually?",
+    "triage": {
+      "category": "password_reset",
+      "priority": "high",
+      "resolvable": true,
+      "reason": "Frontline support can resend the reset flow and help with inbox troubleshooting."
+    },
+    "result": {
+      "status": "resolved",
+      "customer_response": "Hi emma.ross@example.com,\n\nThanks for reaching out. Confirm the account email, ask the customer to check spam, and resend the reset link. If still missing after 10 minutes, escalate to identity support.\n\nPlease let us know if that does not resolve the issue.",
+      "kb_article": "Password reset troubleshooting",
+      "resolution_summary": "Confirm the account email, ask the customer to check spam, and resend the reset link. If still missing after 10 minutes, escalate to identity support."
+    }
+  },
+  {
+    "id": "TCK-1006",
+    "created_at": "2026-04-13T15:54:00Z",
+    "customer_email": "ethan.reed@example.com",
+    "subject": "CSV export is missing customer names",
+    "body": "The CSV file downloads, but several columns including customer name are empty even though they appear in the web table.",
+    "triage": {
+      "category": "csv_export",
+      "priority": "high",
+      "resolvable": false,
+      "reason": "CSV export issues are typically product bugs that frontline support cannot patch."
+    },
+    "result": {
+      "status": "escalated",
+      "reason": "CSV export issues are typically product bugs that frontline support cannot patch."
+    }
+  },
+  {
+    "id": "TCK-1007",
+    "created_at": "2026-04-14T09:03:00Z",
+    "customer_email": "olivia.cooper@example.com",
+    "subject": "Charged twice for monthly plan",
+    "body": "Our admin only clicked upgrade once, but we have two invoice emails and two identical card charges. Please fix this before accounting closes books.",
+    "triage": {
+      "category": "duplicate_billing",
+      "priority": "high",
+      "resolvable": false,
+      "reason": "Duplicate billing needs billing-system investigation and refund handling."
+    },
+    "result": {
+      "status": "escalated",
+      "reason": "Duplicate billing needs billing-system investigation and refund handling."
+    }
+  },
+  {
+    "id": "TCK-1008",
+    "created_at": "2026-04-14T12:36:00Z",
+    "customer_email": "james.parker@example.com",
+    "subject": "Dashboard very slow this afternoon",
+    "body": "Pages that normally load in a second are taking 15 to 20 seconds. Reports are especially slow and time out sometimes.",
+    "triage": {
+      "category": "slow_dashboard",
+      "priority": "high",
+      "resolvable": true,
+      "reason": "Frontline support can collect timing details and offer safe troubleshooting steps."
+    },
+    "result": {
+      "status": "resolved",
+      "customer_response": "Hi james.parker@example.com,\n\nThanks for reaching out. Ask the customer to retry during a lower-traffic period, narrow to the specific report or page, and capture the timestamp for investigation.\n\nPlease let us know if that does not resolve the issue.",
+      "kb_article": "Performance troubleshooting",
+      "resolution_summary": "Ask the customer to retry during a lower-traffic period, narrow to the specific report or page, and capture the timestamp for investigation."
+    }
+  },
+  {
+    "id": "TCK-1009",
+    "created_at": "2026-04-14T17:22:00Z",
+    "customer_email": "sophia.mitchell@example.com",
+    "subject": "iOS login keeps kicking me out",
+    "body": "I can log in from my laptop, but on iOS Safari I get kicked out immediately after the home page appears. It feels like the session never sticks.",
+    "triage": {
+      "category": "mobile_login_loop",
+      "priority": "high",
+      "resolvable": false,
+      "reason": "Persistent login loops on mobile Safari usually need engineering investigation."
+    },
+    "result": {
+      "status": "escalated",
+      "reason": "Persistent login loops on mobile Safari usually need engineering investigation."
+    }
+  },
+  {
+    "id": "TCK-1010",
+    "created_at": "2026-04-15T07:48:00Z",
+    "customer_email": "benjamin.ward@example.com",
+    "subject": "Request for dark mode",
+    "body": "Our support team works nights and would really appreciate a dark mode. The white background is rough in low light.",
+    "triage": {
+      "category": "feature_request",
+      "priority": "low",
+      "resolvable": true,
+      "reason": "Frontline support can acknowledge the request and log product feedback."
+    },
+    "result": {
+      "status": "resolved",
+      "customer_response": "Hi benjamin.ward@example.com,\n\nThanks for reaching out. Thank the customer, confirm the request is logged, and provide a realistic statement that there is no committed ship date yet.\n\nPlease let us know if that does not resolve the issue.",
+      "kb_article": "Feature request acknowledgement",
+      "resolution_summary": "Thank the customer, confirm the request is logged, and provide a realistic statement that there is no committed ship date yet."
+    }
+  },
+  {
+    "id": "TCK-1011",
+    "created_at": "2026-04-15T10:19:00Z",
+    "customer_email": "isabella.cox@example.com",
+    "subject": "Exported CSV contains garbled characters",
+    "body": "Names with accents are coming through as broken characters in the CSV export. Excel opens it, but the encoding looks wrong.",
+    "triage": {
+      "category": "csv_export",
+      "priority": "high",
+      "resolvable": false,
+      "reason": "CSV export issues are typically product bugs that frontline support cannot patch."
+    },
+    "result": {
+      "status": "escalated",
+      "reason": "CSV export issues are typically product bugs that frontline support cannot patch."
+    }
+  },
+  {
+    "id": "TCK-1012",
+    "created_at": "2026-04-15T14:08:00Z",
+    "customer_email": "lucas.bailey@example.com",
+    "subject": "Duplicate charge and no refund confirmation",
+    "body": "I already emailed earlier this week. We were charged twice on the Pro annual plan and still have not received any refund timeline.",
+    "triage": {
+      "category": "duplicate_billing",
+      "priority": "high",
+      "resolvable": false,
+      "reason": "Duplicate billing needs billing-system investigation and refund handling."
+    },
+    "result": {
+      "status": "escalated",
+      "reason": "Duplicate billing needs billing-system investigation and refund handling."
+    }
+  },
+  {
+    "id": "TCK-1013",
+    "created_at": "2026-04-16T09:51:00Z",
+    "customer_email": "amelia.rivera@example.com",
+    "subject": "Login loop only on mobile browser",
+    "body": "This only happens on my phone browser. I sign in, see the dashboard for a split second, then the app returns to the login page again.",
+    "triage": {
+      "category": "mobile_login_loop",
+      "priority": "high",
+      "resolvable": false,
+      "reason": "Persistent login loops on mobile Safari usually need engineering investigation."
+    },
+    "result": {
+      "status": "escalated",
+      "reason": "Persistent login loops on mobile Safari usually need engineering investigation."
+    }
+  },
+  {
+    "id": "TCK-1014",
+    "created_at": "2026-04-16T12:25:00Z",
+    "customer_email": "henry.morris@example.com",
+    "subject": "Typo in invoice email",
+    "body": "Your invoice email says 'reciept' instead of 'receipt'. Not urgent, but it looks sloppy when forwarded to finance.",
+    "triage": {
+      "category": "invoice_copy",
+      "priority": "low",
+      "resolvable": true,
+      "reason": "Frontline support can confirm the typo and reassure the customer."
+    },
+    "result": {
+      "status": "resolved",
+      "customer_response": "Hi henry.morris@example.com,\n\nThanks for reaching out. Acknowledge the typo, confirm it does not affect billing data, and note that the issue has been forwarded to the product team.\n\nPlease let us know if that does not resolve the issue.",
+      "kb_article": "Invoice wording issue",
+      "resolution_summary": "Acknowledge the typo, confirm it does not affect billing data, and note that the issue has been forwarded to the product team."
+    }
+  },
+  {
+    "id": "TCK-1015",
+    "created_at": "2026-04-16T18:02:00Z",
+    "customer_email": "charlotte.price@example.com",
+    "subject": "CSV export cuts off after 200 rows",
+    "body": "Our report should have around 800 rows, but the downloaded CSV stops at 200 every time. The in-app table still shows all rows.",
+    "triage": {
+      "category": "csv_export",
+      "priority": "high",
+      "resolvable": false,
+      "reason": "CSV export issues are typically product bugs that frontline support cannot patch."
+    },
+    "result": {
+      "status": "escalated",
+      "reason": "CSV export issues are typically product bugs that frontline support cannot patch."
+    }
+  },
+  {
+    "id": "TCK-1016",
+    "created_at": "2026-04-17T08:40:00Z",
+    "customer_email": "alexander.brooks@example.com",
+    "subject": "Can't invite teammate",
+    "body": "The invite modal spins forever after I enter my teammate's email address. We are blocked from onboarding two new reps.",
+    "triage": {
+      "category": "team_invites",
+      "priority": "medium",
+      "resolvable": true,
+      "reason": "Frontline support can provide invite troubleshooting and retry guidance."
+    },
+    "result": {
+      "status": "resolved",
+      "customer_response": "Hi alexander.brooks@example.com,\n\nThanks for reaching out. Advise the customer to retry from desktop Chrome, verify the teammate email is not already pending, and capture the invite timestamp if the spinner persists.\n\nPlease let us know if that does not resolve the issue.",
+      "kb_article": "Invite flow troubleshooting",
+      "resolution_summary": "Advise the customer to retry from desktop Chrome, verify the teammate email is not already pending, and capture the invite timestamp if the spinner persists."
+    }
+  },
+  {
+    "id": "TCK-1017",
+    "created_at": "2026-04-17T11:33:00Z",
+    "customer_email": "harper.long@example.com",
+    "subject": "Stuck in mobile login loop again",
+    "body": "This started after your last update. On mobile Safari the app keeps asking me to log in repeatedly and never holds the session cookie.",
+    "triage": {
+      "category": "mobile_login_loop",
+      "priority": "high",
+      "resolvable": false,
+      "reason": "Persistent login loops on mobile Safari usually need engineering investigation."
+    },
+    "result": {
+      "status": "escalated",
+      "reason": "Persistent login loops on mobile Safari usually need engineering investigation."
+    }
+  },
+  {
+    "id": "TCK-1018",
+    "created_at": "2026-04-17T16:47:00Z",
+    "customer_email": "daniel.patterson@example.com",
+    "subject": "Search results not matching exact account name",
+    "body": "Searching the exact customer account name returns unrelated records first, so reps are opening the wrong accounts.",
+    "triage": {
+      "category": "search_accuracy",
+      "priority": "medium",
+      "resolvable": true,
+      "reason": "Frontline support can provide a temporary search workaround while relevance is reviewed."
+    },
+    "result": {
+      "status": "resolved",
+      "customer_response": "Hi daniel.patterson@example.com,\n\nThanks for reaching out. Recommend searching with the account ID or email as a temporary workaround and note that relevance tuning has been flagged internally.\n\nPlease let us know if that does not resolve the issue.",
+      "kb_article": "Search mismatch workaround",
+      "resolution_summary": "Recommend searching with the account ID or email as a temporary workaround and note that relevance tuning has been flagged internally."
+    }
+  },
+  {
+    "id": "TCK-1019",
+    "created_at": "2026-04-18T09:07:00Z",
+    "customer_email": "evelyn.hughes@example.com",
+    "subject": "Mobile sign-in redirects in circles",
+    "body": "When I try signing in on my iPad, the app redirects between two pages and never lands me in the product. Desktop is fine.",
+    "triage": {
+      "category": "mobile_login_loop",
+      "priority": "high",
+      "resolvable": false,
+      "reason": "Persistent login loops on mobile Safari usually need engineering investigation."
+    },
+    "result": {
+      "status": "escalated",
+      "reason": "Persistent login loops on mobile Safari usually need engineering investigation."
+    }
+  },
+  {
+    "id": "TCK-1020",
+    "created_at": "2026-04-18T14:29:00Z",
+    "customer_email": "michael.flores@example.com",
+    "subject": "Feature request: schedule exports",
+    "body": "It would help a lot if CSV exports could be scheduled weekly instead of run manually every Friday.",
+    "triage": {
+      "category": "feature_request",
+      "priority": "low",
+      "resolvable": true,
+      "reason": "Frontline support can acknowledge the request and log product feedback."
+    },
+    "result": {
+      "status": "resolved",
+      "customer_response": "Hi michael.flores@example.com,\n\nThanks for reaching out. Thank the customer, confirm the request is logged, and provide a realistic statement that there is no committed ship date yet.\n\nPlease let us know if that does not resolve the issue.",
+      "kb_article": "Feature request acknowledgement",
+      "resolution_summary": "Thank the customer, confirm the request is logged, and provide a realistic statement that there is no committed ship date yet."
     }
   }
 ]

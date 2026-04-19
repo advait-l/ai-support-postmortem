@@ -3,3 +3,10 @@ traces.jsonl
 .env
 __pycache__/
 *.pyc
+runs/
+index.html
+dist/latest-run.html
+dist/latest-run.json
+dist/runs/
+dist/report.json
+dist/report.md

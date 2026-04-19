@@ -1,0 +1,44 @@
+[
+  {
+    "id": "EVAL-2001",
+    "created_at": "2026-04-12T09:14:00Z",
+    "customer_email": "ava.wilson@example.com",
+    "subject": "App keeps bouncing me back to login on iPhone",
+    "body": "On my iPhone in Safari I sign in, finish 2FA, and then land back on the login screen again."
+  },
+  {
+    "id": "EVAL-2002",
+    "created_at": "2026-04-12T13:42:00Z",
+    "customer_email": "liam.turner@example.com",
+    "subject": "CSV export downloads blank file",
+    "body": "Export to CSV completes but the downloaded file only has headers and no rows."
+  },
+  {
+    "id": "EVAL-2003",
+    "created_at": "2026-04-13T08:27:00Z",
+    "customer_email": "noah.foster@example.com",
+    "subject": "Mobile login loops after verification code",
+    "body": "After I enter the texted verification code on mobile Safari, the page flashes and sends me back to sign in."
+  },
+  {
+    "id": "EVAL-2004",
+    "created_at": "2026-04-13T15:54:00Z",
+    "customer_email": "ethan.reed@example.com",
+    "subject": "CSV export is missing customer names",
+    "body": "The CSV file downloads, but several columns including customer name are empty even though they appear in the web table."
+  },
+  {
+    "id": "EVAL-2005",
+    "created_at": "2026-04-14T17:22:00Z",
+    "customer_email": "sophia.mitchell@example.com",
+    "subject": "iOS login keeps kicking me out",
+    "body": "I can log in from my laptop, but on iOS Safari I get kicked out immediately after the home page appears."
+  },
+  {
+    "id": "EVAL-2006",
+    "created_at": "2026-04-16T18:02:00Z",
+    "customer_email": "charlotte.price@example.com",
+    "subject": "CSV export cuts off after 200 rows",
+    "body": "Our report should have around 800 rows, but the downloaded CSV stops at 200 every time."
+  }
+]

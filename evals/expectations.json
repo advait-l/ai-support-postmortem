@@ -1,0 +1,31 @@
+{
+  "core_recurring.json": {
+    "ticket_count": 6,
+    "resolved": 0,
+    "escalated": 6,
+    "top_issues_includes": [
+      "Mobile login loop",
+      "CSV export failures"
+    ]
+  },
+  "escalation_heavy.json": {
+    "ticket_count": 6,
+    "resolved": 0,
+    "escalated": 6,
+    "top_issues_includes": [
+      "Duplicate billing",
+      "Mobile login loop",
+      "CSV export failures"
+    ]
+  },
+  "frontline_resolvable.json": {
+    "ticket_count": 6,
+    "resolved": 6,
+    "escalated": 0,
+    "top_issues_includes": [
+      "Password reset",
+      "Slow dashboard",
+      "Feature requests"
+    ]
+  }
+}
