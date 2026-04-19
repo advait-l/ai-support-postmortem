@@ -138,6 +138,17 @@ def load_json_file(path: str) -> dict:
         return json.load(file)
 
 
+def load_jsonl_file(path: str) -> list[dict]:
+    entries = []
+    with open(path, "r", encoding="utf-8") as file:
+        for line in file:
+            stripped = line.strip()
+            if not stripped:
+                continue
+            entries.append(json.loads(stripped))
+    return entries
+
+
 def new_run_id(prefix: str = "run") -> str:
     return f"{prefix}-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}-{uuid.uuid4().hex[:8]}"
 
@@ -970,6 +981,145 @@ def render_report_html(summary: dict, recommendations: list[dict]) -> str:
 """
 
 
+def render_run_detail_html(manifest: dict, trace_entries: list[dict]) -> str:
+    run_id = manifest["run_id"]
+    run_kind = run_id.split("-", 1)[0]
+    status_counts = Counter(entry.get("status", "unknown") for entry in trace_entries)
+    agent_counts = Counter(entry.get("agent", "unknown") for entry in trace_entries)
+
+    trace_rows = []
+    for entry in trace_entries:
+        metadata = entry.get("metadata") or {}
+        trace_rows.append(
+            "".join(
+                [
+                    '<article class="trace-card">',
+                    '<div class="trace-head">',
+                    f'<span class="pill agent">{escape(str(entry.get("agent", "unknown")))}</span>',
+                    f'<span class="pill status {escape(str(entry.get("status", "unknown")))}">{escape(str(entry.get("status", "unknown")))}</span>',
+                    f'<span class="step">{escape(str(entry.get("step", "")))}</span>',
+                    "</div>",
+                    '<div class="trace-meta">',
+                    f"<span>{escape(str(entry.get('timestamp', 'unknown')))}</span>",
+                    f"<span>{escape(str(entry.get('latency_ms') or '-'))} ms</span>",
+                    f"<span>{escape(str(entry.get('provider') or 'local'))}</span>",
+                    f"<span>{escape(str(entry.get('model') or '-'))}</span>",
+                    "</div>",
+                    f'<p class="trace-line"><strong>Parent:</strong> {escape(str(entry.get("parent_step") or "-"))}</p>',
+                    f'<p class="trace-line"><strong>Metadata:</strong> {escape(json.dumps(metadata, sort_keys=True))}</p>',
+                    (
+                        f'<p class="trace-line error"><strong>Error:</strong> {escape(str(entry.get("error")))}</p>'
+                        if entry.get("error")
+                        else ""
+                    ),
+                    "</article>",
+                ]
+            )
+        )
+
+    summary_cards = [
+        f'<div class="stat"><span>Run Type</span><strong>{escape(run_kind)}</strong></div>',
+        f'<div class="stat"><span>Tickets</span><strong>{escape(str(manifest.get("ticket_count", "?")))}</strong></div>',
+        f'<div class="stat"><span>Resolved</span><strong>{escape(str(manifest.get("resolved", "?")))}</strong></div>',
+        f'<div class="stat"><span>Escalated</span><strong>{escape(str(manifest.get("escalated", "?")))}</strong></div>',
+        f'<div class="stat"><span>Trace Events</span><strong>{len(trace_entries)}</strong></div>',
+        f'<div class="stat"><span>Errors</span><strong>{status_counts.get("error", 0)}</strong></div>',
+    ]
+
+    artifact_links = []
+    report_snapshot = manifest.get("artifacts", {}).get("report_snapshot")
+    traces_snapshot = manifest.get("artifacts", {}).get("traces_snapshot")
+    manifest_snapshot = manifest.get("artifacts", {}).get("manifest_snapshot")
+    if report_snapshot:
+        artifact_links.append(
+            f'<a href="./{escape(report_snapshot)}">Open report snapshot</a>'
+        )
+    if traces_snapshot:
+        artifact_links.append(
+            f'<a href="./{escape(traces_snapshot)}">Open traces JSON</a>'
+        )
+    if manifest_snapshot:
+        artifact_links.append(
+            f'<a href="./{escape(manifest_snapshot)}">Open run manifest</a>'
+        )
+
+    return f"""<!doctype html>
+<html lang=\"en\">
+<head>
+  <meta charset=\"utf-8\">
+  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+  <title>{escape(run_id)} Observability</title>
+  <style>
+    :root {{
+      color-scheme: dark;
+      --bg: #0b1020;
+      --panel: #131a2e;
+      --panel-2: #0e1428;
+      --muted: #8d99b8;
+      --text: #edf2ff;
+      --border: #283252;
+      --accent: #7cc7ff;
+      --good: #7fe3b0;
+      --warn: #ffd37a;
+      --bad: #ff8d8d;
+    }}
+    * {{ box-sizing: border-box; }}
+    body {{ margin: 0; font-family: Inter, ui-sans-serif, system-ui, sans-serif; background: linear-gradient(180deg, #0b1020 0%, #11172a 100%); color: var(--text); }}
+    main {{ max-width: 1100px; margin: 0 auto; padding: 40px 20px 64px; }}
+    h1 {{ margin: 0 0 10px; font-size: 2.1rem; }}
+    h2 {{ margin: 34px 0 14px; font-size: 1.25rem; }}
+    p {{ line-height: 1.55; }}
+    a {{ color: var(--accent); text-decoration: none; }}
+    .lede, .meta {{ color: var(--muted); }}
+    .stats, .agents, .links {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }}
+    .stat, .agent-card, .trace-card, .link-card {{ background: rgba(19, 26, 46, 0.88); border: 1px solid var(--border); border-radius: 16px; padding: 16px; }}
+    .stat strong, .agent-card strong {{ display: block; font-size: 1.45rem; margin-top: 8px; }}
+    .trace-list {{ display: grid; gap: 12px; }}
+    .trace-card {{ background: var(--panel-2); }}
+    .trace-head {{ display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }}
+    .trace-meta {{ display: flex; flex-wrap: wrap; gap: 12px; color: var(--muted); font-size: 0.92rem; margin-bottom: 10px; }}
+    .pill {{ border-radius: 999px; padding: 4px 10px; font-size: 0.8rem; border: 1px solid var(--border); }}
+    .pill.agent {{ color: var(--accent); }}
+    .pill.status.ok {{ color: var(--good); border-color: rgba(127, 227, 176, 0.35); }}
+    .pill.status.error {{ color: var(--bad); border-color: rgba(255, 141, 141, 0.35); }}
+    .pill.status.fallback {{ color: var(--warn); border-color: rgba(255, 211, 122, 0.35); }}
+    .step {{ font-weight: 600; }}
+    .trace-line {{ margin: 8px 0 0; word-break: break-word; }}
+    .trace-line.error {{ color: var(--bad); }}
+  </style>
+</head>
+<body>
+  <main>
+    <p><a href="./index.html">Back to runs</a> | <a href="../index.html">Latest report</a></p>
+    <h1>{escape(run_id)}</h1>
+    <p class=\"lede\">Static observability view for one pipeline run, including the recorded step timeline that was written during processing.</p>
+
+    <section>
+      <div class=\"stats\">{"".join(summary_cards)}</div>
+      <p class=\"meta\">Started: {escape(str(manifest.get("started_at", "unknown")))} | Finished: {escape(str(manifest.get("finished_at", "unknown")))}</p>
+      {f'<p class="meta">Case: {escape(str(manifest.get("case")))}</p>' if manifest.get("case") else ""}
+    </section>
+
+    <section>
+      <h2>Artifacts</h2>
+      <div class=\"links\">{"".join(f'<div class="link-card">{link}</div>' for link in artifact_links) or '<div class="link-card">No deployed artifacts available.</div>'}</div>
+    </section>
+
+    <section>
+      <h2>Events By Agent</h2>
+      <div class=\"agents\">{"".join(f'<div class="agent-card"><span>{escape(agent)}</span><strong>{count}</strong></div>' for agent, count in sorted(agent_counts.items())) or '<p class="meta">No trace events recorded.</p>'}</div>
+    </section>
+
+    <section>
+      <h2>Trace Timeline</h2>
+      <div class=\"trace-list\">{"".join(trace_rows) or '<p class="meta">No trace events recorded for this run.</p>'}</div>
+    </section>
+  </main>
+</body>
+</html>
+"""
+
+
 def render_runs_index_html(manifests: list[dict]) -> str:
     cards = []
     for manifest in manifests:
@@ -989,12 +1139,13 @@ def render_runs_index_html(manifests: list[dict]) -> str:
                     f'<p class="meta">{escape(run_kind)} run</p>',
                     f"<p><strong>Tickets:</strong> {ticket_count}</p>",
                     f"<p><strong>Resolved:</strong> {resolved} | <strong>Escalated:</strong> {escalated}</p>",
+                    f"<p><strong>Traces:</strong> {manifest.get('trace_count', '?')}</p>",
                     f"<p><strong>Started:</strong> {escape(str(started_at))}</p>",
                     f"<p><strong>Finished:</strong> {escape(str(finished_at))}</p>",
                     f"<p><strong>Case:</strong> {escape(case_name)}</p>"
                     if case_name
                     else "",
-                    f'<p><a href="./{escape(run_id)}.html">Open report snapshot</a></p>',
+                    f'<p><a href="./{escape(run_id)}.html">Open run detail</a></p>',
                     "</article>",
                 ]
             )
@@ -1043,20 +1194,40 @@ def publish_run_snapshot(context: dict, manifest: dict) -> None:
     if not os.path.exists(context["viewer_path"]):
         return
 
-    snapshot_html = os.path.join(DIST_RUNS_DIR, f"{context['run_id']}.html")
-    snapshot_json = os.path.join(DIST_RUNS_DIR, f"{context['run_id']}.json")
+    run_id = context["run_id"]
+    detail_html = os.path.join(DIST_RUNS_DIR, f"{run_id}.html")
+    report_snapshot_html = os.path.join(DIST_RUNS_DIR, f"{run_id}-report.html")
+    snapshot_json = os.path.join(DIST_RUNS_DIR, f"{run_id}.json")
+    traces_snapshot_json = os.path.join(DIST_RUNS_DIR, f"{run_id}.traces.json")
 
     with open(context["viewer_path"], "r", encoding="utf-8") as file:
         viewer_html = file.read()
 
-    write_text_file(snapshot_html, viewer_html)
+    trace_entries = []
+    if os.path.exists(context["trace_path"]):
+        trace_entries = load_jsonl_file(context["trace_path"])
+
+    manifest = {
+        **manifest,
+        "trace_count": len(trace_entries),
+        "artifacts": {
+            **(manifest.get("artifacts") or {}),
+            "report_snapshot": f"{run_id}-report.html",
+            "manifest_snapshot": f"{run_id}.json",
+            "traces_snapshot": f"{run_id}.traces.json",
+        },
+    }
+
+    write_text_file(detail_html, render_run_detail_html(manifest, trace_entries))
+    write_text_file(report_snapshot_html, viewer_html)
     write_json_file(snapshot_json, manifest)
+    write_json_file(traces_snapshot_json, {"run_id": run_id, "traces": trace_entries})
     write_json_file(DIST_LATEST_RUN_JSON_PATH, manifest)
 
     manifests = []
     if os.path.isdir(DIST_RUNS_DIR):
         for name in sorted(os.listdir(DIST_RUNS_DIR), reverse=True):
-            if not name.endswith(".json"):
+            if not name.endswith(".json") or name.endswith(".traces.json"):
                 continue
             try:
                 manifests.append(load_json_file(os.path.join(DIST_RUNS_DIR, name)))
